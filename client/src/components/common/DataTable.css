@@ -1,17 +1,79 @@
-.data-table-container {
+/* Contêiner principal da tabela */
+.data-table {
   width: 100%;
-  overflow-x: auto; /* Adiciona rolagem horizontal apenas se necessário */
+  margin: 0 auto;
+  overflow-x: auto;
 }
 
-.data-table-title {
-  font-size: 1.25rem;
-  margin-bottom: 10px;
+/* Estilos da tabela */
+.data-table .rdt_Table {
+  border: 1px solid #ddd; 
+  border-radius: 5px; 
+  overflow: hidden;
 }
 
-.react-data-table-component {
-  font-size: 0.75rem; /* Ajusta o tamanho da fonte da tabela */
+.data-table .rdt_TableHead {
+  background-color: #f0f0f0; /* Destaca o cabeçalho com um fundo claro */
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-.react-data-table-component .rdt_TableCol {
-  padding: 4px; /* Reduz o padding das colunas */
+.data-table .rdt_TableCol {
+  padding: 6px 8px; 
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table .rdt_TableRow {
+  padding: 6px 0px; 
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table .rdt_TableRow:hover {
+  background-color: #f9f9f9; 
+}
+
+.data-table .rdt_TableCol--sort {
+  cursor: pointer;
+  color: #555; 
+}
+
+.data-table .rdt_TableCol--sort:after {
+  content: ' ▼'; 
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.data-table .rdt_TableHeadRow {
+  border-bottom: 1px solid #ccc; /* Linha de destaque no cabeçalho */
+}
+
+.data-table .rdt_TableRow:last-child {
+  border-bottom: none; /* Remove a borda da última linha */
+}
+
+.data-table .rdt_Pagination {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  background-color: #f7f7f7; /* Fundo claro para a paginação */
+  border-top: 1px solid #ddd; /* Borda superior na paginação */
+}
+
+.data-table .rdt_Pagination button {
+  /* border: none; */
+  background-color: #17c653; 
+  color: #fff;
+  padding: 5px 10px;
+  margin: 0 2px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.data-table .rdt_Pagination button:hover {
+  background-color: #14a547; 
+}
+
+.data-table .rdt_Pagination button:disabled {
+  background-color: #ccc; 
+  cursor: not-allowed;
 }

@@ -1,0 +1,27 @@
+
+.container {
+  width: 90%;
+  display: flex;
+  padding: 20px 0;
+  flex-direction: column;
+  align-items: center; 
+  margin: 0 auto; 
+
+}
+.breadcrumb {
+  width: 100%;
+  margin-bottom: 20px; 
+  text-align: left; 
+  font-size: 0.7rem; 
+}
+
+.breadcrumb a {
+  color: #1c61e7;
+  text-decoration: none; 
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline; 
+}
+
+
