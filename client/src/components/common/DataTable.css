@@ -1,0 +1,17 @@
+.data-table-container {
+  width: 100%;
+  overflow-x: auto; /* Adiciona rolagem horizontal apenas se necessário */
+}
+
+.data-table-title {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.react-data-table-component {
+  font-size: 0.75rem; /* Ajusta o tamanho da fonte da tabela */
+}
+
+.react-data-table-component .rdt_TableCol {
+  padding: 4px; /* Reduz o padding das colunas */
+}
