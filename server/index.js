@@ -28,7 +28,7 @@ app.get('/api/licitacoes', async (req, res) => {
       {
         params: {
           pagina: 1,
-          tamanhoDaPagina: 25
+          tamanhoDaPagina: 250
         },
         headers: {
           Authorization: `Bearer ${process.env.TOKEN}`,

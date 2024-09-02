@@ -51,7 +51,9 @@ const LicitacoesTable = () => {
       <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>
          
       {loading ? (
-        <div>Carregando licitações...</div>
+        <div className="spinner-container">
+          <div className="spinner"></div>
+        </div>
       ) : error ? (
         <div>Erro ao carregar licitações: {error}</div>
       ) : (
