@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { getLicitacoes } from "../../../services/licitacoes";
 import DataTableComponent from "../../common/DataTable";
 import './LicitacoesTable.css';
 
@@ -13,7 +13,7 @@ const columns = [
     name: "Objeto", 
     selector: (row) => row.historico, 
     sortable: true,
-    cell: row => (
+    cell: (row) => (
       <div className="break-word">{row.historico}</div>
     )
   },
@@ -27,11 +27,11 @@ const LicitacoesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/licitacoes");
-        setData(response.data.registros); 
-        setLoading(false);
+        const result = await getLicitacoes();
+        setData(result.registros); 
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -43,7 +43,7 @@ const LicitacoesTable = () => {
     <div className="container">
       <h2>Procedimentos Licitatórios</h2>
       <div className="breadcrumb">
-        Você está aqui: <a href="/">Página inicial</a> / <a href="/transparencia">Transparência</a> /  Procedimentos Licitatórios
+        Você está aqui: <a href="/">Página inicial</a> / <a href="/transparencia">Transparência</a> / Procedimentos Licitatórios
       </div>
       <div className="container-filter">
         filtro de pesquisa
@@ -58,7 +58,7 @@ const LicitacoesTable = () => {
         <div>Erro ao carregar licitações: {error}</div>
       ) : (
         <DataTableComponent
-          title="Licitacoes"
+          title="Licitações"
           columns={columns}
           data={data}
         />
