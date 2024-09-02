@@ -8,7 +8,11 @@ const fetchFromAPI = async (path, req, res) => {
     const url = `${process.env.SERVER}${path}`
 
     const response = await axios.get(url, {
-      params: req.query, // Passar parâmetros de consulta, se houver
+      params: {
+        pagina: 1,
+        tamanhoDaPagina: 25
+      },
+
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
         'cliente-integrado': process.env.CLIENTE_INTEGRADO

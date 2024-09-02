@@ -10,7 +10,11 @@ const fetchFromAPI = async (path, req, res) => {
 
     // Realizar a solicitação para a API externa
     const response = await axios.get(url, {
-      params: req.query, // Passar parâmetros de consulta, se houver
+      params: {
+        pagina: 1,
+        tamanhoDaPagina: 25
+      },
+
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`, // Token de autenticação
         'cliente-integrado': process.env.CLIENTE_INTEGRADO // Header adicional
