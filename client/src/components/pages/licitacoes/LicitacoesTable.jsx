@@ -4,20 +4,44 @@ import DataTableComponent from "../../common/DataTable";
 import './LicitacoesTable.css';
 
 const columns = [
-  { name: "Modalidade", selector: (row) => row.modalidade, sortable: true },
-  { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true },
-  { name: "Órgão", selector: (row) => row.orgao, sortable: true },
-  { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true },
-  { name: "Situação", selector: (row) => row.situacao, sortable: true },
-  { 
-    name: "Objeto", 
-    selector: (row) => row.historico, 
-    sortable: true,
+  {
+    name: "Dados",
+    selector: (row) => row,
     cell: (row) => (
-      <div className="break-word">{row.historico}</div>
-    )
+      <span className="dados-licita">
+        <p><span>{row.modalidade} Nº {row.numeroAno}</span></p>
+        <p><span>Data Abertura:</span> {row.dataDeJulgamento}</p>
+        <p><span>Situação:</span> {row.situacao}</p>
+      </span>
+    ),
+  },
+  {
+    name: "Objeto",
+    selector: (row) => row,
+    cell: (row) => (
+      <span className="objeto-licita">
+        <p><span> {row.orgao}</span></p>
+        <p>{row.historico}</p>
+      </span>
+    ),
   },
 ];
+
+// const columns = [
+//   { name: "Modalidade", selector: (row) => row.modalidade, sortable: true },
+//   { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true },
+//   { name: "Órgão", selector: (row) => row.orgao, sortable: true },
+//   { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true },
+//   { name: "Situação", selector: (row) => row.situacao, sortable: true },
+//   { 
+//     name: "Objeto", 
+//     selector: (row) => row.historico, 
+//     sortable: true,
+//     cell: (row) => (
+//       <div className="break-word">{row.historico}</div>
+//     )
+//   },
+// ];
 
 const LicitacoesTable = () => {
   const [data, setData] = useState([]);

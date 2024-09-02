@@ -8,7 +8,7 @@
 /* Estilos da tabela */
 .data-table .rdt_Table {
   border: 1px solid #ddd; 
-  border-radius: 5px; 
+  border-radius: 5px 5px 0 0; 
   overflow: hidden;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .data-table .rdt_TableCol {
-  padding: 6px 8px; 
+  padding: 0px auto; 
   border-bottom: 1px solid #ddd;
 }
 

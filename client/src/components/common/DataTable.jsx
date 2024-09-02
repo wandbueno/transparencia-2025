@@ -1,6 +1,5 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
-import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import './DataTable.css';
 
@@ -18,14 +17,14 @@ const DataTableComponent = ({ columns, data }) => {
   };
 
   return (
-      <DataTableExtensions {...tableData} export={true}>
-        <DataTable
-          pagination
-          paginationComponentOptions={paginationOptions}
-          className="data-table"
-        />
-      </DataTableExtensions>
-
+    <DataTable
+      columns={columns}
+      data={data}
+      pagination
+      paginationComponentOptions={paginationOptions}
+      className="data-table"
+      noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados
+    />
   );
 };
 

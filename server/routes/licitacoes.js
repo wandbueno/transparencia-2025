@@ -5,7 +5,10 @@ const axios = require('axios')
 const fetchFromAPI = async (path, req, res) => {
   try {
     const response = await axios.get(`${process.env.SERVER}${path}`, {
-      params: req.query,
+      params: {
+        pagina: 1,
+        tamanhoDaPagina: 25
+      },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
         'cliente-integrado': process.env.CLIENTE_INTEGRADO
