@@ -1,29 +1,83 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faHome, 
+  faDollarSign, 
+  faUsers, 
+  faGavel, 
+  faFileInvoice, 
+  faShoppingCart, 
+  faBook, 
+  faHeadset 
+} from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
   return (
     <header className="header">
-      <div className="logo">
-        <h1>Transparência</h1>
+      <div className="header-info">
+        <p>Portal de transparencia</p>
+        <div className="search-container">
+          <input type="text" placeholder="Buscar no portal..." />
+        </div>
+        <p>Voltar ao site da prefeitura</p>
       </div>
       <nav className="nav">
-        <ul>
+      <ul>
           <li>
-            <NavLink exact="true" to="/" activeclassname="active">Início</NavLink>
+            <NavLink exact="true" to="/" activeclassname="active">
+              <FontAwesomeIcon icon={faHome} size="lg" />
+              <span>Início</span>
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/about" activeclassname="active">Sobre</NavLink>
+            <NavLink to="/about" activeclassname="active">
+              <FontAwesomeIcon icon={faDollarSign} size="lg" />
+              <span>Receitas e Despesas</span>
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/services" activeclassname="active">Serviços</NavLink>
+            <NavLink to="/services" activeclassname="active">
+              <FontAwesomeIcon icon={faUsers} size="lg" />
+              <span>Órgãos e Servidores</span>
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/contact" activeclassname="active">Contato</NavLink>
+            <NavLink to="/contact" activeclassname="active">
+              <FontAwesomeIcon icon={faGavel} size="lg" />
+              <span>Políticas Públicas</span>
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/licitacoes" activeclassname="active">Licitações</NavLink> {/* Adicione esta linha */}
+            <NavLink to="/contact" activeclassname="active">
+              <FontAwesomeIcon icon={faFileInvoice} size="lg" />
+              <span>Resp. Fiscal</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/contact" activeclassname="active">
+              <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+              <span>Compras e Licitações</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/contact" activeclassname="active">
+              <FontAwesomeIcon icon={faBook} size="lg" />
+              <span>Legislação e Publicação</span>
+            </NavLink>
+          </li>
+          {/* <li>
+            <NavLink to="/contact" activeclassname="active">
+              <FontAwesomeIcon icon={faHeadset} size="lg" />
+              <span>Ouvidoria/SIC</span>
+            </NavLink>
+          </li> */}
+          <li>
+            <NavLink to="/licitacoes" activeclassname="active">
+              <FontAwesomeIcon icon={faFileInvoice} size="lg" />
+              <span>Licitações</span>
+            </NavLink>
           </li>
         </ul>
       </nav>
