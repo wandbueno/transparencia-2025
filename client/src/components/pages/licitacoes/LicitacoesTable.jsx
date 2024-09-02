@@ -4,7 +4,7 @@ import DataTableComponent from "../../common/DataTable";
 import './LicitacoesTable.css';
 
 const columns = [
-   { name: "Modalidade", selector: (row) => row.modalidade, sortable: true },
+  { name: "Modalidade", selector: (row) => row.modalidade, sortable: true },
   { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true },
   { name: "Órgão", selector: (row) => row.orgao, sortable: true },
   { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true },
@@ -17,7 +17,6 @@ const columns = [
       <div className="break-word">{row.historico}</div>
     )
   },
-
 ];
 
 const LicitacoesTable = () => {
@@ -40,19 +39,28 @@ const LicitacoesTable = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>Erro ao carregar licitações: {error}</div>;
-
   return (
     <div className="container">
+      <h2>Procedimentos Licitatórios</h2>
       <div className="breadcrumb">
-        Você está aqui: <a href="/">Portal da Transparência</a>  <a href="/receitas-e-despesas">Receitas e Despesas</a>  Receitas
+        Você está aqui: <a href="/">Página inicial</a> / <a href="/transparencia">Transparência</a> /  Procedimentos Licitatórios
       </div>
-      <DataTableComponent
-        title="Contratos"
-        columns={columns}
-        data={data}
-      />
+      <div className="container-filter">
+        filtro de pesquisa
+      </div>
+      <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>
+         
+      {loading ? (
+        <div>Carregando licitações...</div>
+      ) : error ? (
+        <div>Erro ao carregar licitações: {error}</div>
+      ) : (
+        <DataTableComponent
+          title="Licitacoes"
+          columns={columns}
+          data={data}
+        />
+      )}
     </div>
   );
 };

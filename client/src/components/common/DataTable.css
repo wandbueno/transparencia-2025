@@ -60,7 +60,7 @@
 }
 
 .data-table .rdt_Pagination button {
-  /* border: none; */
+  border: none;
   background-color: #17c653; 
   color: #fff;
   padding: 5px 10px;
