@@ -5,6 +5,7 @@ import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';
 import InfoText from '../../common/InfoText';
+import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
 
 const columns = [
@@ -87,9 +88,7 @@ const LicitacoesTable = () => {
       </InfoText>
          
       {loading ? (
-        <div className="spinner-container">
-          <div className="spinner"></div>
-        </div>
+        <LoadingSpinner />
       ) : error ? (
         <div>Erro ao carregar licitações: {error}</div>
       ) : (

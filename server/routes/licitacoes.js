@@ -7,7 +7,7 @@ const fetchFromAPI = async (path, req, res) => {
     const response = await axios.get(`${process.env.SERVER}${path}`, {
       params: {
         pagina: 1,
-        tamanhoDaPagina: 25
+        tamanhoDaPagina: 2500
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,

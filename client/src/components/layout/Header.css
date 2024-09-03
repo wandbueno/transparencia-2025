@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between; 
   padding: 2% 5%;
-  background-color: #f4f4f4; /* Cor de fundo clara */
+  background-color: #f4f4f4;
 }
 
 .header-info .logo {
@@ -25,18 +25,17 @@
   padding: 8px; 
   border: 1px solid #ccc; 
   border-radius: 4px; 
-
 }
 
 .nav {
   display: flex;
-  justify-content: center; /* Centraliza a navegação */
+  justify-content: center;
   align-items: center;
-  padding: 0 5%; /* Padding para a área de navegação */
+  padding: 0 5%; 
   margin: 0;
   background-color: #1d62b5;
   color: white;
-  width: 100%; /* Garante que a navegação ocupe toda a largura disponível */
+  width: 100%;
 }
 
 .nav ul {
@@ -44,9 +43,9 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 0px; /* Espaço entre os itens */
-  width: 100%; /* Ocupa toda a largura disponível */
-  justify-content: space-around; /* Distribui os itens uniformemente */
+  gap: 0px;
+  width: 100%;
+  justify-content: space-around;
 }
 
 .nav li {
@@ -54,6 +53,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0px;
+  position: relative;
 }
 
 .nav ul li a {
@@ -62,37 +62,126 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 10px; /* Padding para garantir que o hover cubra toda a área */
+  padding: 20px 10px;
   margin: 0;
-  transition: background-color 0.3s, color 0.3s, transform 0.3s; /* Transição suave */
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
 }
 
 .nav ul li a:hover,
 .nav ul li a.active {
-  background-color: rgba(255, 255, 255, 0.2); /* Cor de fundo ao passar o mouse e ativo */
-  color: #ffcc00; /* Cor do texto ao passar o mouse e ativo */
-  transform: scale(1.05); /* Efeito de zoom */
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffcc00;
+  transform: scale(1.05);
 }
 
 .nav ul li img {
-  width: 24px; /* Tamanho dos ícones */
+  width: 24px;
   height: 24px;
-  margin-bottom: 5px; /* Espaço entre o ícone e o texto */
-  transition: color 0.3s, transform 0.3s; /* Transição suave para cor e transformação */
+  margin-bottom: 5px;
+  transition: color 0.3s, transform 0.3s;
 }
 
 .nav ul li a:hover img,
 .nav ul li a.active img {
-  color: #ffcc00; /* Cor do ícone ao passar o mouse e ativo */
-  transform: scale(1.05); /* Efeito de zoom */
+  color: #ffcc00;
+  transform: scale(1.05);
 }
 
 .nav ul li span {
-  font-size: 0.875rem; /* Tamanho da fonte */
-  transition: color 0.3s; /* Transição suave para cor do texto */
+  font-size: 0.875rem;
+  transition: color 0.3s;
 }
 
 .nav ul li a:hover span,
 .nav ul li a.active span {
-  color: #ffcc00; /* Cor do texto ao passar o mouse e ativo */
+  color: #ffcc00;
+}
+
+/* Estilo do submenu */
+.submenu-items {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: #1d62b5;
+  width: 100%;
+  z-index: 1000;
+}
+
+.submenu-items.open {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submenu-items li {
+  width: 100%;
+  text-align: center;
+}
+
+.submenu-items li a {
+  padding: 10px;
+  font-size: 0.875rem;
+  transition: background-color 0.3s;
+}
+
+.submenu-items li a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsividade para mobile */
+.menu-toggle {
+  display: none;
+  cursor: pointer;
+}
+
+.menu-toggle img {
+  width: 24px;
+  height: 24px;
+}
+
+.nav.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav.open ul {
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav.open {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #1d62b5;
+  }
+
+  .nav ul {
+    flex-direction: column;
+  }
+
+  .nav ul li {
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav ul li a {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .submenu-items {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
 }
