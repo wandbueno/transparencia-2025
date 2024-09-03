@@ -2,6 +2,7 @@ import React from 'react';
 import DataTable from 'react-data-table-component';
 import 'react-data-table-component-extensions/dist/index.css';
 import './DataTable.css';
+import ExportButtons from './ExportButtons';
 
 const DataTableComponent = ({ columns, data }) => {
   const tableData = {
@@ -17,14 +18,17 @@ const DataTableComponent = ({ columns, data }) => {
   };
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      pagination
-      paginationComponentOptions={paginationOptions}
-      className="data-table"
-      noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados
-    />
+    <>
+      <ExportButtons data={data} columns={columns} />
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination
+        paginationComponentOptions={paginationOptions}
+        className="data-table"
+        noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados
+      />
+    </>
   );
 };
 

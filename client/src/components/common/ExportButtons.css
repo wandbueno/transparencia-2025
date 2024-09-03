@@ -1,0 +1,31 @@
+.export-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.export-buttons button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* Ajuste o tamanho dos ícones conforme necessário */
+}
+
+.export-buttons .fa-file-excel {
+  color: #1c61e7; /* Cor para o ícone do Excel */
+}
+
+.export-buttons .fa-file-csv {
+  color: #ff9a00; /* Cor para o ícone do CSV */
+}
+
+.export-buttons .fa-file-pdf {
+  color: #e03c31; /* Cor para o ícone do PDF */
+}
+
+.export-buttons .fa-file-alt {
+  color: #4a4a4a; /* Cor para o ícone do TXT */
+}
+
+.export-buttons .fa-print {
+  color: #000000; /* Cor para o ícone de impressão */
+}
