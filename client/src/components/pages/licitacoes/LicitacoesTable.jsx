@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; 
 import { getLicitacoes } from "../../../services/licitacoes";
 import DataTableComponent from "../../common/DataTable";
+import PageHeader from '../../common/PageHeader';
+import FilterSection from '../../common/FilterSection';
+import InfoText from '../../common/InfoText';
 import './LicitacoesTable.css';
 
 const columns = [
@@ -65,14 +69,22 @@ const LicitacoesTable = () => {
 
   return (
     <div className="container">
-      <h2>Procedimentos Licitatórios</h2>
-      <div className="breadcrumb">
-        Você está aqui: <a href="/">Página inicial</a> / <a href="/transparencia">Transparência</a> / Procedimentos Licitatórios
-      </div>
-      <div className="container-filter">
-        filtro de pesquisa
-      </div>
-      <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>
+      <PageHeader
+        title="Procedimentos Licitatórios"
+        breadcrumb={[
+          { label: 'Página Inicial', path: '/' },
+          { label: 'Transparência', path: '/transparencia' },
+          { label: 'Procedimentos Licitatórios' },
+        ]}
+      />
+      
+      <FilterSection  />
+
+      <InfoText>
+        <p>
+          <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>.
+        </p>
+      </InfoText>
          
       {loading ? (
         <div className="spinner-container">

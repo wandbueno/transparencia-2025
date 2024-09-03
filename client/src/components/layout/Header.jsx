@@ -12,12 +12,13 @@ import {
   faHeadset 
 } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
+import logo from '../../assets/LogoPublixelOfc.png';
 
 const Header = () => {
   return (
     <header className="header">
       <div className="header-info">
-        <p>Portal de transparencia</p>
+        <img src={logo} alt="Logo" className="logo" />
         <div className="search-container">
           <input type="text" placeholder="Buscar no portal..." />
         </div>
@@ -32,7 +33,7 @@ const Header = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/about" activeclassname="active">
+            <NavLink to="/receita" activeclassname="active">
               <FontAwesomeIcon icon={faDollarSign} size="lg" />
               <span>Receitas e Despesas</span>
             </NavLink>

@@ -19,16 +19,29 @@ const licitacoesRoutes = require('./routes/licitacoes')
 const dividaRoutes = require('./routes/divida')
 const diariasRoutes = require('./routes/diarias')
 const contratosRoutes = require('./routes/contratos')
+const receitasRoutes = require('./routes/receitas')
 
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
 app.use('/api/divida', dividaRoutes)
 app.use('/api/diarias', diariasRoutes)
 app.use('/api/contratos', contratosRoutes)
+app.use('/api/receitas', receitasRoutes)
 
 // Rota básica para a raiz do servidor
 app.get('/', (req, res) => {
   res.send('Servidor está funcionando!')
+})
+
+// Middleware para rotas não definidas
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Rota não encontrada' })
+})
+
+// Middleware de tratamento de erros
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).json({ error: 'Algo deu errado!' })
 })
 
 app.listen(PORT, () => {

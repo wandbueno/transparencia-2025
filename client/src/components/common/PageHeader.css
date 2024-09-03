@@ -1,0 +1,31 @@
+/* src/components/common/PageHeader.css */
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 22px;
+  margin: 0;
+  color: #555;
+}
+
+.breadcrumb {
+  margin-top: 0px;
+  font-size: 11px;
+  color: #666;
+}
+
+.breadcrumb-item a {
+  color: #1d62b5;
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 5px;
+  color: #999;
+}

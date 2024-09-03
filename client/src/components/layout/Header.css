@@ -5,9 +5,10 @@
   background-color: #f4f4f4; /* Cor de fundo clara */
 }
 
-.header-info p {
-  margin: 0;
-  padding: 0;
+.header-info .logo {
+  display: flex;
+  align-items: center;
+  height: 40px;
 }
 
 .search-container {
@@ -43,7 +44,7 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 15px; /* Espaço entre os itens */
+  gap: 0px; /* Espaço entre os itens */
   width: 100%; /* Ocupa toda a largura disponível */
   justify-content: space-around; /* Distribui os itens uniformemente */
 }
@@ -52,6 +53,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0px;
 }
 
 .nav ul li a {
@@ -60,8 +62,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px; /* Padding para garantir que o hover cubra toda a área */
-  border-radius: 4px; /* Bordas arredondadas, se desejado */
+  padding: 20px 10px; /* Padding para garantir que o hover cubra toda a área */
+  margin: 0;
   transition: background-color 0.3s, color 0.3s, transform 0.3s; /* Transição suave */
 }
 

@@ -3,24 +3,32 @@
   width: 100%;
   margin: 0 auto;
   overflow-x: auto;
+
 }
 
 /* Estilos da tabela */
 .data-table .rdt_Table {
-  border: 1px solid #ddd; 
+  border: 1px solid #eee; 
   border-radius: 5px 5px 0 0; 
   overflow: hidden;
+
 }
 
 .data-table .rdt_TableHead {
   background-color: #f0f0f0; /* Destaca o cabeçalho com um fundo claro */
   font-weight: bold;
   text-transform: uppercase;
+  
 }
 
 .data-table .rdt_TableCol {
-  padding: 0px auto; 
-  border-bottom: 1px solid #ddd;
+  height: 30px;
+  /* border-bottom: 1px solid #ddd; */
+  background-color: #1d62b5;
+  /* background-color: #fff; */
+  color: #fff;
+  /* color: #555; */
+
 }
 
 .data-table .rdt_TableRow {
@@ -76,4 +84,16 @@
 .data-table .rdt_Pagination button:disabled {
   background-color: #ccc; 
   cursor: not-allowed;
+}
+
+.iGxMlw{
+  font-size: 12px!important;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFFFFF;
+  min-height: 10px!important;
+}
+.hudJpJ {
+  min-height: 10px!important; 
+  
 }
