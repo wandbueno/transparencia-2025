@@ -2,6 +2,7 @@ import React from 'react';
 import DataTable from 'react-data-table-component';
 import 'react-data-table-component-extensions/dist/index.css';
 import './DataTable.css';
+import '../../assets/global.css';
 import ExportButtons from './ExportButtons';
 
 const DataTableComponent = ({ columns, data }) => {

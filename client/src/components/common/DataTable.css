@@ -3,7 +3,6 @@
   width: 100%;
   margin: 0 auto;
   overflow-x: auto;
-
 }
 
 /* Estilos da tabela */
@@ -23,12 +22,8 @@
 
 .data-table .rdt_TableCol {
   height: 30px;
-  /* border-bottom: 1px solid #ddd; */
-  background-color: #1d62b5;
-  /* background-color: #fff; */
+  background-color: var(--primary-color);
   color: #fff;
-  /* color: #555; */
-
 }
 
 .data-table .rdt_TableRow {
@@ -42,7 +37,7 @@
 
 .data-table .rdt_TableCol--sort {
   cursor: pointer;
-  color: #555; 
+  color: var(--titulo-color); 
 }
 
 .data-table .rdt_TableCol--sort:after {
@@ -87,9 +82,9 @@
 }
 
 .iGxMlw{
-  font-size: 12px!important;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.75rem!important;
+  font-weight: 400!important;
+  color: var(--titulo-color)!important;
   background-color: #FFFFFF;
   min-height: 10px!important;
 }

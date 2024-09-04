@@ -4,14 +4,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './PageHeader.css';
+import '../../assets/global.css'
 
 const PageHeader = ({ title, breadcrumb }) => {
   return (
     <div className="page-header">
-      <h2 className="page-title">{title}</h2>
+      <h2 className="title">{title}</h2>
       <nav className="breadcrumb">
         {breadcrumb.map((item, index) => (
-          <span key={index} className="breadcrumb-item">
+          <span key={index} className="breadcrumb-ite">
             {item.path ? (
               <Link to={item.path}>{item.label}</Link>
             ) : (

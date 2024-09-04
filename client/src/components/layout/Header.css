@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between; 
   padding: 2% 5%;
-  background-color: #f4f4f4;
+  background-color: var(--background-color);
 }
 
 .header-info .logo {
@@ -23,7 +23,7 @@
   width: 100%;
   max-width: 300px; 
   padding: 8px; 
-  border: 1px solid #ccc; 
+  border: 1px solid #d0d0d0; 
   border-radius: 4px; 
 }
 
@@ -33,7 +33,7 @@
   align-items: center;
   padding: 0 5%; 
   margin: 0;
-  background-color: #1d62b5;
+  background-color: var(--primary-color);
   color: white;
   width: 100%;
 }
@@ -70,7 +70,7 @@
 .nav ul li a:hover,
 .nav ul li a.active {
   background-color: rgba(255, 255, 255, 0.2);
-  color: #ffcc00;
+  color: var(--secondary-color);
   transform: scale(1.05);
 }
 
@@ -83,7 +83,7 @@
 
 .nav ul li a:hover img,
 .nav ul li a.active img {
-  color: #ffcc00;
+  color: var(--secondary-color);
   transform: scale(1.05);
 }
 
@@ -94,7 +94,7 @@
 
 .nav ul li a:hover span,
 .nav ul li a.active span {
-  color: #ffcc00;
+  color: var(--secondary-color);
 }
 
 /* Estilo do submenu */
@@ -103,7 +103,7 @@
   position: absolute;
   top: 60px;
   left: 0;
-  background-color: #1d62b5;
+  background-color: var(--primary-color);
   width: 100%;
   z-index: 1000;
 }

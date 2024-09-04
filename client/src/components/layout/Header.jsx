@@ -12,6 +12,7 @@ import {
   faHeadset 
 } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
+import '../../assets/global.css';
 import logo from '../../assets/LogoPublixelOfc.png';
 
 const Header = () => {

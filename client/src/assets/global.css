@@ -1,0 +1,59 @@
+/* Definição de variáveis de cor */
+:root {
+  --primary-color: #2f3795;
+  --secondary-color: #f69220;
+  --titulo-color: #555;
+  --text-color: #343434;
+  --background-color: #f8f9fc;
+  --link-color: #1d62b5;
+  --link-hover-color: #f69220;
+}
+
+.title {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--titulo-color);
+  margin: 0;
+}
+.subtitle {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--titulo-color);
+  margin: 0;
+}
+.texto {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: 0.688rem;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.breadcrumb a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+.breadcrumb-separator {
+  margin: 0 2px;
+}
+
+.link {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: red;
+  text-decoration: underline;
+}

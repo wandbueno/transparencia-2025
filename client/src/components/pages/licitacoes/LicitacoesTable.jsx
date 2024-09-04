@@ -7,6 +7,8 @@ import FilterSection from '../../common/FilterSection';
 import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
+import '../../../assets/global.css';
+
 
 // const columns = [
 //   {
