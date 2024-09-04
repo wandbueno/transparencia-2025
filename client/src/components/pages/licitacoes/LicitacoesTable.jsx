@@ -8,45 +8,45 @@ import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
 
-const columns = [
-  {
-    name: "Dados",
-    selector: (row) => row,
-    cell: (row) => (
-      <span className="dados-licita">
-        <p><span>{row.modalidade} Nº {row.numeroAno}</span></p>
-        <p><span>Data Abertura:</span> {row.dataDeJulgamento}</p>
-        <p><span>Situação:</span> {row.situacao}</p>
-      </span>
-    ),
-  },
-  {
-    name: "Objeto",
-    selector: (row) => row,
-    cell: (row) => (
-      <span className="objeto-licita">
-        <p><span> {row.orgao}</span></p>
-        <p>{row.historico}</p>
-      </span>
-    ),
-  },
-];
-
 // const columns = [
-//   { name: "Modalidade", selector: (row) => row.modalidade, sortable: true },
-//   { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true },
-//   { name: "Órgão", selector: (row) => row.orgao, sortable: true },
-//   { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true },
-//   { name: "Situação", selector: (row) => row.situacao, sortable: true },
-//   { 
-//     name: "Objeto", 
-//     selector: (row) => row.historico, 
-//     sortable: true,
+//   {
+//     name: "Dados",
+//     selector: (row) => row,
 //     cell: (row) => (
-//       <div className="break-word">{row.historico}</div>
-//     )
+//       <span className="dados-licita">
+//         <p><span>{row.modalidade} Nº {row.numeroAno}</span></p>
+//         <p><span>Data Abertura:</span> {row.dataDeJulgamento}</p>
+//         <p><span>Situação:</span> {row.situacao}</p>
+//       </span>
+//     ),
+//   },
+//   {
+//     name: "Objeto",
+//     selector: (row) => row,
+//     cell: (row) => (
+//       <span className="objeto-licita">
+//         <p><span> {row.orgao}</span></p>
+//         <p>{row.historico}</p>
+//       </span>
+//     ),
 //   },
 // ];
+
+const columns = [
+  { name: "Modalidade", selector: (row) => row.modalidade, sortable: true, width: '15%' },
+  { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true, width: '11%' },
+  { name: "Órgão", selector: (row) => row.orgao, sortable: true, width: '18%' },
+  { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true, width: '16%' },
+  { name: "Situação", selector: (row) => row.situacao, sortable: true, width: '10%' },
+  { 
+    name: "Objeto", 
+    selector: (row) => row.historico, 
+    sortable: true, width: '30%',
+    cell: (row) => (
+      <div className="break-word">{row.historico}</div>
+    )
+  },
+];
 
 const LicitacoesTable = () => {
   const [data, setData] = useState([]);
