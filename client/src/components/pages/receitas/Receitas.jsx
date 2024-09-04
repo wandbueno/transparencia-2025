@@ -9,17 +9,17 @@ import './Receitas.css';
 
 const columns = [
   // { name: "Ano", selector: (row) => row.chave.ano, sortable: true },
-  { name: "Receita", selector: (row) => row.receita, sortable: true },
+  { name: "Receita", selector: (row) => row.receita, sortable: true, width: '20%' },
   // {
   //   name: "Natureza da Receita",
   //   selector: (row) => `${row.naturezaDaReceita} - ${row.receita}`,
   //   sortable: true,
   // },
-  { name: "Fonte da Receita", selector: (row) => row.fonteDaReceita, sortable: true },
+  { name: "Fonte da Receita", selector: (row) => row.fonteDaReceita, sortable: true, width: '29%' },
   // { name: "Origem dos Recursos", selector: (row) => row.origemDoRecurso, sortable: true },
-  { name: "Valor Orçado", selector: (row) => row.valorOrcado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
-  { name: "Valor Arrecadado (Mês)", selector: (row) => row.arrecadacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
-  { name: "Valor Arrecadado (Anual)", selector: (row) => row.valorAcumulado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
+  { name: "Valor Orçado", selector: (row) => row.valorOrcado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '13%' },
+  { name: "Valor Arrecadado (Mês)", selector: (row) => row.arrecadacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '18%' },
+  { name: "Valor Arrecadado (Anual)", selector: (row) => row.valorAcumulado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '20%' },
 ];
 
 const Receitas = () => {
@@ -53,11 +53,10 @@ const Receitas = () => {
         ]}
       />      
       <FilterSection  />
-      <InfoText>
-        <p>
-          <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>.
-        </p>
-      </InfoText>      
+      
+      <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
+        Veja Declarações Negativas e Demais Documentos Clicando Aqui
+      </InfoText>        
          
       {loading ? (
         <LoadingSpinner />
@@ -70,6 +69,8 @@ const Receitas = () => {
           data={data}
         />
       )}
+
+   
     </div>
   );
 };

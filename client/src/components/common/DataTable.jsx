@@ -19,15 +19,15 @@ const DataTableComponent = ({ columns, data }) => {
 
   return (
     <>
-      <ExportButtons data={data} columns={columns} />
-      <DataTable
-        columns={columns}
-        data={data}
-        pagination
-        paginationComponentOptions={paginationOptions}
-        className="data-table"
-        noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados
-      />
+    <ExportButtons data={data} columns={columns} />
+    <DataTable
+      columns={columns}
+      data={data}
+      pagination
+      paginationComponentOptions={paginationOptions}
+      className="data-table"
+      noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados
+    />
     </>
   );
 };

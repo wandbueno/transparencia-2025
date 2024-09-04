@@ -4,6 +4,7 @@ import Header from './components/layout/Header';
 import Home from './components/pages/Home/Home';
 import Licitacoes from './components/pages/licitacoes/LicitacoesTable';
 import Receitas from './components/pages/receitas/Receitas';
+import Despesas from './components/pages/despesas/Despesas';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/receita" element={<Receitas />} />
         <Route path="/licitacoes" element={<Licitacoes />} />
+        <Route path="/despesas" element={<Despesas />} />
       </Routes>
       </div>
     </Router>

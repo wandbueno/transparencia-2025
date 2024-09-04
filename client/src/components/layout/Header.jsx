@@ -39,7 +39,7 @@ const Header = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/services" activeclassname="active">
+            <NavLink to="/despesas" activeclassname="active">
               <FontAwesomeIcon icon={faUsers} size="lg" />
               <span>Órgãos e Servidores</span>
             </NavLink>
