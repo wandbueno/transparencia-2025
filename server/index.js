@@ -20,6 +20,7 @@ const dividaRoutes = require('./routes/divida')
 const diariasRoutes = require('./routes/diarias')
 const contratosRoutes = require('./routes/contratos')
 const receitasRoutes = require('./routes/receitas')
+const despesasRoutes = require('./routes/receitas-despesas/despesas')
 
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
@@ -27,6 +28,7 @@ app.use('/api/divida', dividaRoutes)
 app.use('/api/diarias', diariasRoutes)
 app.use('/api/contratos', contratosRoutes)
 app.use('/api/receitas', receitasRoutes)
+app.use('/api/despesas', despesasRoutes)
 
 // Rota básica para a raiz do servidor
 app.get('/', (req, res) => {
