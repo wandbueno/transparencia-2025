@@ -9,11 +9,7 @@ const config = {
     endereco: 'Praça José Leal, nº 12, Centro',
     horario: '08:00 às 18:00',
     logotipo: logo,
-    bandeira: 'Bandeira',
-    corPrimaria: '#2f3795',
-    corSecundaria: '#f69220',
-    corTexto: '#343434',
-    corBackground: '#edeff0'
+    bandeira: 'Bandeira'
   },
   redesSociais: {
     facebook: 'https://www.facebook.com/prefeituradeconceicaoto',
@@ -44,4 +40,4 @@ const config = {
   }
 }
 
-export default config
+export { config }

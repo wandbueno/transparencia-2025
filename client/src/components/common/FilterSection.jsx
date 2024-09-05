@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./FilterSection.css";
 
 const FilterSection = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleFilters = () => {
     setIsOpen(!isOpen);

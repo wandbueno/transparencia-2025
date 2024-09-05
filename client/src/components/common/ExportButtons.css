@@ -13,8 +13,8 @@
 }
 
 .export-buttons button .icon-container {
-  width: 60px;
-  height: 40px;
+  width: 55px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,5 +85,5 @@
 
 .export-buttons .icon-container svg {
   color: #ffffff; /* Ícones brancos */
-  font-size: 22px; /* Ajusta o tamanho do ícone */
+  font-size: 20px; /* Ajusta o tamanho do ícone */
 }
