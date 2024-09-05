@@ -117,13 +117,14 @@ const ExportButtons = ({ data, columns }) => {
     };
   
     // Configuração do HTML da impressão
-    printWindow.document.write('<html><head><title>Imprimir Dados</title>');
-    printWindow.document.write('<style>');
-    printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
-    printWindow.document.write('.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }');
-    printWindow.document.write('.data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
-    printWindow.document.write('.data-table th { background-color: #f4f4f4; }');
-    printWindow.document.write('</style></head><body>');
+     // Configuração do HTML da impressão
+     printWindow.document.write('<html><head><title>Imprimir Dados</title>');
+     printWindow.document.write('<style>');
+     printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }'); // Ajusta o tamanho da fonte do corpo
+     printWindow.document.write('.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }'); // Ajusta o tamanho da fonte da tabela
+     printWindow.document.write('.data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
+     printWindow.document.write('.data-table th { background-color: #f4f4f4; }');
+     printWindow.document.write('</style></head><body>');
     
     // Adiciona o header com logo e dados do órgão
     printWindow.document.write(generateHeaderHtml());
