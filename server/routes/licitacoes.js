@@ -30,8 +30,8 @@ router.get('/', (req, res) =>
   )
 )
 
-router.get('/:id', (req, res) => {
-  const id = req.params.id
+router.get('/licitacao/detalhe/:id', (req, res) => {
+  const id = req.params.id;
   fetchFromAPI(
     `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/detalhe?chavePrimaria=${id}`,
     req,
