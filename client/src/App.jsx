@@ -5,6 +5,7 @@ import Home from './components/pages/Home/Home';
 import Licitacoes from './components/pages/licitacoes/LicitacoesTable';
 import Receitas from './components/pages/receitas/Receitas';
 import Despesas from './components/pages/despesas/Despesas';
+import './App.css';
 
 function App() {
   return (

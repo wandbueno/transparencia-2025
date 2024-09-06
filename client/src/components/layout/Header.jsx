@@ -17,7 +17,7 @@ import logo from '../../assets/LogoPublixelOfc.png';
 
 const Header = () => {
   return (
-    <header className="header">
+    <>
       <div className="header-info">
         <img src={logo} alt="Logo" className="logo" />
         <div className="search-container">
@@ -83,7 +83,7 @@ const Header = () => {
           </li>
         </ul>
       </nav>
-    </header>
+    </>
   );
 };
 
