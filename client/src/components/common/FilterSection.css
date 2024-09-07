@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; /* Remove padding to integrate with the section */
+  padding: 10px 20px; 
   margin-bottom: 10px;
   border-bottom: 1px solid #e2e2e2;
   border-radius: 5px 5px 0 0;
@@ -18,16 +18,17 @@
 }
 
 .filter-header-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: #333;
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--titulo-color);
 }
 
 .filter-toggle {
   display: flex;
   align-items: center;
-  font-size: 13px;
-  color: #1c61e7;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
   font-weight: 500;
   cursor: pointer;
 }
@@ -41,11 +42,11 @@
 }
 
 .filter-toggle .arrow.up {
-  border-bottom: 6px solid #1c61e7;
+  border-bottom: 6px solid var(--primary-color);
 }
 
 .filter-toggle .arrow.down {
-  border-top: 6px solid #1c61e7;
+  border-top: 6px solid var(--primary-color);
 }
 
 .filter-content {
@@ -67,8 +68,8 @@
 .filter-group label {
   font-weight: 500;
   margin-bottom: 5px;
-  color: #555;
-  font-size: 12px;
+  color: var(--text-color);
+  font-size: var(--font-size-small);
 }
 
 .filter-group select,
@@ -77,8 +78,8 @@
   border-radius: 4px;
   border: 1px solid #d0d0d0;
   background: #fff;
-  font-size: 12px;
-  color: #555;
+  font-size: var(--font-size-small);
+  color: var(--text-color);
   pointer-events: none;
 }
 
@@ -97,9 +98,9 @@
   padding: 10px 20px;
   border-radius: 4px;
   border: none;
-  background: #1c61e7;
+  background: var(--primary-color);
   color: #fff;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   cursor: not-allowed;
 }
 
@@ -108,16 +109,16 @@
 }
 
 .search-button {
-  background: #1c61e7;
+  background: var(--primary-color);
 }
 
 .filter-placeholder {
   text-align: center;
-  font-size: 12px;
-  color: #777;
+  font-size: var(--font-size-small);
+  color: var(--text-color);
   margin: 20px;
   padding: 10px;
   background: #f9f9f9;
-  border-radius: 4px;
+  border-radius: 5px;
   border: 1px dashed #d0d0d0;
 }

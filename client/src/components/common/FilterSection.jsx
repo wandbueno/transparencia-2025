@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./FilterSection.css";
+import "../../assets/global.css";
 
 const FilterSection = () => {
   const [isOpen, setIsOpen] = useState(false);

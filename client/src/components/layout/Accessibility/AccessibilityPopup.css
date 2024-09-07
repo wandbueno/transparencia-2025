@@ -1,0 +1,96 @@
+/* AccessibilityPopup.css */
+.accessibility-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 1000;
+  width: 250px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.accessibility-options li i{
+  color: var(--primary-color)
+}
+.accessibility-options li i:hover{
+  color: var(--secondary-color)
+}
+.accessibility-options li span{
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+
+}
+
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--titulo-color);
+  float: right;
+  margin: -10px -10px 10px 0;
+}
+
+.close-button:hover {
+  color: var(--secondary-color);
+}
+
+.accessibility-popup h2 {
+  font-size: var(--font-size-large);
+  margin-top: 0;
+  text-align: center;
+}
+
+.accessibility-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.accessibility-options li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.accessibility-options li:hover {
+  background-color: #f0f0f0;
+}
+
+.accessibility-options i {
+  margin-right: 10px;
+  font-size: var(--font-size-base);
+}
+
+.accessibility-popup button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+/* Gray Scale */
+.gray-scale {
+  filter: grayscale(100%);
+  position: relative; 
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Certifique-se de que o popup e o botão de acessibilidade não são afetados */
+.accessibility-popup,
+.accessibility-button {
+  position: fixed;
+  z-index: 1000; /* Garantir que permanecem no topo */
+}
