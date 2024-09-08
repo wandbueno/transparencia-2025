@@ -7,6 +7,13 @@
   --background-color: #f8f9fc;
   --link-color: #1d62b5;
   --link-hover-color: #f69220;
+
+  /* Tamanhos de fontes */
+  --font-size-small: 0.75rem;  /* 12px */
+  --font-size-base: 0.875rem;   /* 14px */
+  --font-size-large: 1rem;    /* 16px */
+  --font-size-xl: 1.375rem;       /* 24px */
+  --font-size-xxl: 2rem;        /* 32px */
 }
 
 .title {

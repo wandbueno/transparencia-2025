@@ -9,3 +9,16 @@ body{
   margin: 0 auto; 
 }
 
+
+.high-contrast {
+  background-color: black;
+  color: white;
+}
+
+.gray-scale {
+  filter: grayscale(100%);
+}
+
+.underline-text {
+  text-decoration: underline;
+}

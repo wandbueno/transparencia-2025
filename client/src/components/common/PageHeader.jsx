@@ -1,9 +1,6 @@
-// src/components/common/PageHeader.jsx
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import './PageHeader.css';
 import '../../assets/global.css'
 
 const PageHeader = ({ title, breadcrumb }) => {
