@@ -8,6 +8,7 @@ import Despesas from './components/pages/despesas/Despesas';
 import AccessibilityButton from './components/layout/Accessibility/AccessibilityButton';
 import AccessibilityPopup from './components/layout/Accessibility/AccessibilityPopup';
 import './App.css';
+import Footer from './components/layout/Footer';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/licitacoes" element={<Licitacoes />} />
         <Route path="/despesas" element={<Despesas />} />
       </Routes>
+      <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />
         <AccessibilityPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
       </div>
