@@ -1,22 +1,35 @@
 import React from 'react';
 import './Footer.css';
-import logo from '../../assets/LogoPublixelOfc.png';
+import '../../assets/global.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt, faEnvelope, faClock, faPhone, } from '@fortawesome/free-solid-svg-icons';
+import { faFacebookF, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 
+
+import { config } from '../../assets/config'; 
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-contact">
         <p>Não encontrou o que está procurando? Acesse nosso canal de atendimento e fale conosco.</p>
+        <div></div>
       </div>
       <div className="footer-sections">
         <div className="footer-column">
           <h4>Fale Conosco</h4>
-          <p>Rua São Bento Q 26, Lt 04, Centro, CEP: 77560-000</p>
-          <p><a href="mailto:ouvidoria@brejinhodenazare.to.gov.br">ouvidoria@brejinhodenazare.to.gov.br</a></p>
-          <p>08:00 as 14:00</p>
-          <p>(63) 3521-1239</p>
+          <p>
+            <FontAwesomeIcon icon={faMapMarkerAlt} /> {config.geral.endereco}
+          </p>
+          <p>
+            <FontAwesomeIcon icon={faEnvelope} /> <a href={`mailto:${config.geral.email}`}>{config.geral.email}</a>
+          </p>
+          <p>
+            <FontAwesomeIcon icon={faClock} /> {config.geral.horario}
+          </p>
+          <p>
+            <FontAwesomeIcon icon={faPhone} /> {config.geral.telefonePrincipal}
+          </p>
         </div>
         <div className="footer-column">
           <h4>Ouvidoria e Atendimento</h4>
@@ -42,17 +55,26 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-social">
-        <a href="https://facebook.com" className="social-icon"></a>
-        <a href="https://twitter.com" className="social-icon"></a>
-        <a href="https://instagram.com" className="social-icon"></a>
-        <a href="https://linkedin.com" className="social-icon"></a>
+        <span>Siga-nos nas redes sociais: </span>
+        <div>
+          <a href={config.redesSociais.facebook} target="_blank" rel="noopener noreferrer" className="social-icon">
+            <FontAwesomeIcon icon={faFacebookF} />
+          </a>
+          <a href={config.redesSociais.instagram} target="_blank" rel="noopener noreferrer" className="social-icon">
+            <FontAwesomeIcon icon={faInstagram} />
+          </a>
+          <a href={config.redesSociais.youtube} target="_blank" rel="noopener noreferrer" className="social-icon">
+            <FontAwesomeIcon icon={faYoutube} />
+          </a>
+        </div>
       </div>
       <div className="footer-bottom">
-        <div className="footer-bottom-left">
-          <p>2024© Todos os direitos reservados.</p>
-        </div>
+          <p>2024 © Todos os direitos reservados.</p>
         <div className="footer-bottom-right">
-          <img src={logo} alt="Logo" className="footer-logo" />
+          <span>Este portal foi desenvolvido por: </span>
+          <a href="https://publixel.com.br/" target="_blank" rel="noopener noreferrer">
+          <img src={config.geral.logotipo} alt="Logo"/>
+        </a>
         </div>
       </div>
     </footer>

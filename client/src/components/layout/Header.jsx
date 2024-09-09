@@ -11,7 +11,9 @@ import {
   faFileInvoice, 
   faShoppingCart, 
   faBook, 
-  faHeadset 
+  faHeadset,
+  faExternalLinkAlt,
+  faSearch  
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -42,6 +44,11 @@ const Header = () => {
     setActiveMenu(activeMenu === menu ? null : menu);
   };
 
+  // Fecha o menu ativo atual
+  const closeMenu = () => {
+    setActiveMenu(null);
+  };
+
   return (
     <div>
       {/* Seção superior com logo, busca e botões */}
@@ -49,11 +56,20 @@ const Header = () => {
         <img src={logo} alt="Logo" className="logo" />
         <div className="search-container">
           <input type="text" placeholder="Buscar no portal..." />
-          <button className="search-button">🔍</button>
+          <button aria-label="Buscar">
+            <FontAwesomeIcon icon={faSearch} />
+          </button>
         </div>
         <div className="action-buttons">
-          <button className="btn">Transparência</button>
-          <button className="btn">Prefeitura</button>
+          <a href="/diario-oficial" className="btn" title="Diário Oficial">
+            <FontAwesomeIcon icon={faBook} />
+          </a>
+          <a href="/ouvidoria" className="btn" title="Ouvidoria/e-Sic">
+            <FontAwesomeIcon icon={faHeadset} />
+          </a>
+          <a href="https://prefeitura.to.gov.br" target="_blank" className="btn" title="Site Institucional">
+            <FontAwesomeIcon icon={faExternalLinkAlt} />
+          </a>
         </div>
       </header>
 
@@ -61,7 +77,7 @@ const Header = () => {
       <nav className="navbar">
         <ul className="menu-list">
           {/* Menu Home */}
-          <li className={location.pathname === '/' ? 'active' : ''}>
+          <li className={location.pathname === '/' ? 'active' : ''} onClick={closeMenu}>
             <Link to="/">
               <div className="menu-icon"><FontAwesomeIcon icon={faHome} /></div>
               <span>Home</span>
@@ -131,82 +147,83 @@ const Header = () => {
           <div className="menu-content">
             {activeMenu === 'receitas' && (
               <div className="submenu-grid">
-                <div className="column">
-                  <p>
-                    <a href="/receita" className={location.pathname === '/receita' ? 'active' : ''}> Receita Prevista e Arrecadada </a>
-                  </p>
-                  <p>
-                    <a href="/arrecadacao" className={location.pathname === '/arrecadacao' ? 'active' : ''}> Arrecadação </a>
-                  </p>
-                  <p>
-                    <a href="/balanco" className={location.pathname === '/balanco' ? 'active' : ''}> Balanço Orçamentário </a>
-                  </p>
-                </div>
-                <div className="column">
-                  <p>
-                    <a href="/despesas" className={location.pathname === '/despesas' ? 'active' : ''}> Despesa/ Empenho </a>
-                  </p>
-                  <p>
-                    <a href="/pagamento" className={location.pathname === '/pagamento' ? 'active' : ''}> Pagamentos </a>
-                  </p>
-                </div>
-                <div className="column">
-                  <p>
-                    <a href="/resumo-rubrica" className={location.pathname === '/resumo-rubrica' ? 'active' : ''}> Resumo Mensal por Rubrica </a>
-                  </p>
-                  <p>
-                    <a href="/resumo-alinea" className={location.pathname === '/resumo-alinea' ? 'active' : ''}> Resumo Mensal por Alínea </a>
-                  </p>
-                  <p>
-                    <a href="/transferencias" className={location.pathname === '/transferencias' ? 'active' : ''}> Transferências Financeiras Recebidas </a>
-                  </p>
-                </div>
+              <div className="column">
+                <p>
+                  <Link to="/receita" className={location.pathname === '/receita' ? 'active' : ''} onClick={closeMenu}> Receita Prevista e Arrecadada </Link>
+                </p>
+                <p>
+                  <Link to="/arrecadacao" className={location.pathname === '/arrecadacao' ? 'active' : ''} onClick={closeMenu}> Arrecadação </Link>
+                </p>
+                <p>
+                  <Link to="/balanco" className={location.pathname === '/balanco' ? 'active' : ''} onClick={closeMenu}> Balanço Orçamentário </Link>
+                </p>
               </div>
+              <div className="column">
+                <p>
+                  <Link to="/despesas" className={location.pathname === '/despesas' ? 'active' : ''} onClick={closeMenu}> Despesa/ Empenho </Link>
+                </p>
+                <p>
+                  <Link to="/pagamento" className={location.pathname === '/pagamento' ? 'active' : ''} onClick={closeMenu}> Pagamentos </Link>
+                </p>
+              </div>
+              <div className="column">
+                <p>
+                  <Link to="/resumo-rubrica" className={location.pathname === '/resumo-rubrica' ? 'active' : ''} onClick={closeMenu}> Resumo Mensal por Rubrica </Link>
+                </p>
+                <p>
+                  <Link to="/resumo-alinea" className={location.pathname === '/resumo-alinea' ? 'active' : ''} onClick={closeMenu}> Resumo Mensal por Alínea </Link>
+                </p>
+                <p>
+                  <Link to="/transferencias" className={location.pathname === '/transferencias' ? 'active' : ''} onClick={closeMenu}> Transferências Financeiras Recebidas </Link>
+                </p>
+              </div>
+            </div>            
             )}
 
-            {activeMenu === 'orgaos' && (
+            {activeMenu === 'orgaos' && (              
               <div className="submenu-grid">
                 <div className="column">
                   <p>
-                    <a href="/servidores" className={location.pathname === '/servidores' ? 'active' : ''}> Servidores </a>
+                    <Link to="/servidores" className={location.pathname === '/servidores' ? 'active' : ''} onClick={closeMenu}>Servidores</Link>
                   </p>
                   <p>
-                    <a href="/terceirizados" className={location.pathname === '/terceirizados' ? 'active' : ''}> Terceirizados </a>
+                    <Link to="/terceirizados" className={location.pathname === '/terceirizados' ? 'active' : ''} onClick={closeMenu}>Terceirizados</Link>
                   </p>
                   <p>
-                    <a href="/estagiarios" className={location.pathname === '/estagiarios' ? 'active' : ''}> Estagiários </a>
-                  </p>
-                </div>
-                <div className="column">
-                  <p>
-                    <a href="/saude" className={location.pathname === '/saude' ? 'active' : ''}> Estabelecimentos e Profissionais da Saúde </a>
-                  </p>
-                  <p>
-                    <a href="/concursos" className={location.pathname === '/concursos' ? 'active' : ''}> Concursos e Processos Seletivos </a>
+                    <Link to="/estagiarios" className={location.pathname === '/estagiarios' ? 'active' : ''} onClick={closeMenu}>Estagiários</Link>
                   </p>
                 </div>
                 <div className="column">
                   <p>
-                    <a href="/diarias" className={location.pathname === '/diarias' ? 'active' : ''}> Diárias Pagas a Servidores </a>
+                    <Link to="/saude" className={location.pathname === '/saude' ? 'active' : ''} onClick={closeMenu}>Estabelecimentos e Profissionais da Saúde</Link>
                   </p>
                   <p>
-                    <a href="/liquidacoes" className={location.pathname === '/liquidacoes' ? 'active' : ''}> Liquidações de Diárias </a>
+                    <Link to="/concursos" className={location.pathname === '/concursos' ? 'active' : ''} onClick={closeMenu} >Concursos e Processos Seletivos</Link>
+                  </p>
+                </div>
+                <div className="column">
+                  <p>
+                    <Link to="/diarias" className={location.pathname === '/diarias' ? 'active' : ''} onClick={closeMenu}>Diárias Pagas a Servidores</Link>
                   </p>
                   <p>
-                    <a href="/tabela-diarias" className={location.pathname === '/tabela-diarias' ? 'active' : ''}> Tabela com Valores de Diárias </a>
+                    <Link to="/liquidacoes" className={location.pathname === '/liquidacoes' ? 'active' : ''} onClick={closeMenu}>Liquidações de Diárias</Link>
+                  </p>
+                  <p>
+                    <Link to="/tabela-diarias" className={location.pathname === '/tabela-diarias' ? 'active' : ''} onClick={closeMenu} >Tabela com Valores de Diárias</Link>
                   </p>
                 </div>
               </div>
+              
             )}
 
             {activeMenu === 'fiscal' && (
               <div className="submenu-grid">
                 <div className="column">
                   <p>
-                    <a href="/relatorio-gestao" className={location.pathname === '/relatorio-gestao' ? 'active' : ''}> Relatório de Gestão Fiscal </a>
+                    <Link to="/relatorio-gestao" className={location.pathname === '/relatorio-gestao' ? 'active' : ''} onClick={closeMenu}>Relatório de Gestão Fiscal</Link>                    
                   </p>
                   <p>
-                    <a href="/execucao-orcamentaria" className={location.pathname === '/execucao-orcamentaria' ? 'active' : ''}> Execução Orçamentária </a>
+                    <Link to="/execucao-orcamentariao" className={location.pathname === '/execucao-orcamentaria' ? 'active' : ''}onClick={closeMenu} >Execução Orçamentária</Link>
                   </p>
                 </div>
               </div>
@@ -216,7 +233,7 @@ const Header = () => {
               <div className="submenu-grid">
                 <div className="column">
                   <p>
-                    <a href="/licitacoes" className={location.pathname === '/licitacoes' ? 'active' : ''}> Procedimentos Licitatórios </a>
+                     <Link to="/licitacoes" className={location.pathname === '/execucao-orcamentaria' ? 'active' : ''} onClick={closeMenu} >Procedimentos Licitatórios</Link>
                   </p>
                 </div>
               </div>
