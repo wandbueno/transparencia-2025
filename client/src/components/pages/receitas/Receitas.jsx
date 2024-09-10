@@ -68,8 +68,9 @@ const Receitas = () => {
           columns={columns}
           data={data}
         />
+        
       )}
-
+<p>Fonte de dados: </p>
    
     </div>
   );

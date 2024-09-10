@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Home from './components/pages/Home/Home';
 import Licitacoes from './components/pages/licitacoes/LicitacoesTable';
+import LicitacaoDetail from './components/pages/licitacoes/LicitacaoDetail';
 import Receitas from './components/pages/receitas/Receitas';
 import Despesas from './components/pages/despesas/Despesas';
 import AccessibilityButton from './components/layout/Accessibility/AccessibilityButton';
@@ -30,6 +31,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/receita" element={<Receitas />} />
         <Route path="/licitacoes" element={<Licitacoes />} />
+        <Route path="/licitacoes/:id" element={<LicitacaoDetail />} /> {/* Adiciona a rota de detalhes */}
         <Route path="/despesas" element={<Despesas />} />
       </Routes>
       <Footer />

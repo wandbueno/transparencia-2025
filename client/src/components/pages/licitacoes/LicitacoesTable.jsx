@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; 
-import { getLicitacoes } from "../../../services/licitacoes";
+import { getLicitacoes  } from "../../../services/licitacoes";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';
@@ -34,20 +34,41 @@ import '../../../assets/global.css';
 //   },
 // ];
 
+export const truncateText = (text, maxLength) => {
+  if (text.length <= maxLength) return text;
+  return `${text.substring(0, maxLength)}...`;
+};
+
 const columns = [
-  { name: "Modalidade", selector: (row) => row.modalidade, sortable: true, width: '15%' },
-  { name: "Número/Ano", selector: (row) => row.numeroAno, sortable: true, width: '11%' },
+  { name: "Modalidade", selector: (row) => row.modalidade, sortable: true, width: '14%' },
+  { name: "Nº/Ano", selector: (row) => row.numeroAno, sortable: true, width: '8%' },
   { name: "Órgão", selector: (row) => row.orgao, sortable: true, width: '18%' },
-  { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true, width: '16%' },
-  { name: "Situação", selector: (row) => row.situacao, sortable: true, width: '10%' },
+  { name: "Data de Julgamento", selector: (row) => row.dataDeJulgamento, sortable: true, width: '15%' },
+  { name: "Situação", selector: (row) => row.situacao, sortable: true, width: '9%' },
   { 
     name: "Objeto", 
     selector: (row) => row.historico, 
     sortable: true, width: '30%',
     cell: (row) => (
-      <div className="break-word">{row.historico}</div>
+      <div className="break-word">
+        {truncateText(row.historico, 150)}
+      </div>
     )
   },
+  { 
+    name: "Detalhes",
+    selector: (row) => row.codigo, // Atualize para `codigo`
+    cell: (row) => {
+      const id = row.codigo; // Atualize para `codigo`
+      console.log('Código na tabela:', id);
+      return (
+        <Link to={`/licitacoes/${id}`} className="btn btn-primary">
+          Ver Detalhes
+        </Link>
+      );
+    },
+    width: '6%'
+  }
 ];
 
 const LicitacoesTable = () => {
@@ -83,10 +104,8 @@ const LicitacoesTable = () => {
       
       <FilterSection  />
 
-      <InfoText>
-        <p>
-          <a href="/">Veja Declarações Negativas e Demais Documentos Clicando Aqui</a>.
-        </p>
+      <InfoText href="/transparencia/declaracoes/">
+        <p>Veja Declarações Negativas e Demais Documentos Clicando Aqui</p>
       </InfoText>
          
       {loading ? (

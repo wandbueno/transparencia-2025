@@ -1,0 +1,82 @@
+.detalhes-geral{
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.detalhes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px; 
+  
+
+  div {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+  }
+
+  div > p {
+    flex: 1; 
+    font-size: var(--font-size-base);
+    color: var(--text-color);
+  }
+
+  div > p > span {
+    display: block; 
+    font-weight: 600;
+    color: var(--titulo-color);
+  }
+  
+  div:nth-of-type(1),
+  div:nth-of-type(2),
+  div:nth-of-type(3),
+  div:nth-of-type(4) {
+    grid-column: span 4; 
+  }
+
+  div:nth-of-type(4) {
+    display: grid;
+    gap: 10px;
+  }
+  div:nth-of-type(5){
+    
+    flex: 1; 
+  }
+}
+
+
+.itens-vencedores {
+  margin-top: 30px;
+  width: 100%;
+}
+
+.data-table {
+  width: 100%; /* Garante que a tabela ocupe a largura total do contêiner */
+}
+
+.data-table .rdt_Table {
+  width: 100%; /* Garante que a tabela ocupe a largura total do contêiner */
+}
+
+.data-table .rdt_TableHead {
+  background-color: #f4f4f4; /* Cor de fundo para o cabeçalho da tabela */
+}
+
+.data-table .rdt_TableRow {
+  border-bottom: 1px solid #ddd; /* Linha divisória entre as linhas da tabela */
+}
+
+.data-table .rdt_TableRow:hover {
+  background-color: #f9f9f9; /* Cor de fundo para a linha da tabela ao passar o mouse */
+}
+
+.data-table .rdt_Pagination {
+  margin-top: 20px;
+}
+
+.data-table .rdt_Pagination .rdt_PaginationRowsPerPage {
+  margin-right: 10px;
+}

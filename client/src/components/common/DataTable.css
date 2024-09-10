@@ -22,11 +22,13 @@
   background-color: var(--primary-color);
   color: #fff;
   font-size: var(--font-size-small);
+  
 }
 
 .data-table .rdt_TableRow {
-  padding: 6px 0px; 
+  padding: 5px 0px; 
   border-bottom: 1px solid #ddd;
+ 
 }
 
 .data-table .rdt_TableRow:hover {
@@ -58,5 +60,6 @@
   min-height: 10px!important;
 }
 .hudJpJ {
-  min-height: 30px!important; 
+  min-height: 30px!important;
+   
 }
