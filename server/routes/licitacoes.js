@@ -6,8 +6,9 @@ const fetchFromAPI = async (path, req, res) => {
   try {
     const response = await axios.get(`${process.env.SERVER}${path}`, {
       params: {
-        pagina: 1,
-        tamanhoDaPagina: 2500
+        pagina: req.query.pagina || 1,
+        tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
+        tipoDeConsultaDeModalidade: req.query.tipoDeConsultaDeModalidade || ''
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
@@ -38,5 +39,78 @@ router.get('/:id', (req, res) => {
     res
   )
 })
+
+// Rotas adicionais
+router.get('/contratos/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/contratos/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/data-de-atualizacao', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/data-de-atualizacao',
+    req,
+    res
+  )
+)
+
+router.get('/empenhos/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empenhos/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/empresas-credenciadas/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empresas-credenciadas/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/itens-cancelados-e-substituidos/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-cancelados-e-substituidos/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/itens-em-aberto/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-em-aberto/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/itens-fracassados-ou-desertos/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-fracassados-ou-desertos/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/itens-vencedores/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-vencedores/paginado',
+    req,
+    res
+  )
+)
+
+router.post('/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/paginado',
+    req,
+    res
+  )
+)
 
 module.exports = router

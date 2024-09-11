@@ -230,3 +230,24 @@
 }
 
 
+/* Responsividade para tablets (máx: 1024px) */
+@media (max-width: 1024px) {
+
+}
+
+/* Responsividade para celulares (máx: 768px) */
+@media (max-width: 768px) {
+  .header-info{
+    display: block;
+    grid-template-columns: 1fr;   
+    text-align: center;
+    
+  }
+  .search-container{
+    margin: 10px 0;
+  }
+  .action-buttons{
+    display: flex;
+    justify-content: center;
+  }
+}

@@ -4,13 +4,15 @@
   margin: 20px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
+  max-width: 100%; 
+  box-sizing: border-box;
 }
 
 .detalhes {
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   gap: 20px; 
-  
+  width: 100%;
 
   div {
     display: flex; 
@@ -87,4 +89,53 @@
 
 .data-table .rdt_Pagination .rdt_PaginationRowsPerPage {
   margin-right: 10px;
+}
+
+/* Responsividade para tablets (máx: 1024px) */
+@media (max-width: 1024px) {
+  .detalhes-geral{
+    width: 100%;
+    max-width: 100%; 
+  }
+  .detalhes {
+    grid-template-columns: repeat(2, 1fr); /* Duas colunas em tablets */
+    gap: 15px;
+  }
+
+  .detalhes div {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas dentro de cada div */
+  }
+
+  .detalhes div > p {
+    grid-column: span 1; /* Cada parágrafo em uma coluna */
+    font-size: var(--font-size-small);
+  }
+
+  /* Última div para 'Fundamento Legal' e 'Objeto' */
+  .detalhes div:last-of-type {
+    grid-template-columns: 1fr; /* Uma coluna por linha para o último bloco */
+  }
+}
+
+/* Responsividade para celulares (máx: 768px) */
+@media (max-width: 768px) {
+
+  .detalhes-geral{
+    width: 100%;
+    max-width: 100%; 
+  }
+  .detalhes {
+    grid-template-columns: 1fr; /* Uma coluna para celular */
+    gap: 10px;
+  }
+
+  .detalhes div {
+    display: grid;
+    grid-template-columns: 1fr; /* Cada item em uma linha no celular */
+  }
+
+  .detalhes div > p {
+    font-size: var(--font-size-small);
+  }
 }

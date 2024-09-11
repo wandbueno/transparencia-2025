@@ -133,3 +133,38 @@
   }
 
 }
+
+
+/* Responsividade para tablets (máx: 1024px) */
+@media (max-width: 1024px) {
+  .footer-sections {
+    display: grid;
+    padding: 1% 3%;
+  }
+  .footer-bottom{
+    display: grid;
+    padding: 1% 3%;
+    justify-content: center;
+  }
+  .footer-bottom-right{
+    display: grid;
+  }
+}
+
+/* Responsividade para celulares (máx: 768px) */
+@media (max-width: 768px) {
+
+  .footer-sections {
+    display: grid;
+    padding: 1% 3%;
+  }
+  .footer-bottom{
+    display: grid;
+    padding: 1% 3%;
+    justify-content: center;
+  }
+  .footer-bottom-right{
+    display: grid;
+  }
+
+}
