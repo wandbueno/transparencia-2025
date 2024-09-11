@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Home from './components/pages/Home/Home';
 import Licitacoes from './components/pages/licitacoes/LicitacoesTable';
+import Dispensas from './components/pages/licitacoes/DispensasTable';
 import LicitacaoDetail from './components/pages/licitacoes/LicitacaoDetail';
 import Receitas from './components/pages/receitas/Receitas';
 import Despesas from './components/pages/despesas/Despesas';
@@ -33,6 +34,9 @@ function App() {
         <Route path="/licitacoes" element={<Licitacoes />} />
         <Route path="/licitacoes/:id" element={<LicitacaoDetail />} /> {/* Adiciona a rota de detalhes */}
         <Route path="/despesas" element={<Despesas />} />
+        <Route path="/dispensas-e-inexigibilidades" element={<Dispensas />} />
+        <Route path="/dispensas-e-inexigibilidades/:id" element={<LicitacaoDetail />} /> 
+
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />

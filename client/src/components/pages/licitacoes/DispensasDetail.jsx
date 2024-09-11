@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getLicitacaoById } from "../../../services/licitacoes";
+import { getDispensasById } from "../../../services/dispensas";
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
 import './LicitacaoDetail.css';
 import '../../../assets/global.css';
 
-const LicitacaoDetail = () => {
+const DispensasDetail = () => {
   const { id } = useParams();  
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const LicitacaoDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getLicitacaoById(id);  
+        const result = await getDispensasById(id);  
         setData(result); 
       } catch (err) {
         setError(err.message);
@@ -78,7 +78,7 @@ const LicitacaoDetail = () => {
         breadcrumb={[
           { label: 'Página Inicial', path: '/' },
           { label: 'Transparência', path: '/transparencia' },
-          { label: 'Licitações', path: '/licitacoes' },
+          { label: 'Dispensas e Inexigibilidades', path: '/dispensas-e-inexigibilidades' },
           { label: data ? `${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes' },
         ]}
       />
@@ -181,4 +181,4 @@ const LicitacaoDetail = () => {
   );
 };
 
-export default LicitacaoDetail;
+export default DispensasDetail;

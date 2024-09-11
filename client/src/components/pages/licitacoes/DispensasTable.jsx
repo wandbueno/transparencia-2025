@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom"; 
 import { useNavigate } from 'react-router-dom';
-import { getLicitacoes  } from "../../../services/licitacoes";
+import { getDispensas  } from "../../../services/dispensas";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';
@@ -10,31 +10,6 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
 import '../../../assets/global.css';
 import ButtonTable from "../../common/ButtonTable";
-
-
-// const columns = [
-//   {
-//     name: "Dados",
-//     selector: (row) => row,
-//     cell: (row) => (
-//       <span className="dados-licita">
-//         <p><span>{row.modalidade} Nº {row.numeroAno}</span></p>
-//         <p><span>Data Abertura:</span> {row.dataDeJulgamento}</p>
-//         <p><span>Situação:</span> {row.situacao}</p>
-//       </span>
-//     ),
-//   },
-//   {
-//     name: "Objeto",
-//     selector: (row) => row,
-//     cell: (row) => (
-//       <span className="objeto-licita">
-//         <p><span> {row.orgao}</span></p>
-//         <p>{row.historico}</p>
-//       </span>
-//     ),
-//   },
-// ];
 
 export const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) return text;
@@ -65,7 +40,7 @@ const columns = [
       const navigate = useNavigate(); // Certifique-se de usar o hook
   
       const handleClick = () => {
-        navigate(`/licitacoes/${id}`); // Navega para o caminho específico
+        navigate(`/dispensas-e-inexigibilidades/${id}`); // Navega para o caminho específico
       };
   
       return <ButtonTable onClick={handleClick} label="Ver Detalhes" />;
@@ -74,7 +49,7 @@ const columns = [
   }
 ];
 
-const LicitacoesTable = () => {
+const DispensasTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -82,7 +57,7 @@ const LicitacoesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getLicitacoes();
+        const result = await getDispensas();
         setData(result.registros); 
       } catch (err) {
         setError(err.message);
@@ -97,11 +72,11 @@ const LicitacoesTable = () => {
   return (
     <div className="container">
       <PageHeader
-        title="Procedimentos Licitatórios"
+        title="Dispensas e Inexigibilidades"
         breadcrumb={[
           { label: 'Página Inicial', path: '/' },
           { label: 'Transparência', path: '/transparencia' },
-          { label: 'Procedimentos Licitatórios' },
+          { label: 'Dispensas e Inexigibilidades' },
         ]}
       />
       
@@ -117,7 +92,7 @@ const LicitacoesTable = () => {
         <div>Erro ao carregar licitações: {error}</div>
       ) : (
         <DataTableComponent
-          title="Licitações"
+          title="Dispensas e Inexigibilidades"
           columns={columns}
           data={data}
         />
@@ -126,4 +101,4 @@ const LicitacoesTable = () => {
   );
 };
 
-export default LicitacoesTable;
+export default DispensasTable;

@@ -26,7 +26,7 @@ const Header = () => {
     orgaos: ['/servidores', '/terceirizados'],
     politicas: ['/politicas'],
     fiscal: ['/fiscal'],
-    licitacoes: ['/licitacoes'],
+    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades'],
     legislacao: ['/legislacao'],
     ouvidoria: ['/ouvidoria']
   };
@@ -233,7 +233,11 @@ const Header = () => {
               <div className="submenu-grid">
                 <div className="column">
                   <p>
-                     <Link to="/licitacoes" className={location.pathname === '/execucao-orcamentaria' ? 'active' : ''} onClick={closeMenu} >Procedimentos Licitatórios</Link>
+                     <Link to="/licitacoes" className={location.pathname === '/licitacoes' ? 'active' : ''} onClick={closeMenu} >Procedimentos Licitatórios</Link>
+                  </p>
+                  <p>
+                     <Link to="/dispensas-e-inexigibilidades" className={location.pathname === '/dispensas-e-inexigibilidades' ? 'active' : ''} onClick={closeMenu} >Dispensas e Inexigibilidades
+                     </Link>
                   </p>
                 </div>
               </div>

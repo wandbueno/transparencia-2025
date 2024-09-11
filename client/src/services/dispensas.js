@@ -4,9 +4,9 @@ import axios from 'axios'
 const API_BASE_URL = 'http://localhost:5000/api/licitacoes'
 
 // Adicione o parâmetro `tipoDeConsultaDeModalidade` nas funções que necessitam dele
-const TIPO_DE_CONSULTA = 1 // Ajuste o valor conforme necessário
+const TIPO_DE_CONSULTA = 2 // Ajuste o valor conforme necessário
 
-export const getLicitacoes = async () => {
+export const getDispensas = async () => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
@@ -18,7 +18,7 @@ export const getLicitacoes = async () => {
   }
 }
 
-export const getLicitacaoById = async id => {
+export const getDispensasById = async id => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
