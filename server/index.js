@@ -15,21 +15,27 @@ app.use(
 app.use(express.json())
 
 // Rotas modularizadas
-const licitacoesRoutes = require('./routes/licitacoes')
-const dividaRoutes = require('./routes/divida')
-const diariasRoutes = require('./routes/diarias')
-const contratosRoutes = require('./routes/contratos')
-const receitasRoutes = require('./routes/receitas')
-const despesasRoutes = require('./routes/receitas-despesas/despesas')
-const servidoresRoutes = require('./routes/servidores/servidores')
+const licitacoesRoutes = require('./routes/contratosLicitacoes/licitacoes')
+const contratosRoutes = require('./routes/contratosLicitacoes/contratos')
+
+const despesasRoutes = require('./routes/receitasDespesas/despesas')
+const receitasRoutes = require('./routes/receitasDespesas/receitas')
+const dividaRoutes = require('./routes/receitasDespesas/divida')
+const ExtraRoutes = require('./routes/receitasDespesas/Extraorçamentaria')
+
+const diariasRoutes = require('./routes/orgaosServidores/diarias')
+const servidoresRoutes = require('./routes/orgaosServidores/servidores')
 
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
-app.use('/api/divida', dividaRoutes)
-app.use('/api/diarias', diariasRoutes)
 app.use('/api/contratos', contratosRoutes)
+
 app.use('/api/receitas', receitasRoutes)
 app.use('/api/despesas', despesasRoutes)
+app.use('/api/divida', dividaRoutes)
+app.use('/api/extra', ExtraRoutes)
+
+app.use('/api/diarias', diariasRoutes)
 app.use('/api/servidores', servidoresRoutes)
 
 // Rota básica para a raiz do servidor

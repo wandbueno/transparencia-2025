@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getReceitas } from "../../../services/receitas";
+import { getReceitas } from "../../../services/receitasDespesas/receitas";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';

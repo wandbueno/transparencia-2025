@@ -22,7 +22,7 @@ const Header = () => {
 
   // Configuração dos menus principais e seus submenus
   const menuConfig = {
-    receitas: ['/despesas', '/receita'],
+    receitas: ['/despesas', '/receita', '/extra-orcamentaria'],
     orgaos: ['/servidores', '/terceirizados'],
     politicas: ['/politicas'],
     fiscal: ['/fiscal'],
@@ -156,6 +156,9 @@ const Header = () => {
                 </p>
                 <p>
                   <Link to="/balanco" className={location.pathname === '/balanco' ? 'active' : ''} onClick={closeMenu}> Balanço Orçamentário </Link>
+                </p>
+                <p>
+                  <Link to="/extra-orcamentaria" className={location.pathname === '/extra-orcamentaria' ? 'active' : ''} onClick={closeMenu}> Extra Orçamentária</Link>
                 </p>
               </div>
               <div className="column">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom"; 
 import { useNavigate } from 'react-router-dom';
-import { getDispensas  } from "../../../services/dispensas";
+import { getDispensas  } from "../../../services/contratosLicitacoes/dispensas";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';

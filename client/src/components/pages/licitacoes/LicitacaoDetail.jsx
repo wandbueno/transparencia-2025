@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getLicitacaoById } from "../../../services/licitacoes";
+import { getLicitacaoById } from "../../../services/contratosLicitacoes/licitacoes";
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
