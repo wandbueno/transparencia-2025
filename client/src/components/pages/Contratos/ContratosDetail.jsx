@@ -26,7 +26,35 @@ const ContratosDetail = () => {
     };
 
     fetchData();
-  }, [id]);  
+  }, [id]); 
+  
+  // Função para formatar CPF com substituição dos números por 'x'
+  const formatCpf = (cpf) => {
+    const cleaned = (cpf || '').replace(/\D/g, '');
+
+    if (cleaned.length === 11) {
+      return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, 'xxx.$1.$2-$3.xx');
+    }
+    
+    return cpf;
+  };
+
+  // Função para formatar CNPJ
+  const formatCnpj = (cnpj) => {
+    const cleaned = (cnpj || '').replace(/\D/g, '');
+
+    if (cleaned.length === 14) {
+      return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    }
+    
+    return cnpj;
+  };
+
+  // Função para formatar CPF ou CNPJ
+  const formatCpfCnpj = (cpfCnpj) => {
+    const cleaned = (cpfCnpj || '').replace(/\D/g, '');
+    return cleaned.length === 11 ? formatCpf(cpfCnpj) : formatCnpj(cpfCnpj);
+  };
 
   // Definição das colunas para o DataTable dos Empenhos
   const columnsEmpenhosContrato = [
@@ -45,6 +73,7 @@ const ContratosDetail = () => {
     { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%'  },
     { name: 'Saldo', selector: row => row.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%' },
   ];
+  
 
   return (
     <div className="container">
@@ -68,7 +97,9 @@ const ContratosDetail = () => {
           <div>
             <p><span>Número do Contrato:</span> {data.numero}</p>
             <p><span>Nome do(a) contratado(a):</span> {data.nomeDoFornecedor}</p>
-            <p><span>CPF/CNPJ do(a) contratado(a):</span> {data.cpfOuCnpjDoFornecedor}</p>
+            <p><span>CPF/CNPJ do(a) contratado(a):</span> 
+              {formatCpfCnpj(data.cpfOuCnpjDoFornecedor)}
+            </p>
             <p><span>Órgão:</span> {data.nomeDoOrgao}</p>
           </div>
           <div>
