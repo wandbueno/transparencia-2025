@@ -5,6 +5,8 @@ import Home from './components/pages/Home/Home';
 import Licitacoes from './components/pages/licitacoes/LicitacoesTable';
 import Dispensas from './components/pages/licitacoes/DispensasTable';
 import LicitacaoDetail from './components/pages/licitacoes/LicitacaoDetail';
+import Contratos from './components/pages/Contratos/Contratos';
+import ContratosDetail from './components/pages/Contratos/ContratosDetail';
 import Receitas from './components/pages/receitas/Receitas';
 import Despesas from './components/pages/despesas/Despesas';
 import Extraorcamentaria from './components/pages/despesas/Extraorcamentaria';
@@ -12,7 +14,6 @@ import AccessibilityButton from './components/layout/Accessibility/Accessibility
 import AccessibilityPopup from './components/layout/Accessibility/AccessibilityPopup';
 import './App.css';
 import Footer from './components/layout/Footer';
-
 
 function App() {
 
@@ -35,6 +36,8 @@ function App() {
         <Route path="/receita" element={<Receitas />} />
         <Route path="/licitacoes" element={<Licitacoes />} />
         <Route path="/licitacoes/:id" element={<LicitacaoDetail />} />
+        <Route path="/contratos" element={<Contratos />} />
+        <Route path="/contratos/:id" element={<ContratosDetail />} />
         <Route path="/despesas" element={<Despesas />} />
         <Route path="/extra-orcamentaria" element={<Extraorcamentaria />} />
         <Route path="/dispensas-e-inexigibilidades" element={<Dispensas />} />

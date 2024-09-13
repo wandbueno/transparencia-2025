@@ -26,7 +26,7 @@ const Header = () => {
     orgaos: ['/servidores', '/terceirizados'],
     politicas: ['/politicas'],
     fiscal: ['/fiscal'],
-    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades'],
+    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos'],
     legislacao: ['/legislacao'],
     ouvidoria: ['/ouvidoria']
   };
@@ -240,6 +240,10 @@ const Header = () => {
                   </p>
                   <p>
                      <Link to="/dispensas-e-inexigibilidades" className={location.pathname === '/dispensas-e-inexigibilidades' ? 'active' : ''} onClick={closeMenu} >Dispensas e Inexigibilidades
+                     </Link>
+                  </p>
+                  <p>
+                     <Link to="/contratos" className={location.pathname === '/contratos' ? 'active' : ''} onClick={closeMenu} >Contratos e Aditivos
                      </Link>
                   </p>
                 </div>

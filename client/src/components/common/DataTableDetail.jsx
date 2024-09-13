@@ -1,7 +1,7 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
 import 'react-data-table-component-extensions/dist/index.css';
-import './DataTable.css';
+import './DataTableDetail.css';
 import '../../assets/global.css'
 
 const DataTableDetail = ({ columns, data }) => {

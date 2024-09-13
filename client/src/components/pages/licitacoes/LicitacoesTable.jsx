@@ -11,31 +11,6 @@ import './LicitacoesTable.css';
 import '../../../assets/global.css';
 import ButtonTable from "../../common/ButtonTable";
 
-
-// const columns = [
-//   {
-//     name: "Dados",
-//     selector: (row) => row,
-//     cell: (row) => (
-//       <span className="dados-licita">
-//         <p><span>{row.modalidade} Nº {row.numeroAno}</span></p>
-//         <p><span>Data Abertura:</span> {row.dataDeJulgamento}</p>
-//         <p><span>Situação:</span> {row.situacao}</p>
-//       </span>
-//     ),
-//   },
-//   {
-//     name: "Objeto",
-//     selector: (row) => row,
-//     cell: (row) => (
-//       <span className="objeto-licita">
-//         <p><span> {row.orgao}</span></p>
-//         <p>{row.historico}</p>
-//       </span>
-//     ),
-//   },
-// ];
-
 export const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) return text;
   return `${text.substring(0, maxLength)}...`;
