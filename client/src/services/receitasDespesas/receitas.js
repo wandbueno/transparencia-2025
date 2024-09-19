@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:5000/api/receitas/paginado'
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/receitas`
 
 export const getReceitas = async () => {
   try {
-    const response = await axios.get(API_BASE_URL)
+    const response = await axios.get(`${API_BASE_URL}/paginado`)
     return response.data
   } catch (error) {
     console.error('Erro ao buscar receitas:', error)

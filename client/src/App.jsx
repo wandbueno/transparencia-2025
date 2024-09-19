@@ -15,6 +15,10 @@ import AccessibilityPopup from './components/layout/Accessibility/AccessibilityP
 import './App.css';
 import Footer from './components/layout/Footer';
 
+// Importando o novo componente Sicap
+import Sicap from './components/pages/licitacoes/sicap'; 
+
+
 function App() {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -42,6 +46,8 @@ function App() {
         <Route path="/extra-orcamentaria" element={<Extraorcamentaria />} />
         <Route path="/dispensas-e-inexigibilidades" element={<Dispensas />} />
         <Route path="/dispensas-e-inexigibilidades/:id" element={<LicitacaoDetail />} /> 
+
+        <Route path="/sicap" element={<Sicap />} />
 
       </Routes>
       <Footer />

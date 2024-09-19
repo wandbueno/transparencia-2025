@@ -1,16 +1,15 @@
 import axios from 'axios'
 
 // URL base para buscar contratos
-const API_BASE_URL = 'http://localhost:5000/api/contratos/detalhes-paginado'
-const API_DETAIL = 'http://localhost:5000/api/contratos/'
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/contratos`
 
 export const getContratos = async () => {
   try {
     // Faz a requisição com o parâmetro para ordenar pela data de início
-    const response = await axios.get(API_BASE_URL, {
+    const response = await axios.get(`${API_BASE_URL}/detalhes-paginado`, {
       params: {
-        ordenarPor: 'dataInicial', // Supondo que o campo de data de início seja 'dataInicial'
-        ordem: 'asc' // 'asc' para ordem crescente, 'desc' para ordem decrescente
+        ordenarPor: 'dataInicial',
+        ordem: 'asc'
       }
     })
     return response.data
@@ -23,7 +22,7 @@ export const getContratos = async () => {
 // Função para buscar contrato por ID
 export const getContratosById = async id => {
   try {
-    const response = await axios.get(`${API_DETAIL}/detalhe`, {
+    const response = await axios.get(`${API_BASE_URL}/detalhe`, {
       params: {
         id: id // ID como parâmetro de consulta
       }

@@ -10,6 +10,7 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
 import '../../../assets/global.css';
 import ButtonTable from "../../common/ButtonTable";
+import { config } from '../../../assets/config';
 
 export const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) return text;
@@ -55,6 +56,10 @@ const LicitacoesTable = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+
+    // Atualiza o título da aba do navegador
+    document.title = `Procedimentos Licitatórios - Portal Transparência - ${config.geral.nomeOrgao}`
+
     const fetchData = async () => {
       try {
         const result = await getLicitacoes();

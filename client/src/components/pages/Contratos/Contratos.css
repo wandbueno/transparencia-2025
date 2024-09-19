@@ -86,23 +86,23 @@
     width: 100%;
     max-width: 100%; 
   }
-  .detalhes {
+  .detalhes-contrato {
     grid-template-columns: repeat(2, 1fr); /* Duas colunas em tablets */
     gap: 15px;
   }
 
-  .detalhes div {
+  .detalhes-contrato div {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Duas colunas dentro de cada div */
   }
 
-  .detalhes div > p {
+  .detalhes-contrato div > p {
     grid-column: span 1; /* Cada parágrafo em uma coluna */
     font-size: var(--font-size-small);
   }
 
   /* Última div para 'Fundamento Legal' e 'Objeto' */
-  .detalhes div:last-of-type {
+  .detalhes-contrato div:last-of-type {
     grid-template-columns: 1fr; /* Uma coluna por linha para o último bloco */
   }
 }
@@ -114,17 +114,17 @@
     width: 100%;
     max-width: 100%; 
   }
-  .detalhes {
+  .detalhes-contrato {
     grid-template-columns: 1fr; /* Uma coluna para celular */
     gap: 10px;
   }
 
-  .detalhes div {
+  .detalhes-contrato div {
     display: grid;
     grid-template-columns: 1fr; /* Cada item em uma linha no celular */
   }
 
-  .detalhes div > p {
+  .detalhes-contrato div > p {
     font-size: var(--font-size-small);
   }
 }

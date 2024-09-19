@@ -56,11 +56,13 @@
 .iGxMlw{
   font-size: var(--font-size-small)!important;
   font-weight: 400!important;
-  color: var(--titulo-color)!important;
+  color: var(--text-color)!important;
   background-color: #FFFFFF;
   min-height: 10px!important;
+
 }
 .hudJpJ {
   min-height: 30px!important;
+  
    
 }

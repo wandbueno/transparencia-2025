@@ -47,13 +47,18 @@ const ExportButtons = ({ data, columns }) => {
       const imgWidth = 50; // Largura da imagem
       const imgHeight = (logoImg.height / logoImg.width) * imgWidth; // Mantendo a proporção
   
+      // Adicionar a logo e o título da página no PDF
       doc.addImage(logoImg, 'PNG', pageWidth / 2 - imgWidth / 2, 10, imgWidth, imgHeight);
+      
+      // Título da página exportada
+      const pageTitle = document.title || 'Exportação de Dados';
   
-      // Adicionando os textos fixos logo abaixo da imagem
       doc.setFontSize(14);
       doc.text(config.geral.nomeOrgao, pageWidth / 2, 10 + imgHeight + 10, { align: 'center' });
       doc.setFontSize(12);
       doc.text(config.geral.descricaoOrgao, pageWidth / 2, 10 + imgHeight + 18, { align: 'center' });
+      doc.setFontSize(10);
+      doc.text(pageTitle, pageWidth / 2, 10 + imgHeight + 28, { align: 'center' });  // Título da página
   
       // Preparando os dados da tabela
       const tableData = data.map(row => columns.map(col => col.selector(row)));
@@ -63,7 +68,7 @@ const ExportButtons = ({ data, columns }) => {
         head: [columns.map(col => col.name)],
         body: tableData,
         theme: 'striped',
-        startY: 10 + imgHeight + 26, // Começando logo abaixo do texto
+        startY: 10 + imgHeight + 36, // Começando logo abaixo do título
         margin: { top: 10 },
       });
   
@@ -83,6 +88,7 @@ const ExportButtons = ({ data, columns }) => {
       window.open(pdfUrl, '_blank');
     };
   };
+  
 
   // Função para exportar para TXT
   const exportToTXT = () => {

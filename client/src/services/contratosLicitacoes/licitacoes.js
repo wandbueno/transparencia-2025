@@ -1,10 +1,8 @@
 import axios from 'axios'
 
-// Atualize a URL base para não incluir o parâmetro tipoDeConsultaDeModalidade
-const API_BASE_URL = 'http://localhost:5000/api/licitacoes'
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/licitacoes`
 
-// Adicione o parâmetro `tipoDeConsultaDeModalidade` nas funções que necessitam dele
-const TIPO_DE_CONSULTA = 1 // Ajuste o valor conforme necessário
+const TIPO_DE_CONSULTA = 1
 
 export const getLicitacoes = async () => {
   try {

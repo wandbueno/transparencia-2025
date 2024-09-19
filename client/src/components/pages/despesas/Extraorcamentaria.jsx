@@ -24,7 +24,7 @@ const columnsExtra = [
       const navigate = useNavigate(); // Certifique-se de usar o hook
   
       const handleClick = () => {
-        navigate(`/dispensas-e-inexigibilidades/${id}`); // Navega para o caminho específico
+        navigate(`/extra-orcamentaria/${id}`); // Navega para o caminho específico
       };
   
       return <ButtonTable onClick={handleClick} label="Ver Detalhes" />;
