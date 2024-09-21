@@ -1,14 +1,29 @@
 .home-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  padding: 20px;
   text-align: center;
-  background-color: #f7f7f7;
 }
 
-h2 {
-  color: #333; 
-  font-size: 2rem;
-  font-family: 'Poppins';
+.cards-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+ 
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
 }
