@@ -49,7 +49,8 @@ const columnsContratos = [
       const id = row.codigo
       return <ButtonTable path="/contratos" id={id} label="Ver Detalhes" /> // Passa a rota e o ID
     },
-    width: '11%'
+    width: '11%',
+    excludeFromExport: true
   }
 ]
 

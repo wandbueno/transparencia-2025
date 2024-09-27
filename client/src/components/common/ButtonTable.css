@@ -2,8 +2,8 @@
 .btn {
   background-color: var(--primary-color); 
   color: #fff; 
-  padding: 10px; 
-  font-size: var(--font-size-small); 
+  padding: 5px 10px; 
+  font-size: var(--font-size-min); 
   border: none; 
   border-radius: 5px; 
   cursor: pointer; 

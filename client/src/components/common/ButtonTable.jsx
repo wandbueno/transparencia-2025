@@ -3,11 +3,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ButtonTable.css';
 
-const ButtonTable = ({ path, id, label }) => {
+const ButtonTable = ({ path, id, label, queryParams }) => {
   const navigate = useNavigate(); // Hook dentro do componente
 
   const handleClick = () => {
-    navigate(`${path}/${id}`); // Navega para a rota correta
+    // Navega para a rota com ou sem queryParams
+    navigate(`${path}/${id}${queryParams ? queryParams : ''}`);
   };
 
   return (

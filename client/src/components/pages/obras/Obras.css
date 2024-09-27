@@ -1,0 +1,15 @@
+
+.dados-licita span, .objeto-licita span{
+ color: #555;
+ font-weight: 600;
+}
+#cell-1-undefined{
+ max-width: 30%;
+}
+
+#cell-2-undefined{
+ max-width: 70%;
+}
+.btn-primary{
+  text-decoration: none!important;
+}

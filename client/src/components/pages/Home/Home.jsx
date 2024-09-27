@@ -58,7 +58,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <h2>Bem-vindo à Página Inicial</h2>
-      
+{/*       
       {loading ? (
         <p>Carregando...</p>
       ) : error ? (
@@ -82,7 +82,7 @@ const Home = () => {
             <p>{valorPago.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

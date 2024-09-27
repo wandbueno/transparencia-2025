@@ -10,20 +10,23 @@ import LogoPublixel from '../../assets/LogoPublixelOfc.png';
 import { config } from '../../assets/config.js';
 
 const ExportButtons = ({ data, columns }) => {
+  // Filtra as colunas que não devem ser exportadas
+  const exportableColumns = columns.filter(col => !col.excludeFromExport);
+
   // Função para exportar para Excel
   const exportToExcel = async () => {
     try {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Dados');
-  
+
       // Adicionar cabeçalhos
-      worksheet.columns = columns.map(col => ({ header: col.name, key: col.selector }));
-  
+      worksheet.columns = exportableColumns.map(col => ({ header: col.name, key: col.selector }));
+
       // Adicionar dados
       data.forEach(item => {
-        worksheet.addRow(columns.map(col => col.selector(item)));
+        worksheet.addRow(exportableColumns.map(col => col.selector(item)));
       });
-  
+
       // Gerar o arquivo XLSX e salvar
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -33,86 +36,69 @@ const ExportButtons = ({ data, columns }) => {
     }
   };
 
-  // Função para exportar para PDF com orientação paisagem
+  // Função para exportar para PDF
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape'); // Definindo orientação paisagem
-  
-    // Carregar a imagem do logo a partir do config
+    const doc = new jsPDF('landscape');
     const logoImg = new Image();
     logoImg.src = config.geral.logotipo;
-  
+
     logoImg.onload = () => {
-      // Adicionar a logo na parte superior centralizada
       const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-      const imgWidth = 50; // Largura da imagem
-      const imgHeight = (logoImg.height / logoImg.width) * imgWidth; // Mantendo a proporção
-  
-      // Adicionar a logo e o título da página no PDF
+      const imgWidth = 50;
+      const imgHeight = (logoImg.height / logoImg.width) * imgWidth;
+
       doc.addImage(logoImg, 'PNG', pageWidth / 2 - imgWidth / 2, 10, imgWidth, imgHeight);
-      
-      // Título da página exportada
-      const pageTitle = document.title || 'Exportação de Dados';
-  
       doc.setFontSize(14);
       doc.text(config.geral.nomeOrgao, pageWidth / 2, 10 + imgHeight + 10, { align: 'center' });
       doc.setFontSize(12);
       doc.text(config.geral.descricaoOrgao, pageWidth / 2, 10 + imgHeight + 18, { align: 'center' });
       doc.setFontSize(10);
-      doc.text(pageTitle, pageWidth / 2, 10 + imgHeight + 28, { align: 'center' });  // Título da página
-  
-      // Preparando os dados da tabela
-      const tableData = data.map(row => columns.map(col => col.selector(row)));
-  
-      // Adicionando a tabela logo abaixo do texto
+      doc.text(document.title, pageWidth / 2, 10 + imgHeight + 28, { align: 'center' });
+
+      const tableData = data.map(row => exportableColumns.map(col => col.selector(row)));
+
       doc.autoTable({
-        head: [columns.map(col => col.name)],
+        head: [exportableColumns.map(col => col.name)],
         body: tableData,
         theme: 'striped',
-        startY: 10 + imgHeight + 36, // Começando logo abaixo do título
+        startY: 10 + imgHeight + 36,
         margin: { top: 10 },
       });
-  
-      // Adicionando o rodapé com a data/hora e paginação em uma fonte menor
+
       const pageCount = doc.internal.getNumberOfPages();
       const dateStr = new Date().toLocaleString('pt-BR');
-      doc.setFontSize(8);  // Reduzindo a fonte do rodapé
+      doc.setFontSize(8);
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.text(`Informações geradas pelo portal da transparência em ${dateStr}.`, 10, doc.internal.pageSize.height - 10);
         doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
       }
-  
-      // Gerando e abrindo o PDF
+
       const pdfOutput = doc.output('blob');
       const pdfUrl = URL.createObjectURL(pdfOutput);
       window.open(pdfUrl, '_blank');
     };
   };
-  
 
   // Função para exportar para TXT
   const exportToTXT = () => {
-    const header = columns.map(col => col.name).join('\t');
-    const rows = data.map(row => columns.map(col => col.selector(row)).join('\t')).join('\n');
+    const header = exportableColumns.map(col => col.name).join('\t');
+    const rows = data.map(row => exportableColumns.map(col => col.selector(row)).join('\t')).join('\n');
     const txt = [header, rows].join('\n');
-    
+
     const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
     saveAs(blob, 'data.txt');
   };
 
   // Função para imprimir a tabela
   const printTable = () => {
-    // Cria uma nova janela para impressão
     const printWindow = window.open('', '', 'height=600,width=800');
-  
-    // Nome da página dinâmica
     const pageTitle = document.title || 'Tabela';
-  
-    // Função para gerar o HTML para logo e dados do órgão
+
     const generateHeaderHtml = () => {
       const { logotipo, nomeOrgao, descricaoOrgao } = config.geral;
       const logoUrl = logotipo;
-  
+
       return `
         <div style="text-align: center; margin-bottom: 20px;">
           <img src="${logoUrl}" alt="Logo" style="width: 200px; height: auto;" />
@@ -121,39 +107,28 @@ const ExportButtons = ({ data, columns }) => {
         </div>
       `;
     };
-  
-    // Configuração do HTML da impressão
-     // Configuração do HTML da impressão
-     printWindow.document.write('<html><head><title>Imprimir Dados</title>');
-     printWindow.document.write('<style>');
-     printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }'); // Ajusta o tamanho da fonte do corpo
-     printWindow.document.write('.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }'); // Ajusta o tamanho da fonte da tabela
-     printWindow.document.write('.data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
-     printWindow.document.write('.data-table th { background-color: #f4f4f4; }');
-     printWindow.document.write('</style></head><body>');
-    
-    // Adiciona o header com logo e dados do órgão
+
+    printWindow.document.write('<html><head><title>Imprimir Dados</title>');
+    printWindow.document.write('<style>body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }');
+    printWindow.document.write('.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }');
+    printWindow.document.write('.data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
+    printWindow.document.write('.data-table th { background-color: #f4f4f4; }</style></head><body>');
+
     printWindow.document.write(generateHeaderHtml());
-    
-    // Cria o HTML da tabela com todos os dados e colunas
+
     const tableHtml = `
       <h3>${pageTitle}</h3>
       <table class="data-table">
         <thead>
-          <tr>${columns.map(col => `<th>${col.name}</th>`).join('')}</tr>
+          <tr>${exportableColumns.map(col => `<th>${col.name}</th>`).join('')}</tr>
         </thead>
         <tbody>
-          ${data.map(row => 
-            `<tr>${columns.map(col => `<td>${col.selector(row)}</td>`).join('')}</tr>`
-          ).join('')}
+          ${data.map(row => `<tr>${exportableColumns.map(col => `<td>${col.selector(row)}</td>`).join('')}</tr>`).join('')}
         </tbody>
       </table>
     `;
-    
-    // Adiciona o HTML gerado à nova janela
-    printWindow.document.write(tableHtml);  
-  
-    // Fecha o documento e inicia a impressão
+
+    printWindow.document.write(tableHtml);
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -166,7 +141,7 @@ const ExportButtons = ({ data, columns }) => {
           <FaFileExcel />
         </div>
       </button>
-      <CSVLink data={data} filename="data.csv">
+      <CSVLink data={data.map(row => exportableColumns.map(col => col.selector(row)))} filename="data.csv">
         <button title="Exportar para CSV">
           <div className="icon-container csv">
             <FaFileCsv />

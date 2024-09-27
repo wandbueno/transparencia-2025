@@ -6,12 +6,24 @@ const fetchFromAPI = async (path, req, res) => {
   try {
     const response = await axios.get(`${process.env.SERVER}${path}`, {
       params: {
-        pagina: 1,
-        tamanhoDaPagina: 500,
-        ano: 2024,
-        mes: 8,
-        mesInteger: 8,
-        orgaoDoCliente: 2
+        pagina: req.query.pagina || 1,
+        tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
+        ano: req.query.ano || ''
+        // codigoDoOrgao: req.query.codigoDoOrgao || ''
+        // categoriaDoTrabalhadorNoESocial:
+        // req.query.categoriaDoTrabalhadorNoESocial,
+        // codigoDaSituacao: req.query.codigoDaSituacao,
+        // codigoDoCargo: req.query.codigoDoCargo,
+        // codigoDoCliente: req.query.codigoDoCliente,
+        // codigoDoTipoDeVinculo: req.query.codigoDoTipoDeVinculo,
+        // cpf: req.query.cpf,
+        // estadoDoCliente: req.query.estadoDoCliente,
+        // logotipoDoCliente: req.query.logotipoDoCliente,
+        // matriculaDoFuncionario: req.query.matriculaDoFuncionario,
+        // mes: req.query.mes,
+        // nomeDoDepartamento: req.query.nomeDoDepartamento,
+        // nomeDoFuncionario: req.query.nomeDoFuncionario,
+        // orgaoDoCliente: req.query.orgaoDoCliente
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
@@ -38,6 +50,12 @@ router.get('/detalhe', (req, res) =>
   fetchFromAPI('/api/orgaos-e-servidores/servidor/detalhe', req, res)
 )
 
+// Ajuste específico para a rota paginado
+router.get('/paginado', (req, res) =>
+  fetchFromAPI('/api/orgaos-e-servidores/servidor/paginado', req, res)
+)
+
+// Outras rotas
 router.get('/movimento-complementar/paginado', (req, res) =>
   fetchFromAPI(
     '/api/orgaos-e-servidores/servidor/movimento-complementar/paginado',
@@ -86,8 +104,13 @@ router.get('/movimento13-salario/paginado', (req, res) =>
   )
 )
 
-router.get('/paginado', (req, res) =>
-  fetchFromAPI('/api/orgaos-e-servidores/servidor/paginado', req, res)
-)
+router.get('/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/orgaos-e-servidores/servidor/detalhe?chavePrimaria=${id}`,
+    req,
+    res
+  )
+})
 
 module.exports = router

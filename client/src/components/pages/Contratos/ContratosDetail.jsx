@@ -4,8 +4,9 @@ import { getContratosById } from "../../../services/contratosLicitacoes/contrato
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import '../../../assets/global.css';
-import './Contratos.css';
+import '../PagesDetail.css';
 import DataTableDetail from "../../common/DataTableDetail";
+import { config } from "../../../assets/config";
 
 const ContratosDetail = () => {
   const { id } = useParams();  
@@ -18,6 +19,12 @@ const ContratosDetail = () => {
       try {
         const result = await getContratosById(id);  
         setData(result); 
+
+         // Atualizando o título da página com base nos dados recebidos
+         if (result) {
+          document.title = `Contrato Nº ${result.numero} - Portal Transparência - ${config.geral.nomeOrgao}`;
+        }
+        
       } catch (err) {
         setError(err.message);
       } finally {
@@ -73,15 +80,53 @@ const ContratosDetail = () => {
     { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%'  },
     { name: 'Saldo', selector: row => row.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%' },
   ];
-  
+
+  // Definição das colunas para o DataTable dos Aditivos
+    const columnsAditivos = [
+      { name: 'Número', selector: row => row.numero, sortable: true, width: '9%'},
+      { name: 'Data da Firmatura', selector: row => row.dataDaFirmatura, sortable: true, width: '15%' },
+      { name: 'Data Final', selector: row => row.dataFinal, sortable: true, width: '10%' },
+      { 
+        name: 'Tipo de Aditivo', 
+        selector: row => row.tipoDeAditivo, 
+        sortable: true, 
+        width: '12%', 
+        cell: row => (
+          <div className="descricao-col">{row.tipoDeAditivo}</div>
+        )
+      },
+      { 
+        name: 'Descrição', 
+        selector: row => row.descricao, 
+        sortable: true, 
+        width: '23%', 
+        cell: row => (
+          <div className="descricao-col">{row.descricao}</div>
+        )
+      },
+      
+      { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '10%' },
+      { name: 'Acréscimo', selector: row => row.valorDoAcrescimo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '10%' },
+      { name: 'Decrescimo', selector: row => row.valorDoDecrescimo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '11%' }
+    ];
+    
+    // Definição das colunas para o DataTable dos Apostilamentos
+    const columnsApostilamentos = [
+      { name: 'Número', selector: row => row.numero, sortable: true },
+      { name: 'Tipo de Apostilamento', selector: row => row.tipoDeApostilamento, sortable: true },
+      { name: 'Tipo de Alteração', selector: row => row.tipoDeAlteracao, sortable: true },
+      { name: 'Data', selector: row => row.data, sortable: true },
+      { name: 'Data Final', selector: row => row.dataFinal, sortable: true },
+      { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
+      { name: 'Valor Atualizado do Contrato', selector: row => row.valorAtualizadoDoContrato.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true }
+    ];
+
 
   return (
     <div className="container">
       <PageHeader
         title={data ? `DETALHES: CONTRATO Nº ${data.numero}` : 'Detalhes'}
         breadcrumb={[
-          { label: 'Página Inicial', path: '/' },
-          { label: 'Transparência', path: '/transparencia' },
           { label: 'Contratos', path: '/Contratos' },
           { label: data ? `CONTRATO Nº ${data.numero}` : 'Detalhes' },
         ]}
@@ -93,44 +138,67 @@ const ContratosDetail = () => {
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
       <div className="detalhes-geral">  
-        <div className="detalhes-contrato">
-          <div>
-            <p><span>Número do Contrato:</span> {data.numero}</p>
-            <p><span>Nome do(a) contratado(a):</span> {data.nomeDoFornecedor}</p>
-            <p><span>CPF/CNPJ do(a) contratado(a):</span> 
+        <div className="detalhes">
+            <span><p>Número do Contrato:</p> {data.numero}</span>
+            <span><p>Nome do(a) contratado(a):</p> {data.nomeDoFornecedor}</span>
+            <span><p>CPF/CNPJ do(a) contratado(a):</p> 
               {formatCpfCnpj(data.cpfOuCnpjDoFornecedor)}
-            </p>
-            <p><span>Órgão:</span> {data.nomeDoOrgao}</p>
-          </div>
-          <div>
-            <p><span>Valor Original:</span> {data.valor ? data.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</p> 
-            <p><span>Valor Aditado:</span> {data.valor ? data.valorAditado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</p> 
-            <p><span>Valor Executado:</span> {data.valor ? data.valorExecutado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</p> 
-            <p><span>Valor Total:</span> {data.valor ? data.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}</p>  
+            </span>
+            <span><p>Órgão:</p> {data.nomeDoOrgao}</span>
+            <span><p>Valor Original:</p> {data.valor !== undefined ? data.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</span>
+            <span><p>Valor Aditado:</p> {data.valorAditado !== undefined ? data.valorAditado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</span>
+            <span><p>Valor Total:</p> {data.valorTotal !== undefined ? data.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</span>
+            <span><p>Valor Executado:</p> {data.valorExecutado !== undefined ? data.valorExecutado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</span>
+            <span><p>Saldo do Contrato:</p> {data.saldo !== undefined ? data.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</span>
+  
+            <span><p>Data de Publicação:</p> {data.dataDaPublicacao}</span>  
+            <span><p>Data de Início de Vigência:</p> {data.data}</span>
+            <span><p>Data Fim de Vigência:</p> {data.vigencia}</span>
+            <span><p>Período:</p> {data.periodo}</span>
+            <span><p>Modalidade</p> {data.modalidade}</span>
+            <span>
+            <p>Licitação/Ano:</p> 
+            {data.numeroEAnoDaLicitacao ? (
+              <a href={`/licitacoes/${data.codigoDaLicitacao}`} target="_blank" rel="noopener noreferrer">
+                {data.numeroEAnoDaLicitacao}
+              </a>
+            ) : 'N/A'}
+          </span>
+            <span><p>Processo de aquisição ou Contratação:</p> {data.numeroDoProcesso}</span>  
+            <span><p>Fiscal do Contrato:</p> {data.nomeDoFiscalDoContrato}</span>
+            <span><p>Local da execução ou entrega no contrato:</p> {data.localDaExecucaoOuEntrega}</span>
+            <span><p>Situação:</p> {data.situacao}</span>
+            <span><p>Finalidade:</p> {data.finalidade}</span>
+          
+          <div className="full-width">
+            <span><p>Objeto:</p> {data.objeto}</span>
           </div> 
-          <div>
-            <p><span>Saldo do Contrato:</span> {data.saldo}</p>
-            <p><span>Data de Publicação:</span> {data.dataDaPublicacao}</p>  
-            <p><span>Data de Início de Vigência:</span> {data.data}</p>
-            <p><span>Data Fim de Vigência:</span> {data.vigencia}</p>
-          </div> 
-          <div>
-            <p><span>Período:</span> {data.periodo}</p>
-            <p><span>Modalidade</span> {data.modalidade}</p>
-            <p><span>Licitação/Ano:</span> {data.numeroEAnoDaLicitacao}</p>
-            <p><span>Processo de aquisição ou Contratação:</span> {data.numeroDoProcesso}</p>  
-          </div> 
-          <div>
-            <p><span>Fiscal do Contrato:</span> {data.nomeDoFiscalDoContrato}</p>
-            <p><span>Local da execução ou entrega no contrato:</span> {data.localDaExecucaoOuEntrega}</p>
-            <p><span>Situação:</span> {data.situacao}</p>
-            <p><span>Finalidade:</span> {data.finalidade}</p>
-          </div>
-          <div>
-            <p><span>Objeto:</span> {data.objeto}</p>
-          </div> 
-
+       
         </div> 
+
+        <div className="tabela-detalhes">
+          {data.aditivos.total > 0 && (
+            <>
+              <h2 className="titulo-tabela">Aditivos</h2>
+              <DataTableDetail
+                columns={columnsAditivos}
+                data={data.aditivos.registros}
+              />
+            </>
+          )}
+        </div>
+
+        <div className="tabela-detalhes">
+          {data.apostilamentos.total > 0 && (
+            <>
+              <h2 className="titulo-tabela">Apostilamentos</h2>
+              <DataTableDetail
+                columns={columnsApostilamentos}
+                data={data.apostilamentos.registros}
+              />
+            </>
+          )}
+        </div>
 
         <div className="tabela-detalhes">
           {data.empenhos.total > 0 && (

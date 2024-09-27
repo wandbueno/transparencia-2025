@@ -8,6 +8,7 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import './LicitacoesTable.css';
 import '../../../assets/global.css';
 import columnsDispensa from "./columnsDispensa";
+import { config } from "../../../assets/config";
 
 
 const DispensasTable = () => {
@@ -16,6 +17,10 @@ const DispensasTable = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+
+    // Atualiza o título da aba do navegador
+    document.title = `Dispensas e Inexigibilidades - Portal Transparência - ${config.geral.nomeOrgao}`
+
     const fetchData = async () => {
       try {
         const result = await getDispensas();
@@ -35,8 +40,6 @@ const DispensasTable = () => {
       <PageHeader
         title="Dispensas e Inexigibilidades"
         breadcrumb={[
-          { label: 'Página Inicial', path: '/' },
-          { label: 'Transparência', path: '/transparencia' },
           { label: 'Dispensas e Inexigibilidades' },
         ]}
       />

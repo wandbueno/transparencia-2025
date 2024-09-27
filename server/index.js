@@ -22,6 +22,7 @@ const despesasRoutes = require('./routes/receitasDespesas/despesas')
 const receitasRoutes = require('./routes/receitasDespesas/receitas')
 const dividaRoutes = require('./routes/receitasDespesas/divida')
 const ExtraRoutes = require('./routes/receitasDespesas/Extraorçamentaria')
+const PagamentoRoutes = require('./routes/receitasDespesas/Pagamento')
 
 const diariasRoutes = require('./routes/orgaosServidores/diarias')
 const servidoresRoutes = require('./routes/orgaosServidores/servidores')
@@ -34,9 +35,10 @@ app.use('/api/receitas', receitasRoutes)
 app.use('/api/despesas', despesasRoutes)
 app.use('/api/divida', dividaRoutes)
 app.use('/api/extra', ExtraRoutes)
+app.use('/api/pagamento', PagamentoRoutes)
 
 app.use('/api/diarias', diariasRoutes)
-app.use('/api/servidores', servidoresRoutes)
+app.use('/api/servidor', servidoresRoutes)
 
 // Rota básica para a raiz do servidor
 app.get('/', (req, res) => {

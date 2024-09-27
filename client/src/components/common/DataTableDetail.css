@@ -73,3 +73,9 @@
 .data-table .rdt_TableCol[data-column="Descrição"] {
   max-width: 100%; /* Ajuste de largura máxima para a coluna de descrição */
 }
+
+/* Adicional para colunas com textos longos */
+.data-table .text-wrap {
+  white-space: normal; /* Permite a quebra de linha */
+  overflow-wrap: break-word; /* Quebra o texto longo */
+}

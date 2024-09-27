@@ -1,0 +1,155 @@
+.header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 2% 3%;
+  background-color: var(--background-color);
+
+  img{
+    height: 40px;
+  }
+  
+}
+.search-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  
+  input{
+    width: 100%;
+    max-width: 350px; 
+    padding: 10px;
+    font-size: var(--font-size-small);
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    outline: none;
+    transition: border 0.3s ease;
+  }
+  input:focus {
+    border-color: var(--primary-color); 
+  }
+
+  button {
+    padding: 10px 15px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: var(--secondary-color); 
+  }
+
+  svg {
+    font-size: var(--font-size-large); 
+    color: white;
+  }
+
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: end;
+}
+
+.action-buttons .btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+  transform: scale(1.1);
+  background-color: var(--secondary-color);
+}
+
+.action-buttons .btn[title]:hover:after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  font-size: var(--font-size-small);
+}
+
+.hamburger-container{
+  display: none;
+}
+
+
+/* Exibir o ícone do hamburger no mobile */
+@media (max-width: 768px) {
+  .header-info {
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    padding: 2% 0!important;
+  }
+
+  .search-container {
+    width: 95%;
+    justify-content: center;
+
+  }
+
+  .action-buttons {
+    justify-content: center;
+  }
+
+  .hamburger-container {
+    display: block;
+    width: 100%; /* Ocupa toda a largura */
+    
+  }
+  .hamburger-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-size-xl);
+  }
+
+  /* Estilo da sessão do hamburger */
+.hamburger-container {
+  width: 100%; 
+  background-color: var(--primary-color);
+  padding: 10px;
+  margin: 0;
+  text-align: end;
+}
+
+/* Ícone e rótulo de "Menu" */
+.hamburger-icon {
+  font-size: var(--font-size-xl);
+  color: white;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.menu-label {
+  margin-left: 10px;
+  font-size: var(--font-size-large);
+  color: white;
+}
+  
+
+}

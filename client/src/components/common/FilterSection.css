@@ -57,12 +57,17 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  flex-wrap: wrap; /* Para garantir que a responsividade seja mantida */
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  width: 18%;
+  width: 22%; /* Ajusta a largura para caber 4 campos na mesma linha */
+}
+
+.filter-group.full-width {
+  width: 32%; /* Largura ajustada para a segunda linha */
 }
 
 .filter-group label {
@@ -80,7 +85,7 @@
   background: #fff;
   font-size: var(--font-size-small);
   color: var(--text-color);
-  pointer-events: none;
+  /* Removido pointer-events: none para permitir cliques */
 }
 
 .full-width {
@@ -101,7 +106,7 @@
   background: var(--primary-color);
   color: #fff;
   font-size: var(--font-size-base);
-  cursor: not-allowed;
+  cursor: pointer; /* Alterado para permitir cliques */
 }
 
 .clear-button {

@@ -8,6 +8,18 @@ const PageHeader = ({ title, breadcrumb }) => {
     <div className="page-header">
       <h2 className="title">{title}</h2>
       <nav className="breadcrumb">
+        {/* Breadcrumb comum a todas as páginas */}
+        <span className="breadcrumb-ite">
+          <Link to="/">Página Inicial</Link>
+          <span className="breadcrumb-separator">/</span>
+        </span>
+        <span className="breadcrumb-ite">
+          <Link to="/transparencia">Transparência</Link>
+          <span className="breadcrumb-separator">/</span>
+        </span>
+
+         {/* Breadcrumb específico da página, recebido via props */}
+
         {breadcrumb.map((item, index) => (
           <span key={index} className="breadcrumb-ite">
             {item.path ? (

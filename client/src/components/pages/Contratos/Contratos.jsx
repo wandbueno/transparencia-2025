@@ -20,7 +20,7 @@ const Contratos = () => {
   useEffect(() => {
 
     // Atualiza o título da aba do navegador
-    document.title = `Contratos - Portal Transparência - ${config.geral.nomeOrgao}`
+    document.title = `Contratos e Aditivos - Portal Transparência - ${config.geral.nomeOrgao}`
     
     const fetchData = async () => {
       try {
@@ -40,13 +40,11 @@ const Contratos = () => {
     <div className="container">
 
       <PageContent 
-        title="Contratos"
+        title="Contratos e Aditivos"
         breadcrumb={[
-          { label: 'Página Inicial', path: '/' },
-          { label: 'Transparência', path: '/contratos' },
-          { label: 'Contratos' },
+          { label: 'Contratos e Aditivos' },
         ]}
-        infoTextHref="/transparencia/contratos" // URL específica para esta página
+        infoTextHref="/transparencia/contratos/declaracoes" // URL específica para esta página
       />
                
       {loading ? (

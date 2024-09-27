@@ -1,0 +1,47 @@
+/* Estilos gerais */
+.header-info {
+  padding: 2% 3%;
+  background-color: var(--background-color);
+}
+
+
+/* Exibir o menu apenas no mobile */
+@media (max-width: 768px) {
+  .navbar {
+    display: none;
+  }
+
+  .navbar.mobile {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: var(--primary-color);
+    height: 100%;
+    width: 90%;
+    z-index: 1000;
+    padding: 20px;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .close-icon {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .menu-list {
+    flex-direction: column;
+    display: block;
+  }
+
+  .menu-list li {
+    padding: 20px;
+    font-size: var(--font-size-large);
+  }
+
+  .menu-list li span {
+    display: inline-block;
+    margin-left: 10px;
+  }
+}

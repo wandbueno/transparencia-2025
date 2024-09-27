@@ -11,3 +11,13 @@ export const getDespesas = async () => {
     throw error
   }
 }
+
+export const getDespesasId = async id => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${id}`)
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar Empenho com id ${id}:`, error)
+    throw error
+  }
+}

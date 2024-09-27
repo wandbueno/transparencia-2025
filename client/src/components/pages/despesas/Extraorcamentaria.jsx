@@ -6,8 +6,9 @@ import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';
 import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import './Despesas.css';
+// import './Despesas.css';
 import ButtonTable from "../../common/ButtonTable";
+import { config } from "../../../assets/config";
 
 const columnsExtra = [
   { name: "Órgão", selector: (row) => row.orgao, sortable: true, width: '15%' },
@@ -40,6 +41,10 @@ const Extraorcamentaria = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    
+    // Atualiza o título da aba do navegador
+    document.title = `Extra Orçamentária - Portal Transparência - ${config.geral.nomeOrgao}`
+
     const fetchData = async () => {
       try {
         const result = await getDespesas();
@@ -59,8 +64,6 @@ const Extraorcamentaria = () => {
     <PageHeader
         title="Extra Orçamentária"
         breadcrumb={[
-          { label: 'Página Inicial', path: '/' },
-          { label: 'Transparência', path: '/Extra Orçamentária' },
           { label: 'Extra Orçamentária' },
         ]}
       />      

@@ -25,34 +25,35 @@ const fetchFromAPI = async (path, req, res) => {
   }
 }
 
-// Rota para buscar a data de atualização
-router.get('/data-de-atualizacao', (req, res) => {
-  fetchFromAPI('/api/orgaos-e-servidores/diaria/data-de-atualizacao', req, res)
-})
-
-// Rota para buscar detalhes
-router.get('/detalhe', (req, res) => {
-  fetchFromAPI('/api/orgaos-e-servidores/diaria/detalhe', req, res)
-})
-
-// Rota para buscar dados paginados
-router.get('/paginado', (req, res) => {
-  fetchFromAPI('/api/orgaos-e-servidores/diaria/paginado', req, res)
-})
-
-// Rota para buscar anulações de liquidações paginadas
-router.get('/anulacoes-de-liquidacoes/paginado', (req, res) => {
+// Rotas para Empenho
+router.get('/data-de-atualizacao', (req, res) =>
   fetchFromAPI(
-    '/api/orgaos-e-servidores/diaria/anulacoes-de-liquidacoes/paginado',
+    '/api/receitas-e-despesas/ordem-de-pagamento/data-de-atualizacao',
     req,
     res
   )
-})
+)
+
+router.get('/detalhe', (req, res) =>
+  fetchFromAPI('/api/receitas-e-despesas/ordem-de-pagamento/detalhe', req, res)
+)
+
+router.get('/estornos-de-ordem-de-pagamento/paginado', (req, res) =>
+  fetchFromAPI(
+    '/api/receitas-e-despesas/ordem-de-pagamento/estornos/paginado',
+    req,
+    res
+  )
+)
+
+router.get('/paginado', (req, res) =>
+  fetchFromAPI('/api/receitas-e-despesas/ordem-de-pagamento/paginado', req, res)
+)
 
 router.get('/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(
-    `/api/orgaos-e-servidores/diaria/detalhe?chavePrimaria=${id}`,
+    `/api/receitas-e-despesas/ordem-de-pagamento/detalhe?chavePrimaria=${id}`,
     req,
     res
   )
