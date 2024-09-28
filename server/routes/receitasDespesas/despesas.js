@@ -8,7 +8,8 @@ const fetchFromAPI = async (path, req, res) => {
       params: {
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        chavePrimaria: req.query.chavePrimaria || ''
+        chavePrimaria: req.query.chavePrimaria || '',
+        codigo: req.query.codigo || ''
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
@@ -82,6 +83,15 @@ router.get('/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(
     `/api/receitas-e-despesas/empenho/detalhe?chavePrimaria=${id}`,
+    req,
+    res
+  )
+})
+
+router.get('/itens-empenho/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/receitas-e-despesas/empenho/itens/paginado?codigo=${id}`,
     req,
     res
   )

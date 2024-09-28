@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { getDespesasId } from "../../../../services/receitasDespesas/despesas";
+import { getDespesasId, getItensEmpenho } from "../../../../services/receitasDespesas/despesas";
 import PageHeader from '../../../common/PageHeader';
 import LoadingSpinner from '../../../common/LoadingSpinner'
 import DataTableDetail from '../../../common/DataTableDetail';
@@ -16,12 +16,18 @@ const EmpenhoDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo a ser exportado
+  const [itens, setItens] = useState(null); // Estado para os itens do empenho
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+       // Busca detalhes do empenho
         const result = await getDespesasId(id);  
         setData(result);
+
+        // Busca itens do empenho
+        const itensEmpenho = await getItensEmpenho(id);
+        setItens(itensEmpenho);  // Armazene os itens separadamente no estado
         
         // Atualizando o título da página com base nos dados recebidos
         if (result) {
@@ -144,16 +150,16 @@ const EmpenhoDetail = () => {
 
         {/* Tabela de Itens do Empenho */}
         <div className="tabela-detalhes">  
-          {data.itens.total > 0 && (
+          {itens && itens.total > 0 && (
             <>
               <h2 className="titulo-tabela">Detalhamento Itens do Empenho</h2>
               <DataTableDetail
                 columns={columnsItensEmpenho}
-                data={data.itens.registros}
+                data={itens.registros}
               />
             </>
           )}
-        </div> 
+        </div>
 
         {/* Tabela de Liquidações */}
         <div className="tabela-detalhes">
