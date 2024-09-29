@@ -1,48 +1,43 @@
 import React from 'react';
-import { FaPrint } from 'react-icons/fa';
-import { config } from '../../assets/config'; // Para obter as informações do órgão
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const ExportDetailToPDF = ({ contentRef }) => {
+  const handleDownloadPDF = async () => {
+    const content = contentRef.current; // Acessa o conteúdo da página
 
-  // Função para imprimir o conteúdo da página
-  const printPage = () => {
-    const content = contentRef.current;
+    // Usa o html2canvas para capturar o conteúdo como imagem
+    const canvas = await html2canvas(content, {
+      scale: 2,
+      useCORS: true, // Certifique-se de capturar conteúdo corretamente com CORS
+    });
 
-    if (content) {
-      const printWindow = window.open('', '', 'height=600,width=800');
-      printWindow.document.write('<html><head><title>Imprimir</title>');
+    const imageData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'landscape', // Modo paisagem
+      unit: 'px',
+      format: 'a4', // Formato A4
+    });
 
-      // Estilos personalizados para a impressão
-      printWindow.document.write(`
-        <style>
-          body { font-family: Arial, sans-serif; font-size: 10px; margin: 20px; }
-          .detalhes { display: flex; flex-wrap: wrap; justify-content: space-between; }
-          .detalhes span { width: 48%; margin-bottom: 10px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          table, th, td { border: 1px solid black; }
-          th, td { padding: 8px; text-align: left; white-space: nowrap; }
-          th { background-color: #f2f2f2; }
-          @media print {
-            @page { size: landscape; } /* Força a impressão em paisagem */
-          }
-        </style>
-      `);
+    const margin = 20; // Define a margem do PDF
+    const pageWidth = pdf.internal.pageSize.getWidth(); // Largura da página
+    const pageHeight = pdf.internal.pageSize.getHeight(); // Altura da página
+    const imageWidth = pageWidth - 2 * margin; // Largura da imagem com margem
+    const imageHeight = (canvas.height * imageWidth) / canvas.width; // Proporção da imagem
 
-      printWindow.document.write('</head><body>');
-      printWindow.document.write(content.innerHTML); // Adiciona o conteúdo para impressão
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-    }
+    // Adiciona a imagem (conteúdo capturado) ao PDF com margem
+    pdf.addImage(imageData, 'PNG', margin, margin, imageWidth, imageHeight);
+
+    // Abre o PDF em uma nova janela/aba
+    const pdfBlob = pdf.output('blob'); // Gera o Blob do PDF
+    const pdfURL = URL.createObjectURL(pdfBlob); // Cria uma URL a partir do Blob
+    window.open(pdfURL); // Abre a URL gerada em uma nova aba
   };
 
   return (
-    <div className="export-buttons">
-      <button onClick={printPage} title="Imprimir">
-        <FaPrint /> Imprimir
-      </button>
-    </div>
+    <button onClick={handleDownloadPDF}>
+      Abrir PDF
+    </button>
   );
 };
 

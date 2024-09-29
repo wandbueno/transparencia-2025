@@ -17,7 +17,7 @@ const EmpenhoDetail = () => {
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo a ser exportado
   const [itens, setItens] = useState(null); // Estado para os itens do empenho
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -93,7 +93,7 @@ const EmpenhoDetail = () => {
       />
 
       {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} />
+      <ExportDetailToPDF contentRef={contentRef} /> 
 
       {loading ? (
         <LoadingSpinner />
