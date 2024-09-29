@@ -21,11 +21,12 @@ const Despesas = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({}); // Estado para armazenar os filtros
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getDespesas();
+        const result = await getDespesas(filters); // Passando os filtros para a API
         setData(result.registros); 
       } catch (err) {
         setError(err.message);
@@ -35,19 +36,26 @@ const Despesas = () => {
     };
 
     fetchData();
-  }, []);
+  }, [filters]); // Atualiza os dados quando os filtros mudarem
+
+  // Função para aplicar os filtros recebidos
+  const applyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
 
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Despesas"
         breadcrumb={[
           { label: 'Página Inicial', path: '/' },
           { label: 'Transparência', path: '/Despesas' },
           { label: 'Despesas' },
         ]}
-      />      
-      <FilterSection  />
+      />
+            
+      {/* Passando a função de aplicar filtros para o componente FilterSection */}
+      <FilterSection onFilterChange={applyFilters} />
       
       <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -64,8 +72,6 @@ const Despesas = () => {
           data={data}
         />
       )}
-
-   
     </div>
   );
 };
