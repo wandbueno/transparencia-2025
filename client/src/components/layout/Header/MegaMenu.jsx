@@ -130,6 +130,18 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                 </div>
               </div>
             )}
+
+            {activeMenu === 'legislacao' && (
+              <div className="submenu-grid">
+                <div className="column">
+                  <p>
+                     <Link to="/leis" className={location.pathname === '/leis' ? 'active' : ''} onClick={closeMenu} >Leis Municípais</Link>
+                  </p>
+                  
+                </div>
+              </div>
+            )}
+            
           </div>
     </div>
   );

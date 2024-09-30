@@ -21,6 +21,8 @@ import Obras from './components/pages/obras/Obras';
 import Diarias from './components/pages/servidores/diarias/Diarias';
 import DiariasDetail from './components/pages/servidores/diarias/DiariasDetail';
 import ReceitasDetail from './components/pages/receitas/ReceitasDetail';
+import Leis from './components/pages/legislacao/Leis';
+import LegislacaoDetail from './components/pages/legislacao/LegislacaoDetail';
 
 
 function App() {
@@ -57,6 +59,9 @@ function App() {
         <Route path="/obras" element={<Obras />} />
         <Route path="/diarias" element={<Diarias />} />
         <Route path="/diarias/:id" element={<DiariasDetail />} />
+
+        <Route path="/leis" element={<Leis />} />
+        <Route path="/leis/:id" element={<LegislacaoDetail />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />

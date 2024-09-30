@@ -15,7 +15,7 @@ export const getLicitacoes = async filters => {
     fornecedor,
     objeto
   } = filters
-
+  console.log(filters)
   const params = new URLSearchParams()
   if (ano) params.append('ano', ano)
   if (codigoDoOrgao) params.append('codigoDoOrgao', codigoDoOrgao)

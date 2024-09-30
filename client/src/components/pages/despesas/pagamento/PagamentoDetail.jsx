@@ -9,12 +9,13 @@ import '../../../../assets/global.css';
 import { config } from "../../../../assets/config";
 import ExportDetailToPDF from "../../../common/ExportDetailToPDF";
 
-const EmpenhoDetail = () => {
+const PagamentoDetail = () => {
   const { id } = useParams();  
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const contentRef = useRef();  // Referência para capturar o conteúdo a ser exportado
+  const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,15 +57,15 @@ const EmpenhoDetail = () => {
       />
 
       {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} />
+      <ExportDetailToPDF contentRef={contentRef} tableRef={tableRef} pageTitle={`Pagamento Nº ${data?.numero}`} />
 
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
-      <div className="detalhes-geral" ref={contentRef}>  
-        <div className="detalhes">
+      <div className="detalhes-geral">  
+        <div className="detalhes" ref={contentRef}>
           <span><p>Data:</p> {data.dataPagamento}</span>
           <span><p>Número:</p> {data.numero}</span>
           <span><p>Órgão:</p> {data.nomeDoOrgao}</span>
@@ -84,19 +85,21 @@ const EmpenhoDetail = () => {
           <div className="full-width">
             <span><p>Histórico:</p> {data.historico}</span>
           </div>         
-        </div> 
+        </div>
 
-        {/* Tabela de Estornos */}
-        <div className="tabela-detalhes">
-          {data.estornos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Ordem Pagamento Anulação</h2>
-              <DataTableDetail
-                columns={columnsEstornos}
-                data={data.estornos.registros}
-              />
-            </>
-          )}
+        <div ref={tableRef}>
+          {/* Tabela de Estornos */}
+          <div className="tabela-detalhes">
+            {data.estornos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Ordem Pagamento Anulação</h2>
+                <DataTableDetail
+                  columns={columnsEstornos}
+                  data={data.estornos.registros}
+                />
+              </>
+            )}
+          </div>
         </div>
         
       </div> 
@@ -107,4 +110,4 @@ const EmpenhoDetail = () => {
   );
 };
 
-export default EmpenhoDetail;
+export default PagamentoDetail;

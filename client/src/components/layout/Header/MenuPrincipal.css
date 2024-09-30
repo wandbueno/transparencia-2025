@@ -12,7 +12,7 @@
 }
 
 .menu-list li {
-  color: white;
+  color: white!important;
   text-align: center;
   cursor: pointer;
   /* flex: 1; */
@@ -29,6 +29,7 @@
 
 .navbar ul.menu-list li a {
   text-decoration: none; 
+  color: white;
 }
 
 .menu-list li.active,

@@ -15,7 +15,8 @@ const EmpenhoDetail = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const contentRef = useRef();  // Referência para capturar o conteúdo a ser exportado
+  const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
   const [itens, setItens] = useState(null); // Estado para os itens do empenho
   
   useEffect(() => {
@@ -93,15 +94,15 @@ const EmpenhoDetail = () => {
       />
 
       {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} /> 
+      <ExportDetailToPDF contentRef={contentRef} tableRef={tableRef} pageTitle={`Empenho Nº ${data?.numeroDoTcm}`} />
 
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
-      <div className="detalhes-geral" ref={contentRef}>  
-        <div className="detalhes">
+      <div className="detalhes-geral" >  
+        <div className="detalhes" ref={contentRef}>
           <span><p>Data:</p> {data.data}</span>
           <span><p>Fonte:</p> {data.tituloDaFonte}</span>
           <span><p>Fornecedor:</p> {data.cnpjENomeDoFornecedor}</span>
@@ -145,46 +146,47 @@ const EmpenhoDetail = () => {
           <div className="full-width">
             <span><p>Bem Fornecido ou Serviço Prestado:</p> {data.historico}</span>
           </div>         
-
         </div> 
+            
+        <div ref={tableRef}> 
+          {/* Tabela de Itens do Empenho */}
+          <div className="tabela-detalhes">  
+            {itens && itens.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Detalhamento Itens do Empenho</h2>
+                <DataTableDetail
+                  columns={columnsItensEmpenho}
+                  data={itens.registros}
+                />
+              </>
+            )}
+          </div>
 
-        {/* Tabela de Itens do Empenho */}
-        <div className="tabela-detalhes">  
-          {itens && itens.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Detalhamento Itens do Empenho</h2>
-              <DataTableDetail
-                columns={columnsItensEmpenho}
-                data={itens.registros}
-              />
-            </>
-          )}
-        </div>
+          {/* Tabela de Liquidações */}
+          <div className="tabela-detalhes">
+            {data.liquidacoes.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Detalhamento das Liquidações</h2>
+                <DataTableDetail
+                  columns={columnsLiquidacoes}
+                  data={data.liquidacoes.registros}
+                />
+              </>
+            )}
+          </div>
 
-        {/* Tabela de Liquidações */}
-        <div className="tabela-detalhes">
-          {data.liquidacoes.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Detalhamento das Liquidações</h2>
-              <DataTableDetail
-                columns={columnsLiquidacoes}
-                data={data.liquidacoes.registros}
-              />
-            </>
-          )}
-        </div>
-
-        {/* Tabela de Ordens de Pagamento */}
-        <div className="tabela-detalhes">
-          {data.ordensDePagamento.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Detalhamento das Ordem de Pagamentos</h2>
-              <DataTableDetail
-                columns={columnsOrdemPagamentos}
-                data={data.ordensDePagamento.registros}
-              />
-            </>
-          )}
+          {/* Tabela de Ordens de Pagamento */}
+          <div className="tabela-detalhes">
+            {data.ordensDePagamento.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Detalhamento das Ordem de Pagamentos</h2>
+                <DataTableDetail
+                  columns={columnsOrdemPagamentos}
+                  data={data.ordensDePagamento.registros}
+                />
+              </>
+            )}
+          </div>
         </div>
         
       </div> 

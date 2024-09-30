@@ -19,7 +19,7 @@ const Header = () => {
     politicas: ['/politicas'],
     fiscal: ['/fiscal'],
     licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos'],
-    legislacao: ['/legislacao'],
+    legislacao: ['/legislacao', '/leis'],
     ouvidoria: ['/ouvidoria']
   };
 
