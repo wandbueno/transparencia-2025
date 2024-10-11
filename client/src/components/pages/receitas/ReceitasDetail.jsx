@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getReceitasId } from "../../../services/receitasDespesas/receitas";
+import { getReceitasId, getMovimentosReceita } from "../../../services/receitasDespesas/receitas";
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
 import '../PagesDetail.css';
 import '../../../assets/global.css';
 import { config } from "../../../assets/config";
-import ExportDetailToPDF from "../../common/ExportDetailToPDF";
 
 const ReceitasDetail = () => {
   const { id } = useParams();  
   const [searchParams] = useSearchParams(); // Para pegar os parâmetros ano, mes, e codigoDoOrgao
   const [data, setData] = useState(null);
+  const [movimentos, setMovimentos] = useState(null); // Estado para armazenar os movimentos
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const contentRef = useRef();  // Referência para capturar o conteúdo a ser exportado
+  const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
 
   // Definição das colunas para o DataTable de Movimentos
   const columnsMovimentos = [
@@ -36,8 +37,13 @@ const ReceitasDetail = () => {
           return;
         }
 
+        // Buscando os detalhes da receita
         const result = await getReceitasId(id, ano, mes, codigoDoOrgao);  
         setData(result);
+
+        // Buscando os movimentos relacionados à receita
+        const movimentosResult = await getMovimentosReceita(id, ano, mes, codigoDoOrgao);
+        setMovimentos(movimentosResult.data); // Armazene os movimentos no estado
         
         // Atualizando o título da página com base nos dados recebidos
         if (result) {
@@ -54,26 +60,30 @@ const ReceitasDetail = () => {
     fetchData();
   }, [id, searchParams]);  // Adiciona `id` e `searchParams` como dependências do useEffect
 
+   // Definindo o título dinamicamente com base nos dados
+   const pageTitle = data ? `Detalhes: Receita - ${data.receita}` : 'Detalhes';
+
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: Receita - ${data.receita}` : 'Detalhes'}
+        title={pageTitle}
         breadcrumb={[
           { label: 'Receitas', path: '/receitas' },
           { label: data ? `Receita - ${data.receita}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle} 
       />
-  
-      {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} />
   
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
-        <div className="detalhes-geral" ref={contentRef}>  
-          <div className="detalhes">
+        <div className="detalhes-geral">  
+          <div className="detalhes" ref={contentRef}>
             <span><p>Órgão/Unidade Gestora:</p> {data.orgaoUnidadeGestora}</span>
             <span><p>Mês/Ano:</p> {data.mesAno}</span>
             <span><p>Receita:</p> {data.receita}</span>
@@ -87,19 +97,28 @@ const ReceitasDetail = () => {
             <span><p>Valor Acumulado (Anual):</p> {data.valorAcumulado?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
             <span><p>Tipo de Conta:</p> {data.tipoDeConta}</span>
           </div>
- 
-            {/* Tabela de Anulações de Liquidações */}
+
+          <div ref={tableRef}>
+            {/* Tabela detalhes movimentos */}
             <div className="tabela-detalhes">
-              {data.movimentos && data.movimentos.total > 0 && (
+              {movimentos && movimentos.total > 0 && (
                 <>
                   <h2 className="titulo-tabela">Detalhamento (Movimentos)</h2>
                   <DataTableDetail
                     columns={columnsMovimentos}
-                    data={data.movimentos.registros}
+                    data={movimentos.registros.sort((a, b) => {
+                      // Converte a data de "dd/mm/yyyy" para um formato comparável pelo JavaScript
+                      const dateA = new Date(a.data.split("/").reverse().join("-"));
+                      const dateB = new Date(b.data.split("/").reverse().join("-"));
+                      
+                      // Ordena de forma decrescente
+                      return dateB - dateA;
+                    })}
                   />
                 </>
               )}
             </div>
+          </div>
 
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getDispensasById } from "../../../services/contratosLicitacoes/dispensas";
 import PageHeader from '../../common/PageHeader';
@@ -12,6 +12,8 @@ const DispensasDetail = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,15 +108,21 @@ const DispensasDetail = () => {
     { name: 'Data do Decreto', selector: row => row.dataDoDecreto, sortable: true },
   ];
 
+   // Definindo o título dinamicamente com base nos dados
+   const pageTitle = data ? `Detalhes: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes';
 
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes'}
+      title={pageTitle} 
         breadcrumb={[
           { label: 'Dispensas e Inexigibilidades', path: '/dispensas-e-inexigibilidades' },
           { label: data ? `${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle} 
       />
 
       {loading ? (
@@ -123,7 +131,7 @@ const DispensasDetail = () => {
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
       <div className="detalhes-geral">  
-        <div className="detalhes">
+        <div className="detalhes" ref={contentRef}>
             <span><p>Unidade Gestora:</p> {data.orgao}</span>
             <span><p>Modalidade:</p> {data.modalidade}</span>
             <span><p>Nº/Ano:</p> {data.numeroAno}</span>
@@ -152,106 +160,108 @@ const DispensasDetail = () => {
               )}
             </span>
           
-          <div>
+          <div className="full-width">
             <span><p>Fundamento Legal:</p> {data.descricaoDoFundamentoLegalDispensa}</span>
             <span><p>Objeto:</p> {data.historico}</span>
           </div> 
 
         </div> 
+              
+        <div ref={tableRef}>
+          <div className="tabela-detalhes">
+            {data.empresasCredenciadas && data.empresasCredenciadas.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Empresas Credenciadas</h2>
+                <DataTableDetail
+                  columns={columnsEmpresasCredenciadas}
+                  data={data.empresasCredenciadas.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.empresasCredenciadas && data.empresasCredenciadas.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Empresas Credenciadas</h2>
-              <DataTableDetail
-                columns={columnsEmpresasCredenciadas}
-                data={data.empresasCredenciadas.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">
+            {data.responsaveisPelaComissao && data.responsaveisPelaComissao.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Responsáveis pela Comissão</h2>
+                <DataTableDetail
+                  columns={columnsResponsaveisPelaComissao}
+                  data={data.responsaveisPelaComissao.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.responsaveisPelaComissao && data.responsaveisPelaComissao.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Responsáveis pela Comissão</h2>
-              <DataTableDetail
-                columns={columnsResponsaveisPelaComissao}
-                data={data.responsaveisPelaComissao.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">  
+            {data.itensVencedores.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Itens Vencedores</h2>
+                <DataTableDetail
+                  columns={columnsItensVencedores}
+                  data={data.itensVencedores.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">  
-          {data.itensVencedores.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Itens Vencedores</h2>
-              <DataTableDetail
-                columns={columnsItensVencedores}
-                data={data.itensVencedores.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">
+            {data.itensFracassadosOuDesertos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Itens Fracassados ou Desertos</h2>
+                <DataTableDetail
+                  columns={columnsItensFracassadosOuDesertos}
+                  data={data.itensFracassadosOuDesertos.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.itensFracassadosOuDesertos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Itens Fracassados ou Desertos</h2>
-              <DataTableDetail
-                columns={columnsItensFracassadosOuDesertos}
-                data={data.itensFracassadosOuDesertos.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">
+            {data.itensCanceladosESubstituidos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Itens Cancelados e Substituídos</h2>
+                <DataTableDetail
+                  columns={columnsItensCanceladosESubstituidos}
+                  data={data.itensCanceladosESubstituidos.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.itensCanceladosESubstituidos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Itens Cancelados e Substituídos</h2>
-              <DataTableDetail
-                columns={columnsItensCanceladosESubstituidos}
-                data={data.itensCanceladosESubstituidos.registros}
-              />
-            </>
-          )}
-        </div>
-
-        <div className="tabela-detalhes">
-          {data.contratos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Contratos</h2>
-              <DataTableDetail
-                columns={columnsContratos}
-                data={data.contratos.registros}
-              />
-            </>
-          )}
-        </div>
-        <div className="tabela-detalhes">
-          {data.empenhos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Empenhos</h2>
-              <DataTableDetail
-                columns={columnsEmpenhos}
-                data={data.empenhos.registros}
-              />
-            </>
-          )}
-        </div>
-        <div className="tabela-detalhes">
-          {data.itensEmAberto.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Itens em Aberto</h2>
-              <DataTableDetail
-                columns={columnsItensEmAberto}
-                data={data.itensEmAberto.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">
+            {data.contratos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Contratos</h2>
+                <DataTableDetail
+                  columns={columnsContratos}
+                  data={data.contratos.registros}
+                />
+              </>
+            )}
+          </div>
+          <div className="tabela-detalhes">
+            {data.empenhos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Empenhos</h2>
+                <DataTableDetail
+                  columns={columnsEmpenhos}
+                  data={data.empenhos.registros}
+                />
+              </>
+            )}
+          </div>
+          <div className="tabela-detalhes">
+            {data.itensEmAberto.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Itens em Aberto</h2>
+                <DataTableDetail
+                  columns={columnsItensEmAberto}
+                  data={data.itensEmAberto.registros}
+                />
+              </>
+            )}
+          </div>
+        </div> 
       </div> 
        
 

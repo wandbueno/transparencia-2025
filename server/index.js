@@ -23,9 +23,14 @@ const receitasRoutes = require('./routes/receitasDespesas/receitas')
 const dividaRoutes = require('./routes/receitasDespesas/divida')
 const ExtraRoutes = require('./routes/receitasDespesas/Extraorçamentaria')
 const PagamentoRoutes = require('./routes/receitasDespesas/Pagamento')
+const PatrimonioAlmoxarifadoRoutes = require('./routes/receitasDespesas/PatrimonioAlmoxarifado')
+const TransferenciasRealizadasRoutes = require('./routes/receitasDespesas/TransferenciasRealizadas')
+const TransferenciasRecebidasRoutes = require('./routes/receitasDespesas/TransferenciasRecebidas')
 
 const diariasRoutes = require('./routes/orgaosServidores/diarias')
 const servidoresRoutes = require('./routes/orgaosServidores/servidores')
+
+const legislacaoRoutes = require('./routes/legislacaoPublicacoes/legislacao')
 
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
@@ -36,9 +41,14 @@ app.use('/api/despesas', despesasRoutes)
 app.use('/api/divida', dividaRoutes)
 app.use('/api/extra', ExtraRoutes)
 app.use('/api/pagamento', PagamentoRoutes)
+app.use('/api/patrimonio-e-almoxarifado', PatrimonioAlmoxarifadoRoutes)
+app.use('/api/transferencia-realizada', TransferenciasRealizadasRoutes)
+app.use('/api/transferencias-recebidas', TransferenciasRecebidasRoutes)
 
 app.use('/api/diarias', diariasRoutes)
 app.use('/api/servidor', servidoresRoutes)
+
+app.use('/api/legislacao', legislacaoRoutes)
 
 // Rota básica para a raiz do servidor
 app.get('/', (req, res) => {

@@ -7,7 +7,6 @@ import DataTableDetail from '../../../common/DataTableDetail';
 import '../../PagesDetail.css';
 import '../../../../assets/global.css';
 import { config } from "../../../../assets/config";
-import ExportDetailToPDF from "../../../common/ExportDetailToPDF";
 
 const PagamentoDetail = () => {
   const { id } = useParams();  
@@ -38,6 +37,9 @@ const PagamentoDetail = () => {
     fetchData();
   }, [id]);  // Adiciona `id` como dependência do useEffect
 
+  // Definindo o título dinamicamente com base nos dados
+  const pageTitle = data ? `Detalhes: Pagamento Nº ${data.numero}` : 'Detalhes';
+
   // Definição das colunas para o DataTable dos Estornos
   const columnsEstornos = [
     { name: 'Data', selector: row => row.dataDoEstorno, sortable: true, width: '30%' },
@@ -49,15 +51,16 @@ const PagamentoDetail = () => {
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: Pagamento Nº ${data.numero}` : 'Detalhes'}
+        title={pageTitle} 
         breadcrumb={[
           { label: 'Pagamentos', path: '/pagamentos' },
           { label: data ? `Pagamento Nº ${data.numero}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle}  
       />
-
-      {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} tableRef={tableRef} pageTitle={`Pagamento Nº ${data?.numero}`} />
 
       {loading ? (
         <LoadingSpinner />

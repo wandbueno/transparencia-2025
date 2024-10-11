@@ -1,0 +1,32 @@
+.somatorio-movimentos {
+  display: flex;
+  flex-direction: column;
+}
+
+.somatorio-movimentos span {
+  margin-bottom: 10px;
+  font-size: var(--font-size-xsmall);
+  color: var(--titulo-color);
+}
+
+.somatorio-movimentos p {
+  display: grid;
+  font-weight: bold;
+
+  
+}
+.somatorio-detalhes{
+  border: 1px solid #d0d0d0;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  /* text-align: center; */
+  justify-content: space-between;
+
+  span{
+    display: grid;    
+    font-size: var(--font-size-xsmall);
+    color: var(--titulo-color);
+  }
+}

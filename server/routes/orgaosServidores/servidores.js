@@ -8,7 +8,9 @@ const fetchFromAPI = async (path, req, res) => {
       params: {
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        ano: req.query.ano || ''
+        ano: req.query.ano || '',
+        mes: req.query.mes || '',
+        matricula: req.query.matricula || ''
         // codigoDoOrgao: req.query.codigoDoOrgao || ''
         // categoriaDoTrabalhadorNoESocial:
         // req.query.categoriaDoTrabalhadorNoESocial,
@@ -19,8 +21,7 @@ const fetchFromAPI = async (path, req, res) => {
         // cpf: req.query.cpf,
         // estadoDoCliente: req.query.estadoDoCliente,
         // logotipoDoCliente: req.query.logotipoDoCliente,
-        // matriculaDoFuncionario: req.query.matriculaDoFuncionario,
-        // mes: req.query.mes,
+
         // nomeDoDepartamento: req.query.nomeDoDepartamento,
         // nomeDoFuncionario: req.query.nomeDoFuncionario,
         // orgaoDoCliente: req.query.orgaoDoCliente
@@ -104,11 +105,74 @@ router.get('/movimento13-salario/paginado', (req, res) =>
   )
 )
 
-router.get('/:id', (req, res) => {
-  const id = req.params.id
+// router.get('/:id', (req, res) => {
+//   const id = req.params.id
+//   fetchFromAPI(
+//     `/api/orgaos-e-servidores/servidor/detalhe?matricula=${id}`,
+//     req,
+//     res
+//   )
+// })
+
+// Rota para acessar detalhes de um servidor pela matrícula, ano e mês
+router.get('/:matricula', (req, res) => {
+  const { matricula } = req.params
+  const { ano, mes } = req.query // Recebe ano e mes como query parameters
+  // console.log(
+  //   `Recebido no back-end: matricula=${matricula}, ano=${ano}, mes=${mes}`
+  // )
+
   fetchFromAPI(
-    `/api/orgaos-e-servidores/servidor/detalhe?chavePrimaria=${id}`,
-    req,
+    `/api/orgaos-e-servidores/servidor/detalhe`,
+    {
+      query: {
+        ano,
+        mes,
+        matricula
+      }
+    },
+    res
+  )
+})
+
+// Rota para acessar detalhes de um servidor pela matrícula, ano e mês
+router.get('/ferias/:matricula', (req, res) => {
+  const { matricula } = req.params
+  const { ano, mes } = req.query // Recebe ano e mes como query parameters
+  // console.log(
+  //   `Recebido no back-end: matricula=${matricula}, ano=${ano}, mes=${mes}`
+  // )
+
+  fetchFromAPI(
+    `/api/orgaos-e-servidores/servidor/movimento-ferias/paginado`,
+    {
+      query: {
+        ano,
+        mes,
+        matricula
+      }
+    },
+    res
+  )
+})
+
+// Rota para acessar detalhes de um servidor pela matrícula, ano e mês
+router.get('/movimento-vencimentos/:matricula', (req, res) => {
+  const { matricula } = req.params
+  const { ano, mes } = req.query // Recebe ano e mes como query parameters
+  // console.log(
+  //   `Recebido no back-end: matricula=${matricula}, ano=${ano}, mes=${mes}`
+  // )
+
+  fetchFromAPI(
+    `/api/orgaos-e-servidores/servidor/movimento-vencimentos/paginado`,
+    {
+      query: {
+        ano,
+        mes,
+        matricula
+      }
+    },
     res
   )
 })

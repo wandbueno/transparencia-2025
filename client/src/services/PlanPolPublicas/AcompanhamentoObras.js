@@ -15,3 +15,23 @@ export const getAcompanhamentoObras = async () => {
     throw error
   }
 }
+
+// Função para obter apenas obras paralisadas (Inacabada ou Paralisada)
+export const getObrasParalisadas = async () => {
+  try {
+    const obras = await getAcompanhamentoObras() // Reaproveita a função original
+
+    // Filtrar as obras onde a situação é 'Inacabada' (32) ou 'Paralisada' (34)
+    const obrasParalisadas = obras.filter(obra => {
+      const situacaoObra = obra['situacao-obra'] // Acessa o campo 'situacao-obra'
+      return (
+        situacaoObra && (situacaoObra.includes(32) || situacaoObra.includes(34))
+      )
+    })
+
+    return obrasParalisadas
+  } catch (error) {
+    console.error('Erro ao buscar obras paralisadas:', error)
+    throw error
+  }
+}

@@ -12,13 +12,16 @@ const fetchFromAPI = async (path, req, res, params = {}) => {
       params: {
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 3000,
+        codigoDaReceita: req.query.codigoDaReceita || '',
+        codigoDoOrgao: req.query.codigoDoOrgao || '',
         ano: req.query.ano || currentYear, // Ano atual automaticamente
         mes: req.query.mes || currentMonth, // Mês atual automaticamente
         ...params // Adiciona os parâmetros dinamicamente
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        'cliente-integrado': process.env.CLIENTE_INTEGRADO,
+        Accept: 'application/json'
       }
     })
     res.json(response.data)
@@ -72,6 +75,32 @@ router.get('/:id', (req, res) => {
     mes,
     codigoDoOrgao
   })
+})
+
+// Rota para buscar os movimentos de uma receita específica
+router.get('/movimentos/:id', (req, res) => {
+  const id = req.params.id
+  const { ano, mes, codigoDoOrgao } = req.query
+
+  // Verifica se os parâmetros necessários estão presentes
+  if (!id || !ano || !mes || !codigoDoOrgao) {
+    return res.status(400).json({
+      error: 'Faltando parâmetros para buscar os movimentos da receita'
+    })
+  }
+
+  // Chama a API com os parâmetros necessários
+  fetchFromAPI(
+    '/api/receitas-e-despesas/receita/movimentos/paginado',
+    req,
+    res,
+    {
+      codigoDaReceita: id,
+      ano,
+      mes,
+      codigoDoOrgao
+    }
+  )
 })
 
 module.exports = router

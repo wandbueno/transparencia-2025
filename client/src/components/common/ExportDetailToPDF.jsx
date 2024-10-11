@@ -2,6 +2,9 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { config } from '../../assets/config';
+import './ExportDetailToPDF.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPrint } from '@fortawesome/free-solid-svg-icons'; // Importando o ícone de impressão
 
 const ExportDetailToPDF = ({ contentRef, tableRef, pageTitle }) => {
   const handleDownloadPDF = async () => {
@@ -92,8 +95,9 @@ const ExportDetailToPDF = ({ contentRef, tableRef, pageTitle }) => {
   };
 
   return (
-    <button onClick={handleDownloadPDF}>
-      Abrir PDF
+    <button onClick={handleDownloadPDF} className="print-button">
+      <FontAwesomeIcon icon={faPrint} style={{ marginRight: '5px' }} />
+      Imprimir
     </button>
   );
 };

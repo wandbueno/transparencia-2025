@@ -10,16 +10,15 @@ import ButtonTable from "../../common/ButtonTable";
 import { config } from '../../../assets/config';
 
 const columnsLeis = [
-  { name: "Ano", selector: (row) => row.ano, sortable: true, width: '5%' },
-  { name: "Data", selector: (row) => row.dataDaPublicacao, sortable: true, width: '10%' },
+  
   { name: "Tipo", selector: (row) => row.tipoDoDocumento, sortable: true, width: '5%' },
-  { name: "Número", selector: (row) => row.numeroDoDocumento, sortable: true, width: '10%' },
-  { name: "Situação", selector: (row) => row.situacao, sortable: true, width: '10%' },
+  { name: "Número", selector: (row) => row.numeroDoDocumento, sortable: true, width: '8%' },
+  { name: "Data", selector: (row) => row.dataDaPublicacao, sortable: true, width: '10%' },
   {
     name: "Descrição",
     selector: (row) => row.descricao,
     sortable: true,
-    width: '49%',
+    width: '66%',
     cell: (row) => (
       <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>
         {row.descricao}

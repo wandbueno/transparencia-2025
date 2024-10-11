@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getContratosById } from "../../../services/contratosLicitacoes/contratos";
 import PageHeader from '../../common/PageHeader';
@@ -13,6 +13,8 @@ const ContratosDetail = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +36,9 @@ const ContratosDetail = () => {
 
     fetchData();
   }, [id]); 
+
+   // Definindo o título dinamicamente com base nos dados
+   const pageTitle = data ? `Detalhes: Contrato Nº ${data.numero}` : 'Detalhes';
   
   // Função para formatar CPF com substituição dos números por 'x'
   const formatCpf = (cpf) => {
@@ -125,11 +130,15 @@ const ContratosDetail = () => {
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: CONTRATO Nº ${data.numero}` : 'Detalhes'}
+        title={pageTitle} 
         breadcrumb={[
           { label: 'Contratos', path: '/Contratos' },
           { label: data ? `CONTRATO Nº ${data.numero}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle}  
       />
 
       {loading ? (
@@ -138,7 +147,7 @@ const ContratosDetail = () => {
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
       <div className="detalhes-geral">  
-        <div className="detalhes">
+        <div className="detalhes" ref={contentRef}>
             <span><p>Número do Contrato:</p> {data.numero}</span>
             <span><p>Nome do(a) contratado(a):</p> {data.nomeDoFornecedor}</span>
             <span><p>CPF/CNPJ do(a) contratado(a):</p> 
@@ -175,41 +184,42 @@ const ContratosDetail = () => {
           </div> 
        
         </div> 
+        <div ref={tableRef}>
+          <div className="tabela-detalhes">
+            {data.aditivos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Aditivos</h2>
+                <DataTableDetail
+                  columns={columnsAditivos}
+                  data={data.aditivos.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.aditivos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Aditivos</h2>
-              <DataTableDetail
-                columns={columnsAditivos}
-                data={data.aditivos.registros}
-              />
-            </>
-          )}
-        </div>
+          <div className="tabela-detalhes">
+            {data.apostilamentos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Apostilamentos</h2>
+                <DataTableDetail
+                  columns={columnsApostilamentos}
+                  data={data.apostilamentos.registros}
+                />
+              </>
+            )}
+          </div>
 
-        <div className="tabela-detalhes">
-          {data.apostilamentos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Apostilamentos</h2>
-              <DataTableDetail
-                columns={columnsApostilamentos}
-                data={data.apostilamentos.registros}
-              />
-            </>
-          )}
-        </div>
-
-        <div className="tabela-detalhes">
-          {data.empenhos.total > 0 && (
-            <>
-              <h2 className="titulo-tabela">Empenhos</h2>
-              <DataTableDetail
-                columns={columnsEmpenhosContrato}
-                data={data.empenhos.registros}
-              />
-            </>
-          )}
+          <div className="tabela-detalhes">
+            {data.empenhos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Empenhos</h2>
+                <DataTableDetail
+                  columns={columnsEmpenhosContrato}
+                  data={data.empenhos.registros}
+                />
+              </>
+            )}
+          </div>
         </div>
         
         

@@ -14,11 +14,11 @@ const Header = () => {
 
   // Configuração dos menus principais e seus submenus
   const menuConfig = {
-    receitas: ['/despesas-empenho', '/receitas', '/extra-orcamentaria', '/pagamentos'],
-    orgaos: ['/servidores', '/terceirizados', '/diarias'],
-    politicas: ['/politicas'],
+    receitas: ['/despesas-empenho', '/receitas', '/extra-orcamentaria', '/pagamentos', '/transferencias-voluntarias-realizadas', '/transferencias-voluntarias-recebidas', '/renuncias-fiscais', '/desoneracao', '/divida-ativa'],
+    orgaos: ['/servidores', '/terceirizados', '/diarias', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo'],
+    politicas: ['/politicas', '/obras', '/obras-paralisadas', '/julgamento-de-contas','/prestacao-de-contas', '/incentivos-a-projetos-culturais'],
     fiscal: ['/fiscal'],
-    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos'],
+    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos','/patrimonio-e-almoxarifado'],
     legislacao: ['/legislacao', '/leis'],
     ouvidoria: ['/ouvidoria']
   };

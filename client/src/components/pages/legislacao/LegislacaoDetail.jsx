@@ -6,7 +6,6 @@ import LoadingSpinner from '../../common/LoadingSpinner'
 import '../PagesDetail.css';
 import '../../../assets/global.css';
 import { config } from "../../../assets/config";
-import ExportDetailToPDF from "../../common/ExportDetailToPDF";
 
 const LegislacaoDetail = () => {
   const { id } = useParams();  
@@ -37,6 +36,9 @@ const LegislacaoDetail = () => {
     fetchData();
   }, [id]);  // Adiciona `id` como dependência do useEffect
 
+  // Definindo o título dinamicamente com base nos dados
+  const pageTitle = data ? `Detalhes: ${data.tipoDoDocumento} Nº ${data.numeroDoDocumento}` : 'Detalhes';
+
   if (loading) return <LoadingSpinner />;
   if (error) return <div>Erro ao carregar detalhes: {error}</div>;
   if (!data) return <div>Nenhum dado encontrado.</div>;  // Adicione uma verificação para garantir que `data` exista
@@ -44,15 +46,16 @@ const LegislacaoDetail = () => {
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: ${data.tipoDoDocumento} Nº ${data.numeroDoDocumento}` : 'Detalhes'}
+        title={pageTitle} 
         breadcrumb={[
           { label: 'Leis Municípais', path: '/leis' },
           { label: data ? `${data.tipoDoDocumento} Nº ${data.numeroDoDocumento}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle}  
       />
-
-      {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} tableRef={tableRef} pageTitle={`${data.tipoDoDocumento} Nº ${data.numeroDoDocumento}`} />
 
       {loading ? (
         <LoadingSpinner />

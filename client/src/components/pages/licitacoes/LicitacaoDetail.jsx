@@ -8,7 +8,6 @@ import '../PagesDetail.css';
 import '../../../assets/global.css';
 import { config } from "../../../assets/config";
 import ButtonTable from '../../common/ButtonTable'
-import ExportDetailToPDF from "../../common/ExportDetailToPDF";
 
 const LicitacaoDetail = () => {
   const { id } = useParams();  
@@ -16,6 +15,7 @@ const LicitacaoDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo principal
+  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,28 +123,30 @@ const LicitacaoDetail = () => {
       { name: 'Data do Decreto', selector: row => row.dataDoDecreto, sortable: true },
     ];
 
+    // Definindo o título dinamicamente com base nos dados
+   const pageTitle = data ? `Detalhes: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes';
 
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes'}
+        title={pageTitle} 
         breadcrumb={[
           { label: 'Procedimentos Licitatório', path: '/licitacoes' },
           { label: data ? `${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle}
       />
-
-       {/* Botão para exportar os detalhes para PDF */}
-       <ExportDetailToPDF contentRef={contentRef} pageTitle={`Procedimentos Licitatório Nº ${data?.numeroAno}`} />
 
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div>Erro ao carregar detalhes: {error}</div>
       ) : (
-      <div className="detalhes-geral" ref={contentRef}>  
-        <div className="detalhes">
-          
+      <div className="detalhes-geral">  
+        <div className="detalhes" ref={contentRef}>
             <span><p>Unidade Gestora:</p> {data.orgao}</span>
             <span><p>Modalidade:</p> {data.modalidade}</span>
             <span><p>Nº/Ano:</p> {data.numeroAno}</span>
@@ -179,7 +181,7 @@ const LicitacaoDetail = () => {
           </div> 
         </div> 
 
-        <div>
+        <div ref={tableRef}>
           <div className="tabela-detalhes">
             {data.empresasCredenciadas && data.empresasCredenciadas.total > 0 && (
               <>

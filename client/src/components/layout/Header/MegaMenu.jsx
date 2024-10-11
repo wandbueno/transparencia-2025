@@ -32,9 +32,7 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                 <p>
                   <Link to="/receitas" className={location.pathname === '/receitas' ? 'active' : ''} onClick={handleSubmenuClick}> Receita Prevista e Arrecadada </Link>
                 </p>
-                <p>
-                  <Link to="/arrecadacao" className={location.pathname === '/arrecadacao' ? 'active' : ''} onClick={closeMenu}> Arrecadação </Link>
-                </p>
+                
                 <p>
                   <Link to="/balanco" className={location.pathname === '/balanco' ? 'active' : ''} onClick={closeMenu}> Balanço Orçamentário </Link>
                 </p>
@@ -49,17 +47,24 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                 <p>
                   <Link to="/pagamentos" className={location.pathname === '/pagamentos' ? 'active' : ''} onClick={closeMenu}> Pagamentos </Link>
                 </p>
+                <p>
+                  <Link to="/renuncias-fiscais" className={location.pathname === '/renuncias-fiscais' ? 'active' : ''} onClick={closeMenu}> Renúncias Fiscais</Link>
+                </p>
+                <p>
+                  <Link to="/desoneracao" className={location.pathname === '/desoneracao' ? 'active' : ''} onClick={closeMenu}> Desoneração </Link>
+                </p>
               </div>
               <div className="column">
                 <p>
-                  <Link to="/resumo-rubrica" className={location.pathname === '/resumo-rubrica' ? 'active' : ''} onClick={closeMenu}> Resumo Mensal por Rubrica </Link>
+                  <Link to="/transferencias-voluntarias-realizadas" className={location.pathname === '/transferencias-voluntarias-realizadas' ? 'active' : ''} onClick={closeMenu}> Transferências Voluntárias Realizadas</Link>
                 </p>
                 <p>
-                  <Link to="/resumo-alinea" className={location.pathname === '/resumo-alinea' ? 'active' : ''} onClick={closeMenu}> Resumo Mensal por Alínea </Link>
+                  <Link to="/transferencias-voluntarias-recebidas" className={location.pathname === '/transferencias-voluntarias-recebidas' ? 'active' : ''} onClick={closeMenu}> Transferências Voluntárias Recebidas</Link>
                 </p>
                 <p>
-                  <Link to="/transferencias" className={location.pathname === '/transferencias' ? 'active' : ''} onClick={closeMenu}> Transferências Financeiras Recebidas </Link>
+                  <Link to="/divida-ativa" className={location.pathname === '/divida-ativa' ? 'active' : ''} onClick={closeMenu}> Dívida Ativa e Cobranças</Link>
                 </p>
+               
               </div>
             </div>            
             )} 
@@ -75,6 +80,9 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                   </p>
                   <p>
                     <Link to="/estagiarios" className={location.pathname === '/estagiarios' ? 'active' : ''} onClick={closeMenu}>Estagiários</Link>
+                  </p>
+                  <p>
+                    <Link to="/concurso-processo-seletivo" className={location.pathname === '/concurso-processo-seletivo' ? 'active' : ''} onClick={closeMenu}>Concursos e Processos Seletivos</Link>
                   </p>
                 </div>
                 <div className="column">
@@ -98,6 +106,32 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                 </div>
               </div>
               
+            )}
+
+            {activeMenu === 'politicas' && (
+              <div className="submenu-grid">
+                <div className="column">
+                  <p>
+                    <Link to="/obras" className={location.pathname === '/obras' ? 'active' : ''} onClick={closeMenu}>Acompanhamento de Obras</Link>                    
+                  </p> 
+                  <p>
+                    <Link to="/obras-paralisadas" className={location.pathname === '/obras-paralisadas' ? 'active' : ''} onClick={closeMenu}>Relação de Obras paralisadas</Link>                    
+                  </p>
+                                    
+                </div>
+                <div className="column">
+                  <p>
+                    <Link to="/julgamento-de-contas" className={location.pathname === '/julgamento-de-contas' ? 'active' : ''} onClick={closeMenu}>Julgamento de Contas pelo Legislativo</Link>                    
+                  </p> 
+                  <p>
+                    <Link to="/prestacao-de-contas" className={location.pathname === '/prestacao-de-contas' ? 'active' : ''} onClick={closeMenu}>Prestação de Contas e Parecer Prévio do TCE</Link>                    
+                  </p>  
+                  <p>
+                    <Link to="/incentivos-a-projetos-culturais" className={location.pathname === '/incentivos-a-projetos-culturais' ? 'active' : ''} onClick={closeMenu}>Incentivos a Projetos Culturais / Esportivos</Link>                    
+                  </p>                 
+                </div>
+
+              </div>
             )}
 
             {activeMenu === 'fiscal' && (
@@ -128,6 +162,12 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                      </Link>
                   </p>
                 </div>
+                <div className="column">
+                  <p>
+                     <Link to="/patrimonio-e-almoxarifado" className={location.pathname === '/patrimonio-e-almoxarifado' ? 'active' : ''} onClick={closeMenu} >Patrimônio e Almoxarifado</Link>
+                  </p>                  
+                </div>
+                
               </div>
             )}
 
@@ -136,8 +176,7 @@ const MegaMenu = ({ activeMenu, closeMenu, location }) => {
                 <div className="column">
                   <p>
                      <Link to="/leis" className={location.pathname === '/leis' ? 'active' : ''} onClick={closeMenu} >Leis Municípais</Link>
-                  </p>
-                  
+                  </p>                  
                 </div>
               </div>
             )}

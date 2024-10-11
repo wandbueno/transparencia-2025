@@ -41,3 +41,31 @@ export const getReceitasId = async (id, ano, mes, codigoDoOrgao) => {
     throw error
   }
 }
+
+// Função para buscar movimentos de uma receita específica
+export const getMovimentosReceita = async (id, codigoDoOrgao) => {
+  try {
+    const ano = new Date().getFullYear()
+    const mes = (new Date().getMonth() + 1).toString().padStart(2, '0') // Formata o mês com dois dígitos
+
+    console.log(
+      `Chamando a API para movimentos com ano=${ano}, mes=${mes}, receitaId=${id}, codigoDoOrgao=${codigoDoOrgao}`
+    )
+
+    const response = await axios.get(`${API_BASE_URL}/movimentos/${id}`, {
+      params: {
+        ano,
+        mes,
+        codigoDoOrgao
+      }
+    })
+
+    return {
+      data: response.data,
+      url: `${API_BASE_URL}/movimentos/${id}?ano=${ano}&mes=${mes}&codigoDoOrgao=${codigoDoOrgao}` // Retorna a URL da API
+    }
+  } catch (error) {
+    console.error(`Erro ao buscar movimentos da Receita com id ${id}:`, error)
+    throw error
+  }
+}

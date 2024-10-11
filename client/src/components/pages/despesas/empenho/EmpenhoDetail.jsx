@@ -7,8 +7,6 @@ import DataTableDetail from '../../../common/DataTableDetail';
 import '../../PagesDetail.css';
 import '../../../../assets/global.css';
 import { config } from "../../../../assets/config";
-import ExportDetailToPDF from "../../../common/ExportDetailToPDF";
-
 
 const EmpenhoDetail = () => {
   const { id } = useParams();  
@@ -44,6 +42,9 @@ const EmpenhoDetail = () => {
 
     fetchData();
   }, [id]);  // Adiciona `id` como dependência do useEffect
+
+  // Definindo o título dinamicamente com base nos dados
+  const pageTitle = data ? `Detalhes: Empenho Nº ${data.numeroDoTcm}` : 'Detalhes';
 
   // Definição das colunas para o DataTable do Detalhamento das Liquidações
   const columnsLiquidacoes = [
@@ -86,15 +87,16 @@ const EmpenhoDetail = () => {
   return (
     <div className="container">
       <PageHeader
-        title={data ? `DETALHES: Empenho Nº ${data.numeroDoTcm}` : 'Detalhes'}
+        title={pageTitle} 
         breadcrumb={[
           { label: 'Despesa/ Empenho', path: '/despesas-empenho' },
           { label: data ? `Empenho Nº ${data.numeroDoTcm}` : 'Detalhes' },
         ]}
+        showExportButton={true}  // Exibe o botão de exportação apenas aqui
+        contentRef={contentRef}
+        tableRef={tableRef}
+        pageTitle={pageTitle}  
       />
-
-      {/* Botão para exportar os detalhes para PDF */}
-      <ExportDetailToPDF contentRef={contentRef} tableRef={tableRef} pageTitle={`Empenho Nº ${data?.numeroDoTcm}`} />
 
       {loading ? (
         <LoadingSpinner />
