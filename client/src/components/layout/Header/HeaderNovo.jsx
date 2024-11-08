@@ -14,13 +14,13 @@ const Header = () => {
 
   // Configuração dos menus principais e seus submenus
   const menuConfig = {
-    receitas: ['/despesas-empenho', '/receitas', '/extra-orcamentaria', '/pagamentos', '/transferencias-voluntarias-realizadas', '/transferencias-voluntarias-recebidas', '/renuncias-fiscais', '/desoneracao', '/divida-ativa'],
-    orgaos: ['/servidores', '/terceirizados', '/diarias', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo'],
-    politicas: ['/politicas', '/obras', '/obras-paralisadas', '/julgamento-de-contas','/prestacao-de-contas', '/incentivos-a-projetos-culturais'],
-    fiscal: ['/fiscal'],
-    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos','/patrimonio-e-almoxarifado'],
-    legislacao: ['/legislacao', '/leis'],
-    ouvidoria: ['/ouvidoria']
+    receitas: ['/despesas-empenho', '/receitas', '/extra-orcamentaria', '/pagamentos', '/transferencias-voluntarias-realizadas', '/transferencias-voluntarias-recebidas', '/renuncias-fiscais', '/desoneracao', '/divida-ativa', '/liquidacoes', '/repasse-ou-transferencia', '/despesas-fixadas', '/despesa-sintetica', '/restos-a-pagar', '/informacoes-consolidadas', '/ordem-cronologica-de-pagamentos', '/balanco-anual', '/pcasp' ],
+    orgaos: ['/servidores', '/terceirizados', '/diarias', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo', '/tabela-explicativa-de-valores-de-diarias', '/estrutura-de-remuneracao'],
+    politicas: ['/politicas', '/obras', '/obras-paralisadas', '/julgamento-de-contas','/prestacao-de-contas', '/incentivos-a-projetos-culturais', '/planos', '/metas-e-riscos-fiscais'],
+    fiscal: ['/relatorio-do-controle-interno', '/relatorio-anual-de-gestao', '/relatorio-balanco-anual', '/relatorio-resumido-da-execucao-orcamentaria', '/relatorio-de-gestao-fiscal'],
+    licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos','/patrimonio-e-almoxarifado', '/sancoes-administrativas'],
+    legislacao: ['/legislacao', '/leis', '/convenio-pre-convenio-celebrados', '/emendas-parlamentares', '/acordos'],
+    ouvidoria: ['/ouvidoria', '/rol-de-informacoes']
   };
 
   // Verifica se o menu principal deve estar ativo com base na rota

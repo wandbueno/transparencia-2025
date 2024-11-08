@@ -4,6 +4,7 @@ import '../../assets/global.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faEnvelope, faClock, faPhone, } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import seloQualidade from '../../assets/selo_diamante.jpg';
 
 
 import { config } from '../../assets/config'; 
@@ -16,6 +17,11 @@ const Footer = () => {
         <div></div>
       </div>
       <div className="footer-sections">
+        <div className="footer-column">
+          <img src={seloQualidade} alt="Selo Qualidade" 
+        className="selo-qualidade" />
+        </div>
+        
         <div className="footer-column">
           <h4>Fale Conosco</h4>
           <p>

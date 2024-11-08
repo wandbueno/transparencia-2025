@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { getDespesasId, getItensEmpenho } from "../../../../services/receitasDespesas/despesas";
+import { getDespesasId, getItensEmpenho, getEstornosEmpenho, getLiquidacoesEmpenho, getOrdensPagamentoEmpenho } from "../../../../services/receitasDespesas/despesas";
 import PageHeader from '../../../common/PageHeader';
 import LoadingSpinner from '../../../common/LoadingSpinner'
 import DataTableDetail from '../../../common/DataTableDetail';
 import '../../PagesDetail.css';
 import '../../../../assets/global.css';
 import { config } from "../../../../assets/config";
+import ButtonTable from "../../../common/ButtonTable";
 
 const EmpenhoDetail = () => {
   const { id } = useParams();  
@@ -16,6 +17,9 @@ const EmpenhoDetail = () => {
   const contentRef = useRef();  // Referência para capturar o conteúdo principal
   const tableRef = useRef(); // Referência para capturar as tabelas separadamente
   const [itens, setItens] = useState(null); // Estado para os itens do empenho
+  const [estornos, setEstornos] = useState(null); // Estado para os estornos de ordem de pagamento
+  const [liquidacoes, setLiquidacoes] = useState(null);
+  const [ordensPagamento, setOrdensPagamento] = useState(null);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +31,19 @@ const EmpenhoDetail = () => {
         // Busca itens do empenho
         const itensEmpenho = await getItensEmpenho(id);
         setItens(itensEmpenho);  // Armazene os itens separadamente no estado
-        
+
+        // Busca estornos de ordem de pagamento
+        const estornosEmpenho = await getEstornosEmpenho(id);
+        setEstornos(estornosEmpenho);  // Armazene os estornos separadamente no estado
+
+        // Busca liquidações relacionadas ao empenho
+        const liquidacoesEmpenho = await getLiquidacoesEmpenho(id);
+        setLiquidacoes(liquidacoesEmpenho);
+
+        // Busca ordens de pagamento relacionadas ao empenho
+        const ordensPagamentoEmpenho = await getOrdensPagamentoEmpenho(id);
+        setOrdensPagamento(ordensPagamentoEmpenho);
+   
         // Atualizando o título da página com base nos dados recebidos
         if (result) {
           document.title = `Empenho Nº ${result.numeroDoTcm} - Portal Transparência - ${config.geral.nomeOrgao}`;
@@ -48,39 +64,67 @@ const EmpenhoDetail = () => {
 
   // Definição das colunas para o DataTable do Detalhamento das Liquidações
   const columnsLiquidacoes = [
-    { name: 'Data', selector: row => row.data, sortable: true, width: '20%' },
-    { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '20%' },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '12%' },
+    { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%' },
     {
       name: 'Motivo',
       selector: row => row.motivo,
       sortable: true,
-      width: '60%',
+      width: '70%',
       cell: row => <div className="text-wrap">{row.motivo}</div> // Aplicando a classe CSS para quebra de linha
+    },
+    {
+      name: 'Abrir',
+      cell: row => (
+        <ButtonTable path={`/liquidacoes/${row.codigoDaLiquidacao}`} label="Abrir" />  // Remova o "id", já que o path já inclui o ID
+      ),
+      width: '6%',
+      excludeFromExport: true
     }
   ];
 
    // Definição das colunas para o DataTable da Detalhamento das Ordem de Pagamentos
    const columnsOrdemPagamentos = [
-    { name: 'Data', selector: row => row.data, sortable: true, width: '20%' },
-    { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '20%' },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '12%' },
+    { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%' },
     {
       name: 'Motivo',
       selector: row => row.motivo,
       sortable: true,
-      width: '60%',
+      width: '70%',
       cell: row => <div className="text-wrap">{row.motivo}</div> // Aplicando a classe CSS para quebra de linha
     },
-   
+    {
+      name: 'Abrir',
+      cell: row => (
+        <ButtonTable path={`/pagamentos/${row.codigoDaOrdemPagamento}`} label="Abrir" />  // Remova o "id", já que o path já inclui o ID
+      ),
+      width: '6%',
+      excludeFromExport: true
+    }
     
   ];
 
    // Definição das colunas para o DataTable do Detalhamento Itens do Empenho
    const columnsItensEmpenho = [
-    { name: 'Código', selector: row => row.codigoDoProduto, sortable: true, width: '15%' },
-    { name: 'Nome', selector: row => row.tituloDoProduto, sortable: true, width: '30%' },
+    { name: 'Código', selector: row => row.codigoDoProduto, sortable: true, width: '12%' },
+    { name: 'Nome', selector: row => row.tituloDoProduto, sortable: true, width: '33%' },
     { name: 'Quantidade', selector: row => row.quantidade, sortable: true, width: '15%' },
     { name: 'Valor Unitário', selector: row => row.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '20%' },
     { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '20%' }
+  ];
+
+  // Definição das colunas para o DataTable do Detalhamento dos Estornos de Ordem de Pagamento
+  const columnsEstornos = [
+    { name: 'Data', selector: row => row.data, sortable: true, width: '15%' },
+    { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%' },
+    {
+      name: 'Motivo',
+      selector: row => row.motivo,
+      sortable: true,
+      width: '70%',
+      cell: row => <div className="text-wrap">{row.motivo}</div> // Aplicando a classe CSS para quebra de linha
+    }
   ];
 
 
@@ -150,9 +194,8 @@ const EmpenhoDetail = () => {
           </div>         
         </div> 
             
-        <div ref={tableRef}> 
-          {/* Tabela de Itens do Empenho */}
-          <div className="tabela-detalhes">  
+        <div className="tabela-detalhes" ref={tableRef}> 
+          {/* Tabela de Itens do Empenho */}            
             {itens && itens.total > 0 && (
               <>
                 <h2 className="titulo-tabela">Detalhamento Itens do Empenho</h2>
@@ -161,34 +204,35 @@ const EmpenhoDetail = () => {
                   data={itens.registros}
                 />
               </>
-            )}
-          </div>
+            )}          
 
-          {/* Tabela de Liquidações */}
-          <div className="tabela-detalhes">
-            {data.liquidacoes.total > 0 && (
+          {/* Tabela de Liquidações */}          
+            {liquidacoes && liquidacoes.total > 0 && (
               <>
                 <h2 className="titulo-tabela">Detalhamento das Liquidações</h2>
-                <DataTableDetail
-                  columns={columnsLiquidacoes}
-                  data={data.liquidacoes.registros}
-                />
+                <DataTableDetail columns={columnsLiquidacoes} data={liquidacoes.registros} />
               </>
-            )}
-          </div>
+            )}          
 
-          {/* Tabela de Ordens de Pagamento */}
-          <div className="tabela-detalhes">
-            {data.ordensDePagamento.total > 0 && (
+          {/* Tabela de Ordens de Pagamento */}          
+            {ordensPagamento && ordensPagamento.total > 0 && (
               <>
-                <h2 className="titulo-tabela">Detalhamento das Ordem de Pagamentos</h2>
+                <h2 className="titulo-tabela">Detalhamento das Ordens de Pagamento</h2>
+                <DataTableDetail columns={columnsOrdemPagamentos} data={ordensPagamento.registros} />
+              </>
+            )}          
+
+          {/* Tabela de Estornos de Ordem de Pagamento */}          
+            {estornos && estornos.total > 0 && (
+              <>
+                <h2 className="titulo-tabela">Detalhamento das Anulações das Ordem de Pagamentos</h2>
                 <DataTableDetail
-                  columns={columnsOrdemPagamentos}
-                  data={data.ordensDePagamento.registros}
+                  columns={columnsEstornos}
+                  data={estornos.registros}
                 />
               </>
             )}
-          </div>
+                
         </div>
         
       </div> 

@@ -23,6 +23,8 @@ const DataTableDetail = ({ columns, data }) => {
       columns={columns}
       data={data}
       pagination
+      paginationPerPage={5}  // Define o limite de 5 resultados por página
+      paginationRowsPerPageOptions={[5, 10, 15, 20]}  // Define as opções de quantos resultados por página
       paginationComponentOptions={paginationOptions}
       className="data-table"
       noDataComponent={<div>Nenhum dado encontrado</div>} // Mensagem para quando não há dados

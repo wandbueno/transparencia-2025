@@ -6,7 +6,7 @@ import FilterSection from '../../../common/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
-import ButtonLink from "../../../common/ButtonLink";
+import ButtonTable from "../../../common/ButtonTable";
 
 const columnsPrestacaoContas = [
   { 
@@ -39,7 +39,11 @@ const columnsPrestacaoContas = [
   { 
     name: 'Mais Detalhes', 
     selector: (row) => (
-      <ButtonLink link={row.meta["link-externo"]} label="Ver Detalhes" /> // Usa ButtonLink diretamente, sem verificação
+      <ButtonTable 
+        path="/prestacao-de-contas"  // Caminho base para os detalhes
+        id={row.slug}                // Usando o slug como identificador
+        label="Ver Detalhes"          // Texto do botão
+      />
     ),
     width: '10%',
     excludeFromExport: true

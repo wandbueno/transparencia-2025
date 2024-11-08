@@ -41,7 +41,7 @@ const IncentivosProjetos = () => {
   useEffect(() => {
     
     // Atualiza o título da aba do navegador
-    document.title = `Relação de Incentivos Relacionados a Projetos Culturais / Esportivos - ${config.geral.nomeOrgao}`
+    document.title = `Relação de Incentivos a Projetos Culturais / Esportivos - ${config.geral.nomeOrgao}`
 
     const fetchData = async () => {
       try {
@@ -51,7 +51,7 @@ const IncentivosProjetos = () => {
         setData(data); // Armazena os dados filtrados
 
       } catch (error) {
-        console.error('Erro ao carregar Relação de Incentivos Relacionados a Projetos Culturais / Esportivos:', error);
+        console.error('Erro ao carregar Relação de Incentivos a Projetos Culturais / Esportivos:', error);
         setError('Erro ao carregar dados da API');
       } finally {
         setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
@@ -64,9 +64,9 @@ const IncentivosProjetos = () => {
   return (
     <div className="container">
     <PageHeader
-        title="Relação de Incentivos Relacionados a Projetos Culturais / Esportivos"
+        title="Relação de Incentivos a Projetos Culturais / Esportivos"
         breadcrumb={[
-          { label: 'Relação de Incentivos Relacionados a Projetos Culturais / Esportivos' },
+          { label: 'Relação de Incentivos a Projetos Culturais / Esportivos' },
         ]}
       />      
       <FilterSection  />
@@ -81,7 +81,7 @@ const IncentivosProjetos = () => {
         <div>Erro ao carregar Relação de Incentivos Relacionados a Projetos Culturais / Esportivos: {error}</div>
       ) : (
         <DataTableComponent
-          title="Relação de Incentivos Relacionados a Projetos Culturais / Esportivos"
+          title="Relação de Incentivos a Projetos Culturais / Esportivos"
           columns={columnsIncentivosProjetos}
           data={data}
         />

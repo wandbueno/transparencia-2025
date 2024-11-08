@@ -5,9 +5,9 @@ import PageHeader from '../../../common/PageHeader';
 import FilterSection from '../../../common/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
-import './Empenho.css';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
+import FonteDadosMega from "../../../common/FonteDadosMega";
 
 const columns = [
   { name: "Número", selector: (row) => row.codigo, sortable: true, width: '9%' },
@@ -79,6 +79,9 @@ const Empenho = () => {
         />
       )}
 
+
+      <FonteDadosMega />
+    
    
     </div>
   );

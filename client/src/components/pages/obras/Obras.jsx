@@ -103,6 +103,8 @@ const Obras = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalValorObras, setTotalValorObras] = useState(0); // Estado para o total
+  const [totalObras, setTotalObras] = useState(0); // Estado para o total de obras
 
   useEffect(() => {
     // Atualiza o título da aba do navegador
@@ -112,6 +114,18 @@ const Obras = () => {
       try {
         const result = await getAcompanhamentoObras(); // Chamada para o serviço de obras
         setData(result); // Define os dados da API
+
+        // Calcula o total do valor das obras
+        const total = result.reduce((sum, obra) => {
+          const valor = parseFloat(obra.meta["valor-obra"]?.replace(/[^\d,-]/g, '').replace(',', '.') || 0);
+          return sum + valor;
+        }, 0);
+
+        setTotalValorObras(total); // Armazena o valor total
+
+        // Define o total de obras
+        setTotalObras(result.length);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -141,6 +155,7 @@ const Obras = () => {
       ) : error ? (
         <div>Erro ao carregar Despesas Extra Orçamentária: {error}</div>
       ) : (
+        <>
         <DataTableComponent
           title="Acompanhamento de Obras"
           columns={columnsObras}
@@ -148,6 +163,16 @@ const Obras = () => {
           responsive={true} // Garante que a tabela seja responsiva
           noWrap={false} // Permite que o texto seja quebrado em múltiplas linhas
         />
+
+          <div className="total-valor-obras">
+            <p className="titulo">Resumo total de obras</p>
+            <div>
+              <span><strong>Total de Obras:</strong> {totalObras}</span>
+              <span><strong>Valor Estimado de Contratos:</strong> R$ {totalValorObras.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+        </>
+        
       )}
 
    

@@ -13,3 +13,25 @@
 .btn-primary{
   text-decoration: none!important;
 }
+
+.total-valor-obras{
+  background-color: #fff;
+  color: var(--titulo-color);
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #cccccc50;
+
+  p{
+    font-size: var(--font-size-large);
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 1px solid #cccccc50;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  div{
+    display: flex;
+    justify-content: space-between
+  }
+}

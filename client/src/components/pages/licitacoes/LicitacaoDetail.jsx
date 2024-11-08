@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { getLicitacaoById } from "../../../services/contratosLicitacoes/licitacoes";
+import { getLicitacaoById, getItensVencedores, getItensFracassadosOuDesertos, getItensEmAberto, getItensCanceladosESubstituidos, getEmpresasCredenciadas, getEmpenhos, getContratos } from "../../../services/contratosLicitacoes/licitacoes";
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
@@ -16,13 +16,42 @@ const LicitacaoDetail = () => {
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo principal
   const tableRef = useRef(); // Referência para capturar as tabelas separadamente
+  const [itensVencedores, setItensVencedores] = useState(null);  // Estado para armazenar os Itens Vencedores
+  const [itensFracassados, setItensFracassados] = useState([]);
+  const [itensEmAberto, setItensEmAberto] = useState([]);
+  const [itensCancelados, setItensCancelados] = useState([]);
+  const [empresasCredenciadas, setEmpresasCredenciadas] = useState([]);
+  const [empenhos, setEmpenhos] = useState([]);
+  const [contratos, setContratos] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getLicitacaoById(id);  
         setData(result);
-        
+
+        // Buscando os itens relacionados
+        const itensVencedoresResult = await getItensVencedores(id);
+        setItensVencedores(itensVencedoresResult.registros);
+
+        const itensFracassadosResult = await getItensFracassadosOuDesertos(id);
+        setItensFracassados(itensFracassadosResult.registros);
+
+        const itensEmAbertoResult = await getItensEmAberto(id);
+        setItensEmAberto(itensEmAbertoResult.registros);
+
+        const itensCanceladosResult = await getItensCanceladosESubstituidos(id);
+        setItensCancelados(itensCanceladosResult.registros);
+
+        const empresasCredenciadasResult = await getEmpresasCredenciadas(id);
+        setEmpresasCredenciadas(empresasCredenciadasResult.registros);
+
+        const empenhosResult = await getEmpenhos(id);
+        setEmpenhos(empenhosResult.registros);
+
+        const contratosResult = await getContratos(id);
+        setContratos(contratosResult.registros);
+                
         // Atualizando o título da página com base nos dados recebidos
         if (result) {
           document.title = `${result.modalidade} Nº ${result.numeroAno} - Portal Transparência - ${config.geral.nomeOrgao}`;
@@ -41,10 +70,10 @@ const LicitacaoDetail = () => {
   // Definição das colunas para o DataTable dos Itens Vencedores
   const columnsItensVencedores = [
     { name: 'Lote/Item', selector: row => row.loteEItem, sortable: true, width: '10%' },
-    { name: 'Produto', selector: row => row.produto, sortable: true, width: '20%'  },
-    { name: 'Qtd', selector: row => row.quantidade, sortable: true, width: '6%'  },
-    { name: 'Und', selector: row => row.unidade, sortable: true, width: '7%'  },
+    { name: 'Produto', selector: row => row.produto, sortable: true, width: '22%'  },
     { name: 'Fornecedor Vencedor', selector: row => row.fornecedor, sortable: true, width: '20%'  },
+    { name: 'Und', selector: row => row.unidade, sortable: true, width: '5%'  },
+    { name: 'Qtd', selector: row => row.quantidade, sortable: true, width: '6%'  },
     { name: 'Valor Unitário', selector: row => row.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '13%'  },
     { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%'  },
     { name: 'Adjudicada', selector: row => row.adjudicada, sortable: true, width: '12%'  }
@@ -53,7 +82,7 @@ const LicitacaoDetail = () => {
   // Definição das colunas para o DataTable dos Contratos
   const columnsContratos = [
     { name: 'Número', selector: row => row.numero, sortable: true, width: '10%' },
-    { name: 'Fornecedor', selector: row => row.nomeDoFornecedor, sortable: true, width: '40%'  },
+    { name: 'Fornecedor', selector: row => row.nomeDoFornecedor, sortable: true, width: '42%'  },
     // { name: 'Objeto', selector: row => row.objeto, sortable: true, width: '40%' },
     { name: 'Data', selector: row => row.data, sortable: true, width: '10%'  },
     { name: 'Vigência', selector: row => row.vigencia, sortable: true, width: '10%'  },
@@ -65,43 +94,55 @@ const LicitacaoDetail = () => {
         const id = row.codigo;
         return <ButtonTable path="/contratos" id={id} label="Abrir" target="_blank"/>; // Abre em nova aba
       },
-      width: '10%',
-        },
+      width: '8%',
+      excludeFromExport: true
+    },
   ];
 
   // Definição das colunas para o DataTable dos Empenhos
   const columnsEmpenhos = [
-    { name: 'Dotação Orçamentária', selector: row => row.classificacaoOrcamentaria, sortable: true, width: '13%' },
-    { name: 'Número', selector: row => row.numero, sortable: true, width: '9%' },
-    { name: 'Data', selector: row => row.data, sortable: true, width: '9%'  },
-    { name: 'Fornecedor', selector: row => row.nomeDoFornecedor, sortable: true, width: '17%'  },
-    { name: 'Empenho', selector: row => row.valorDoEmpenho.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%'  },
-    { name: 'Anulação', selector: row => row.valorDaAnulacaoDoEmpenho.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%' },
-    { name: 'Liquidação', selector: row => row.valorDaLiquidacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '12%'  },
-    { name: 'Anulação Liquidação', selector: row => row.valorDaAnulacaoDaLiquidacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '16%' },
+    { name: 'Dotação Orçamentária', selector: row => row.classificacaoOrcamentaria, sortable: true, width: '16%' },
+    { name: 'Número', selector: row => row.numero, sortable: true, width: '7%' },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '8%'  },
+    { name: 'Fornecedor', selector: row => row.nomeDoFornecedor, sortable: true, width: '19%'  },
+    { name: 'Empenho', selector: row => row.valorDoEmpenho.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '9%'  },
+    { name: 'Anulação', selector: row => row.valorDaAnulacaoDoEmpenho.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '9%' },
+    { name: 'Liquidação', selector: row => row.valorDaLiquidacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '9%'  },
+    { name: 'Anulação Liquidação', selector: row => row.valorDaAnulacaoDaLiquidacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '15%' },
+    {
+      name: 'Detalhes',
+      selector: row => row.codigo,
+      cell: row => {
+        const id = row.codigo;
+        return <ButtonTable path="/despesas-empenho" id={id} label="Abrir" target="_blank"/>; // Abre em nova aba
+      },
+      width: '8%',
+      excludeFromExport: true
+    },
   ];
 
   // Definição das colunas para o DataTable dos Itens em Aberto
   const columnsItensEmAberto = [
-    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true },
-    { name: 'Produto', selector: row => row.produto, sortable: true },
-    { name: 'Unidade', selector: row => row.unidade, sortable: true },
-    { name: 'Quantidade', selector: row => row.quantidade, sortable: true },
+    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true, width: '20%' },
+    { name: 'Produto', selector: row => row.produto, sortable: true, width: '40%' },
+    { name: 'Unidade', selector: row => row.unidade, sortable: true, width: '20%' },
+    { name: 'Quantidade', selector: row => row.quantidade, sortable: true, width: '20%' },
   ];
 
   // Definição das colunas para o DataTable das Empresas Credenciadas
     const columnsEmpresasCredenciadas = [
-      { name: 'CPF/CNPJ', selector: row => row.cpfOuCnpjDoCredenciado, sortable: true },
-      { name: 'ME/EPP', selector: row => row.meEppCredenciado, sortable: true },
-      { name: 'Nome', selector: row => row.nomeDoCredenciado, sortable: true },
+      { name: 'CPF/CNPJ', selector: row => row.cpfOuCnpjDoCredenciado, sortable: true, width: '32%' },
+      { name: 'Nome', selector: row => row.nomeDoCredenciado, sortable: true, width: '56%' },
+      { name: 'ME/EPP', selector: row => row.meEppCredenciado, sortable: true, width: '12%' },
+     
     ];
 
   // Definição das colunas para o DataTable dos Itens Fracassados ou Desertos
   const columnsItensFracassadosOuDesertos = [
-    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true },
-    { name: 'Produto', selector: row => row.produto, sortable: true },
-    { name: 'Quantidade', selector: row => row.quantidade, sortable: true },
-    { name: 'Unidade', selector: row => row.unidade, sortable: true },
+    { name: 'Lote/Item', selector: row => row.loteEItem, sortable: true, width: '10%' },
+    { name: 'Produto', selector: row => row.produto, sortable: true, width: '50%' },
+    { name: 'Quantidade', selector: row => row.quantidade, sortable: true, width: '28%' },
+    { name: 'Unidade', selector: row => row.unidade, sortable: true, width: '12%' },
   ];
 
   // Definição das colunas para o DataTable dos Itens Cancelados e Substituídos
@@ -125,6 +166,8 @@ const LicitacaoDetail = () => {
 
     // Definindo o título dinamicamente com base nos dados
    const pageTitle = data ? `Detalhes: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes';
+
+   
 
   return (
     <div className="container">
@@ -182,19 +225,18 @@ const LicitacaoDetail = () => {
         </div> 
 
         <div ref={tableRef}>
-          <div className="tabela-detalhes">
-            {data.empresasCredenciadas && data.empresasCredenciadas.total > 0 && (
+          
+          {/* Empresas Credenciadas */}
+          {empresasCredenciadas && empresasCredenciadas.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Empresas Credenciadas</h2>
                 <DataTableDetail
                   columns={columnsEmpresasCredenciadas}
-                  data={data.empresasCredenciadas.registros}
+                  data={empresasCredenciadas}
                 />
               </>
             )}
-          </div>
-
-          <div className="tabela-detalhes">
+          
             {data.responsaveisPelaComissao && data.responsaveisPelaComissao.total > 0 && (
               <>
                 <h2 className="titulo-tabela">Responsáveis pela Comissão</h2>
@@ -204,82 +246,78 @@ const LicitacaoDetail = () => {
                 />
               </>
             )}
-          </div>
           
-          <div className="tabela-detalhes">
-            {data.itensEmAberto.total > 0 && (
+            {/* Itens em Aberto */}
+            {itensEmAberto && itensEmAberto.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Itens em Aberto</h2>
                 <DataTableDetail
                   columns={columnsItensEmAberto}
-                  data={data.itensEmAberto.registros}
+                  data={itensEmAberto}
                 />
               </>
             )}
-          </div>
+          
 
-          <div className="tabela-detalhes">  
-            {data.itensVencedores.total > 0 && (
+          {/* Itens Vencedores */}
+          {itensVencedores && itensVencedores.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Itens Vencedores</h2>
                 <DataTableDetail
                   columns={columnsItensVencedores}
-                  data={data.itensVencedores.registros}
+                  data={itensVencedores}
                 />
               </>
             )}
-          </div>
-
-          <div className="tabela-detalhes">
-            {data.itensFracassadosOuDesertos.total > 0 && (
+          
+            {/* Itens Fracassados ou Desertos */}
+            {itensFracassados && itensFracassados.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Itens Fracassados ou Desertos</h2>
                 <DataTableDetail
                   columns={columnsItensFracassadosOuDesertos}
-                  data={data.itensFracassadosOuDesertos.registros}
+                  data={itensFracassados}
                 />
               </>
             )}
-          </div>
-
-          <div className="tabela-detalhes">
-            {data.itensCanceladosESubstituidos.total > 0 && (
+          
+            {/* Itens Cancelados e Substituídos */}
+            {itensCancelados && itensCancelados.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Itens Cancelados e Substituídos</h2>
                 <DataTableDetail
                   columns={columnsItensCanceladosESubstituidos}
-                  data={data.itensCanceladosESubstituidos.registros}
+                  data={itensCancelados}
                 />
               </>
             )}
-          </div>
-
-          <div className="tabela-detalhes">
-            {data.contratos.total > 0 && (
+          
+            {/* Contratos */}
+            {contratos && contratos.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Contratos</h2>
                 <DataTableDetail
                   columns={columnsContratos}
-                  data={data.contratos.registros}
+                  data={contratos}
                 />
               </>
             )}
-          </div>
-          <div className="tabela-detalhes">
-            {data.empenhos.total > 0 && (
+          
+            {/* Empenhos */}
+            {empenhos && empenhos.length > 0 && (
               <>
                 <h2 className="titulo-tabela">Empenhos</h2>
                 <DataTableDetail
                   columns={columnsEmpenhos}
-                  data={data.empenhos.registros}
+                  data={empenhos}
                 />
               </>
             )}
-          </div>
+          
         </div>
         
+        
       </div> 
-       
 
       )} 
     </div>

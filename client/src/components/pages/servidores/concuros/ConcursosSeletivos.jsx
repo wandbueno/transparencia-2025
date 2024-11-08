@@ -6,7 +6,13 @@ import FilterSection from '../../../common/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
-import ButtonLink from "../../../common/ButtonLink";
+import ButtonTable from "../../../common/ButtonTable";
+
+// Função utilitária para decodificar entidades HTML
+function decodeHtmlEntities(text) {
+  const doc = new DOMParser().parseFromString(text, "text/html");
+  return doc.documentElement.textContent;
+}
 
 const columnsConcursosSeletivos = [
   { 
@@ -17,10 +23,11 @@ const columnsConcursosSeletivos = [
   },
   { 
     name: "Descrição", 
-    selector: (row) => row.title?.rendered || 'Sem título', 
+    selector: (row) => row.title?.rendered ? decodeHtmlEntities(row.title?.rendered) : 'Sem título', 
     sortable: true, 
     width: '60%' 
   },
+    
   { 
     name: "Situação", 
     selector: (row) => row.meta["situacao_pss"] || 'Sem título', 
@@ -28,17 +35,18 @@ const columnsConcursosSeletivos = [
     width: '20%' 
   },
   { 
-    name: 'Ação', 
-    selector: (row) => row.meta["link-externo"], 
-    cell: row => (
-      <ButtonLink 
-        link={row.meta["link-externo"]}  // Passa o link externo para o botão
-        label="Ver Detalhes"
+    name: 'Mais Detalhes', 
+    selector: (row) => (
+      <ButtonTable 
+        path="/concurso-processo-seletivo"  // Caminho base para os detalhes
+        id={row.slug}                // Usando o slug como identificador
+        label="Ver Detalhes"          // Texto do botão
       />
     ),
-    width: '20%',
+    width: '10%',
     excludeFromExport: true
   }
+  
   
 ];
 

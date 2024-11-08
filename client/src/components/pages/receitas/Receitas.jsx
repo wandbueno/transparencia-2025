@@ -7,7 +7,7 @@ import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import './Receitas.css';
 import ButtonTable from "../../common/ButtonTable";
-// import { config } from '../../../../assets/config';
+import { config } from '../../../assets/config';
 
 const columns = [
   // { name: "Ano", selector: (row) => row.chave.ano, sortable: true, width: '6%' },
@@ -80,10 +80,12 @@ const Receitas = () => {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
+    document.title = `Receita Prevista e Arrecadada - Portal Transparência - ${config.geral.nomeOrgao}`;
+
     const fetchData = async () => {
       try {
         const { data, url } = await getReceitas();
-        console.log(data.registros); // Adicione isso para verificar os dados recebidos
+        console.log(data.registros);
         setData(data.registros);  
         setUrl(url);  
       } catch (err) {
@@ -98,9 +100,9 @@ const Receitas = () => {
   return (
     <div className="container">
     <PageHeader
-        title="Receitas"
+        title="Receita Prevista e Arrecadada"
         breadcrumb={[
-          { label: 'Receitas' },
+          { label: 'Receita Prevista e Arrecadada' },
         ]}
       />      
       <FilterSection  />

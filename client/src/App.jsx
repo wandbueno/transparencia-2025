@@ -12,7 +12,7 @@ import Empenho from './components/pages/despesas/empenho/Empenho';
 import Pagamento from './components/pages/despesas/pagamento/Pagamento';
 import PagamentoDetail from './components/pages/despesas/pagamento/PagamentoDetail';
 import EmpenhoDetail from './components/pages/despesas/empenho/EmpenhoDetail';
-import Extraorcamentaria from './components/pages/despesas/Extraorcamentaria';
+import Extraorcamentaria from './components/pages/despesas/Extraorcamentaria/Extraorcamentaria';
 import AccessibilityButton from './components/layout/Accessibility/AccessibilityButton';
 import AccessibilityPopup from './components/layout/Accessibility/AccessibilityPopup';
 import './App.css';
@@ -21,8 +21,8 @@ import Obras from './components/pages/obras/Obras';
 import Diarias from './components/pages/servidores/diarias/Diarias';
 import DiariasDetail from './components/pages/servidores/diarias/DiariasDetail';
 import ReceitasDetail from './components/pages/receitas/ReceitasDetail';
-import Leis from './components/pages/legislacao/Leis';
-import LegislacaoDetail from './components/pages/legislacao/LegislacaoDetail';
+import Leis from './components/pages/legislacaoPublicacao/Leis';
+import LegislacaoDetail from './components/pages/legislacaoPublicacao/LegislacaoDetail';
 import PatrimonioAlmoxarifado from './components/pages/despesas/patrimonio/PatrimonioAlmoxarifado';
 import PatrimonioAlmoxarifadoDetail from './components/pages/despesas/patrimonio/PatrimonioAlmoxarifadoDetail';
 import DispensasDetail from './components/pages/licitacoes/DispensasDetail';
@@ -42,6 +42,33 @@ import JulgamentoContas from './components/pages/PoliticasPublicas/JulgamenrtoCo
 import PrestacaoContas from './components/pages/PoliticasPublicas/PrestacaoContas/PrestacaoContas';
 import ObrasParalisadas from './components/pages/obras/ObrasParalisadas';
 import IncentivosProjetos from './components/pages/PoliticasPublicas/IncentivosProjetos/IncentivosProjetos';
+import Convenio from './components/pages/legislacaoPublicacao/Convenio/Convenio';
+import EmendasParlamentares from './components/pages/legislacaoPublicacao/EmendasParlamentares/EmendasParlamentares';
+import ValoresDiarias from './components/pages/servidores/ValoresDiarias/ValoresDiarias';
+import SancoesAdministrativas from './components/pages/licitacoes/SancoesAdministrativas/SancoesAdministrativas';
+import PlanosMunicipal from './components/pages/PoliticasPublicas/PlanosMunicipal/PlanosMunicipal';
+import PublicacaoWPDetail from './components/pages/DetalhesPubWP/PublicacaoWPDetail';
+import RelControleInterno from './components/pages/RespFiscal/RelControleInterno/RelControleInterno';
+import RelAnualGestao from './components/pages/RespFiscal/RelAnualGestao/RelAnualGestao';
+import RolInformacoes from './components/pages/ouvidoria/RolInformacoes/RolInformacoes';
+import ParceirasAcordos from './components/pages/legislacaoPublicacao/ParceirasAcordos/ParceirasAcordos';
+import Liquidacao from './components/pages/despesas/Liquidacao/Liquidacao';
+import LiquidacaoDetail from './components/pages/despesas/Liquidacao/LiquidacaoDetail';
+import EstruturaRemuneracao from './components/pages/servidores/estrutura/EstruturaRemuneracao';
+import EstruturaRemuneracaoDetail from './components/pages/servidores/estrutura/EstruturaRemuneracaoDetail';
+import ExtraorcamentariaDetail from './components/pages/despesas/Extraorcamentaria/ExtraorcamentariaDetail';
+import RepassesTransferencias from './components/pages/despesas/RepassesTransferencias/RepassesTransferencias';
+import RepassesTransferenciasDetail from './components/pages/despesas/RepassesTransferencias/RepassesTransferenciasDetail';
+import DespesasFixadas from './components/pages/despesas/DespesasFixadas/DespesasFixadas';
+import DespesasFixadasDetail from './components/pages/despesas/DespesasFixadas/DespesasFixadasDetail';
+import DespesasSintetica from './components/pages/despesas/DespesasSintetica/DespesasSintetica';
+import DespesasSinteticaDetail from './components/pages/despesas/DespesasSintetica/DespesasSinteticaDetail';
+import RestosPagar from './components/pages/despesas/RestosPagar/RestosPagar';
+import RestosPagaroDetail from './components/pages/despesas/RestosPagar/RestosPagaroDetail';
+import NewHeader from './components/layout/Header/NewHeader/NewHeader';
+import Metas from './components/pages/lrf/Metas/Metas';
+import BalancoAnual from './components/pages/lrf/Balanco/Balanco';
+import Pcasp from './components/pages/lrf/Pcasp/Pcasp';
 
 function App() {
 
@@ -57,7 +84,7 @@ function App() {
 
   return (
     <Router>
-      <HeaderNovo />
+      <NewHeader />
       <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
@@ -69,9 +96,12 @@ function App() {
         <Route path="/contratos/:id" element={<ContratosDetail />} />
         <Route path="/despesas-empenho" element={<Empenho />} />
         <Route path="/despesas-empenho/:id" element={<EmpenhoDetail />} />
-        <Route path="/pagamentos" element={<Pagamento />} />        
+        <Route path="/pagamentos" element={<Pagamento />} />          
         <Route path="/pagamentos/:id" element={<PagamentoDetail />} />
+        <Route path="/liquidacoes" element={<Liquidacao />} /> 
+        <Route path="/liquidacoes/:id" element={<LiquidacaoDetail />} />
         <Route path="/extra-orcamentaria" element={<Extraorcamentaria />} />
+        <Route path="/extra-orcamentaria/:id" element={<ExtraorcamentariaDetail />} /> 
         <Route path="/dispensas-e-inexigibilidades" element={<Dispensas />} />
         <Route path="/dispensas-e-inexigibilidades/:id" element={<DispensasDetail />} /> 
         <Route path="/obras" element={<Obras />} />
@@ -80,6 +110,8 @@ function App() {
         <Route path="/diarias/:id" element={<DiariasDetail />} />
         <Route path="/servidores" element={<Servidores />} />
         <Route path="/servidores/:id" element={<ServidoresDetail />} />
+        <Route path="/estrutura-de-remuneracao" element={<EstruturaRemuneracao />} />
+        <Route path="/estrutura-de-remuneracao/:id" element={<EstruturaRemuneracaoDetail />} />
         <Route path="/terceirizados" element={<Terceirizados />} />
         <Route path="/estagiarios" element={<Estagiarios />} />
         <Route path="/transferencias-voluntarias-realizadas" element={<TransferenciasRealizadas />} />
@@ -90,16 +122,40 @@ function App() {
         <Route path="/desoneracao" element={<Desoneracao />} />
         <Route path="/divida-ativa" element={<DividaAtiva />} />
         <Route path="/concurso-processo-seletivo" element={<ConcursosSeletivos />} />
+        <Route path="/concurso-processo-seletivo/:slug" element={<PublicacaoWPDetail />} />
         <Route path="/julgamento-de-contas" element={<JulgamentoContas />} />   
         <Route path="/prestacao-de-contas" element={<PrestacaoContas />} />
+        <Route path="/prestacao-de-contas/:slug" element={<PublicacaoWPDetail />} />
         <Route path="/incentivos-a-projetos-culturais" element={<IncentivosProjetos />} />
-
+        <Route path="/convenio-pre-convenio-celebrados" element={<Convenio />} />
+        <Route path="/convenio-pre-convenio-celebrados/:slug" element={<PublicacaoWPDetail />} />
+        <Route path="/emendas-parlamentares" element={<EmendasParlamentares />} />
+        <Route path="/emendas-parlamentares/:slug" element={<PublicacaoWPDetail />} />
+        <Route path="/tabela-explicativa-de-valores-de-diarias" element={<ValoresDiarias />} />
+        <Route path="/sancoes-administrativas" element={<SancoesAdministrativas />} />
+        <Route path="/planos" element={<PlanosMunicipal />} />
+        <Route path="/planos/:slug" element={<PublicacaoWPDetail />} />
+        <Route path="/relatorio-do-controle-interno" element={<RelControleInterno />} />
+        <Route path="/relatorio-anual-de-gestao" element={<RelAnualGestao />} />
+        <Route path="/relatorio-anual-de-gestao/:slug" element={<PublicacaoWPDetail />} />
+        <Route path="/rol-de-informacoes" element={<RolInformacoes />} />
+        <Route path="/acordos" element={<ParceirasAcordos />} />
+        
         <Route path="/leis" element={<Leis />} />
         <Route path="/leis/:id" element={<LegislacaoDetail />} />
         <Route path="/patrimonio-e-almoxarifado" element={<PatrimonioAlmoxarifado />} />
         <Route path="/patrimonio-e-almoxarifado/:id" element={<PatrimonioAlmoxarifadoDetail />} />
-
-
+        <Route path="/repasse-ou-transferencia" element={<RepassesTransferencias />} />
+        <Route path="/repasse-ou-transferencia/:id" element={<RepassesTransferenciasDetail />} />
+        <Route path="/despesas-fixadas" element={<DespesasFixadas />} />
+        <Route path="/despesas-fixadas/:id" element={<DespesasFixadasDetail />} />
+        <Route path="/despesa-sintetica" element={<DespesasSintetica />} />
+        <Route path="/despesa-sintetica/:id" element={<DespesasSinteticaDetail />} />
+        <Route path="/restos-a-pagar" element={<RestosPagar />} />
+        <Route path="/restos-a-pagar/:id" element={<RestosPagaroDetail />} />
+        <Route path="/metas-e-riscos-fiscais" element={<Metas />} />
+        <Route path="/balanco-anual" element={<BalancoAnual />} />
+        <Route path="/pcasp" element={<Pcasp />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />

@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { getReceitasId, getMovimentosReceita } from "../../../services/receitasDespesas/receitas";
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
-import DataTableDetail from '../../common/DataTableDetail';
+import DataTable from '../../common/DataTable';
 import '../PagesDetail.css';
 import '../../../assets/global.css';
 import { config } from "../../../assets/config";
@@ -104,7 +104,7 @@ const ReceitasDetail = () => {
               {movimentos && movimentos.total > 0 && (
                 <>
                   <h2 className="titulo-tabela">Detalhamento (Movimentos)</h2>
-                  <DataTableDetail
+                  <DataTable
                     columns={columnsMovimentos}
                     data={movimentos.registros.sort((a, b) => {
                       // Converte a data de "dd/mm/yyyy" para um formato comparável pelo JavaScript

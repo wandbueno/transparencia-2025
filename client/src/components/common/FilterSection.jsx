@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './FilterSection.css';
+import '../common/FilterSection/FilterSection.css';
 
 const FilterSection = ({ data, onFilterChange, resetFilters }) => {
   const [isOpen, setIsOpen] = useState(false);

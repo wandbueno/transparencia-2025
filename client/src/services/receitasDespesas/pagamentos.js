@@ -2,12 +2,14 @@ import axios from 'axios'
 
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/pagamento`
 
-export const getPagamentos = async () => {
+export const getPagamentos = async (filters = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/paginado`)
+    const response = await axios.get(`${API_BASE_URL}/paginado`, {
+      params: filters
+    })
     return response.data
   } catch (error) {
-    console.error('Erro ao buscar pagamento:', error)
+    console.error('Erro ao buscar pagamentos:', error)
     throw error
   }
 }

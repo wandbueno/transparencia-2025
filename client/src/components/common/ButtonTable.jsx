@@ -46,8 +46,12 @@ const ButtonTable = ({ path, id, label, queryParams }) => {
   const navigate = useNavigate(); // Hook dentro do componente
 
   const handleClick = () => {
-    // Navega para a rota com ou sem queryParams
-    navigate(`${path}/${id}${queryParams ? queryParams : ''}`);
+    // Construir a URL dinamicamente: Se o `id` existir, adicioná-lo, senão não.
+    const fullPath = id ? `${path}/${id}` : path;
+    const finalPath = queryParams ? `${fullPath}${queryParams}` : fullPath;
+
+    // Navega para a rota final
+    navigate(finalPath);
   };
 
   return (

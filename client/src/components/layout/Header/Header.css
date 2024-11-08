@@ -1,9 +1,3 @@
-/* Estilos gerais */
-.header-info {
-  padding: 2% 3%;
-  background-color: var(--background-color);
-}
-
 
 /* Exibir o menu apenas no mobile */
 @media (max-width: 768px) {

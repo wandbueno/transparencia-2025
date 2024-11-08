@@ -1,15 +1,4 @@
-.header-info {
-  display: grid;
-  /* justify-content: space-between; */
-  grid-template-columns: repeat(3, 1fr); 
-  padding: 2% 3%;
-  background-color: var(--background-color);
-  
-  img{
-    height: 40px;
-  }
-  
-}
+
 .search-container{
   display: flex;
   align-items: center;

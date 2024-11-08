@@ -58,7 +58,17 @@ const TransferenciasRecebidas = () => {
     const fetchData = async () => {
       try {
         const result = await getTransferenciasRecebidas();
-        setData(result.registros); 
+
+         // Ordena os dados pela dataDoRepasse em ordem decrescente
+          const sortedData = result.registros.sort((a, b) => {
+            // Convertendo as datas de dd/mm/yyyy para yyyy-mm-dd antes de comparar
+            const dataA = a.dataDoRepasse.split('/').reverse().join('-');
+            const dataB = b.dataDoRepasse.split('/').reverse().join('-');
+            
+            return new Date(dataB) - new Date(dataA);
+          });
+
+        setData(sortedData); 
       } catch (err) {
         setError(err.message);
       } finally {

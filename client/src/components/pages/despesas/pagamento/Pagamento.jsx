@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { getPagamentos } from "../../../../services/receitasDespesas/pagamentos";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterSection from '../../../common/FilterSection/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
-// import './Empenho.css';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
 
@@ -53,40 +52,58 @@ const columnsPagamento = [
   },
 ];
 
-
 const Pagamento = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Define quais filtros estarão disponíveis nesta página
+  const filtrosDisponiveis = [
+    'ano',
+    'orgao',
+    'modalidade'
+  ];
+
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
-    document.title = `Pagamentos - Portal Transparência - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        const result = await getPagamentos();
-        setData(result.registros); 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    document.title = `Pagamentos - Portal Transparência - ${config.geral.nomeOrgao}`;
     fetchData();
   }, []);
 
+  const fetchData = async (filters = {}) => {
+    try {
+      setLoading(true);
+      const result = await getPagamentos(filters);
+      setData(result.registros);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = async (filters) => {
+    try {
+      console.log('Filtros recebidos:', filters); // Log para debug
+      await fetchData(filters);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Pagamentos"
         breadcrumb={[
           { label: 'Pagamentos' },
         ]}
       />      
-      <FilterSection  />
+      
+      <FilterSection 
+        availableFilters={filtrosDisponiveis}
+        onFilterChange={handleFilterChange}
+      />
       
       <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -95,7 +112,7 @@ const Pagamento = () => {
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
-        <div>Erro ao carregar Despesas: {error}</div>
+        <div>Erro ao carregar Pagamentos: {error}</div>
       ) : (
         <DataTableComponent
           title="Pagamentos"
@@ -103,8 +120,6 @@ const Pagamento = () => {
           data={data}
         />
       )}
-
-   
     </div>
   );
 };

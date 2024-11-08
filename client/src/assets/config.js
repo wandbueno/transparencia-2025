@@ -2,6 +2,7 @@ import logo from '../assets/LogoPublixelOfc.png'
 
 const config = {
   geral: {
+    cidade: 'Conceição do Tocantins',
     nomeOrgao: 'Prefeitura Municipal Modelo',
     descricaoOrgao: 'Administração 2021-2024',
     telefonePrincipal: '(63) 9 9248-0044',

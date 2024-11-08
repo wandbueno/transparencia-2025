@@ -34,3 +34,43 @@ export const getItensEmpenho = async id => {
     throw error
   }
 }
+
+// Função para buscar os estornos de um empenho específico pelo id
+export const getEstornosEmpenho = async id => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/estornos-empenho/${id}`)
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar estornos do Empenho com id ${id}:`, error)
+    throw error
+  }
+}
+
+// Função para buscar as liquidações de um empenho específico pelo id
+export const getLiquidacoesEmpenho = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/liquidacoes-empenho/${id}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar liquidações do Empenho com id ${id}:`, error)
+    throw error
+  }
+}
+
+// Função para buscar as ordens de pagamento de um empenho específico pelo id
+export const getOrdensPagamentoEmpenho = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/ordens-pagamento-empenho/${id}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Erro ao buscar ordens de pagamento do Empenho com id ${id}:`,
+      error
+    )
+    throw error
+  }
+}

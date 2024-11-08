@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { getDespesas } from "../../../services/receitasDespesas/extraorcamentaria";
-import DataTableComponent from "../../common/DataTable";
-import PageHeader from '../../common/PageHeader';
-import FilterSection from '../../common/FilterSection';
-import InfoText from '../../common/InfoText';
-import LoadingSpinner from '../../common/LoadingSpinner';
+import { getExtra } from "../../../../services/receitasDespesas/extraorcamentaria";
+import DataTableComponent from "../../../common/DataTable";
+import PageHeader from '../../../common/PageHeader';
+import FilterSection from '../../../common/FilterSection';
+import InfoText from '../../../common/InfoText';
+import LoadingSpinner from '../../../common/LoadingSpinner';
 // import './Despesas.css';
-import ButtonTable from "../../common/ButtonTable";
-import { config } from "../../../assets/config";
+import ButtonTable from "../../../common/ButtonTable";
+import { config } from "../../../../assets/config";
 
 const columnsExtra = [
   { name: "Órgão", selector: (row) => row.orgao, sortable: true, width: '15%' },
@@ -18,20 +18,28 @@ const columnsExtra = [
   { name: "Valor Anulação (Mês)", selector: (row) => row.valorAnulacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '16%' },
   { name: "Valor Acumulado", selector: (row) => row.valorAcumulado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '11%' },
   {
-    name: "Mais",
-    selector: (row) => row.codigo,
+    name: "Detalhes",
+    selector: (row) => row.chave.codigoDaExtra, // Código da despesa extra-orçamentária
     cell: (row) => {
-      const id = row.codigo;
-      const navigate = useNavigate(); // Certifique-se de usar o hook
-  
-      const handleClick = () => {
-        navigate(`/extra-orcamentaria/${id}`); // Navega para o caminho específico
-      };
-  
-      return <ButtonTable onClick={handleClick} label="Ver Detalhes" />;
+      const id = row.chave.codigoDaExtra;
+      const ano = row.ano || new Date().getFullYear(); // Pega o ano da row ou o ano atual
+      const mes = row.mes || (new Date().getMonth() + 1).toString().padStart(2, '0'); // Pega o mês da row ou o mês atual formatado
+    
+      // Verifica se o ID, ano e mês estão corretos
+      console.log(`ID: ${id}, Ano: ${ano}, Mês: ${mes}`);
+    
+      return (
+        <ButtonTable
+          path="/extra-orcamentaria" // O caminho para a página de detalhes
+          id={id}
+          queryParams={`?ano=${ano}&mes=${mes}`}  // Passa o ano e o mês como parâmetros da query string
+          label="Ver Detalhes"
+        />
+      );
     },
-    width: '11%',
+    width: '11%', 
   }
+  
 ];
 
 
@@ -47,7 +55,7 @@ const Extraorcamentaria = () => {
 
     const fetchData = async () => {
       try {
-        const result = await getDespesas();
+        const result = await getExtra();
         setData(result.registros); 
       } catch (err) {
         setError(err.message);

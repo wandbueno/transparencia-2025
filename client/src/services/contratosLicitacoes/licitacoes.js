@@ -49,3 +49,103 @@ export const getLicitacaoById = async id => {
     throw error
   }
 }
+
+// Função para buscar os itens vencedores de uma licitação específica
+export const getItensVencedores = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/itens-vencedores/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar itens vencedores para o id ${id}:`, error)
+    throw error
+  }
+}
+
+// Função para buscar itens fracassados ou desertos de uma licitação específica
+export const getItensFracassadosOuDesertos = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/itens-fracassados-ou-desertos/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Erro ao buscar itens fracassados ou desertos para o id ${id}:`,
+      error
+    )
+    throw error
+  }
+}
+
+// Função para buscar itens em aberto de uma licitação específica
+export const getItensEmAberto = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/itens-em-aberto/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar itens em aberto para o id ${id}:`, error)
+    throw error
+  }
+}
+
+// Função para buscar itens cancelados ou substituídos de uma licitação específica
+export const getItensCanceladosESubstituidos = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/itens-cancelados-e-substituidos/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Erro ao buscar itens cancelados ou substituídos para o id ${id}:`,
+      error
+    )
+    throw error
+  }
+}
+
+// Função para buscar empresas credenciadas de uma licitação específica
+export const getEmpresasCredenciadas = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/empresas-credenciadas/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Erro ao buscar empresas credenciadas para o id ${id}:`,
+      error
+    )
+    throw error
+  }
+}
+
+// Função para buscar empenhos de uma licitação específica
+export const getEmpenhos = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/empenhos/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar empenhos para o id ${id}:`, error)
+    throw error
+  }
+}
+
+// Função para buscar contratos de uma licitação específica
+export const getContratos = async id => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/contratos/${id}?tipoDeConsultaDeModalidade=${TIPO_DE_CONSULTA}`
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Erro ao buscar contratos para o id ${id}:`, error)
+    throw error
+  }
+}
