@@ -1,46 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { getMetaDadosRelatorios, getRelatorio } from "../../../../services/lrf/metasRiscos";
+import { getMetaDadosMetas, getRelatorioMetas } from "../../../../services/lrf/metasRiscos";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterSectionLRF from "../../../common/FilterLRF/FilterSectionLRF";
 import LoadingSpinner from '../../../common/LoadingSpinner';
+import Toast from '../../../common/Toast';
 import { config } from '../../../../assets/config';
-
-const columnsMetas = [
-  { 
-    name: "Relatórios", 
-    selector: (row) => row.title,
-    sortable: true, 
-    width: '80%'
-  },
-  { 
-    name: "Visualizar",
-    selector: (row) => row.path,
-    cell: (row) => (
-      <button
-        className="btn btn-primary btn-sm"
-        onClick={() => row.onDownload(row.path.slice(1), row.title)}
-      >
-        Abrir
-      </button>
-    ),
-    width: '20%',
-    center: true,
-    excludeFromExport: true
-  }
-];
 
 const Metas = () => {
   const [relatorios, setRelatorios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [parametros] = useState({
+  const [toast, setToast] = useState(null);
+  const [parametros, setParametros] = useState({
     ano: new Date().getFullYear(),
     mes: 1,
     extensao: 'pdf',
-    orgao: 1,
+    orgao: 3,
     tipoDoRelatorio: 3
   });
+
+  const extensoes = [
+    { value: 'pdf', label: 'PDF' },
+    { value: 'xlsx', label: 'Excel' },
+    { value: 'docx', label: 'Word' },
+    { value: 'odt', label: 'ODT' },
+    { value: 'html', label: 'HTML' }
+  ];
+
+  const columnsMetas = [
+    { 
+      name: "Relatórios", 
+      selector: (row) => row.title,
+      sortable: true, 
+      width: '80%'
+    },
+    { 
+      name: "Visualizar",
+      selector: (row) => row.path,
+      cell: (row) => (
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => baixarRelatorio(row.path.slice(1), row.title, row.path)}
+        >
+          Abrir
+        </button>
+      ),
+      width: '20%',
+      center: true
+    }
+  ];
 
   useEffect(() => {
     document.title = `Metas e Riscos Fiscais - Portal Transparência - ${config.geral.nomeOrgao}`;
@@ -49,22 +57,54 @@ const Metas = () => {
 
   const carregarMetaDados = async () => {
     try {
-      const dados = await getMetaDadosRelatorios();
-      const relatoriosComAcao = dados.map(relatorio => ({
-        ...relatorio,
-        onDownload: baixarRelatorio
-      }));
-      setRelatorios(relatoriosComAcao);
+      setLoading(true);
+      const dados = await getMetaDadosMetas();
+      if (Array.isArray(dados)) {
+        const relatoriosComAcao = dados.map(relatorio => ({
+          ...relatorio,
+          onDownload: baixarRelatorio
+        }));
+        setRelatorios(relatoriosComAcao);
+      } else {
+        setRelatorios([]);
+        setToast({
+          type: 'error',
+          message: 'Formato de dados inválido'
+        });
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Erro ao carregar metadados:', err);
+      setToast({
+        type: 'error',
+        message: `Erro ao carregar dados: ${err.message}`
+      });
+      setRelatorios([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const baixarRelatorio = async (tipo, titulo) => {
+  const baixarRelatorio = async (tipo, titulo, path) => {
+    setToast({
+      type: 'loading',
+      message: 'Carregando relatório...'
+    });
+
     try {
-      const response = await getRelatorio(tipo, parametros);
+      const response = await getRelatorioMetas(tipo, parametros);
+      
+      if (response.data instanceof Blob && response.data.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const errorData = JSON.parse(reader.result);
+          setToast({
+            type: 'error',
+            message: errorData.error || 'Relatório não publicado'
+          });
+        };
+        reader.readAsText(response.data);
+        return;
+      }
       
       const blob = new Blob([response.data], { 
         type: parametros.extensao === 'pdf' 
@@ -82,9 +122,49 @@ const Metas = () => {
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
       }, 100);
+
+      setToast({
+        type: 'success',
+        message: 'Relatório aberto com sucesso!'
+      });
       
     } catch (err) {
-      setError(`Erro ao abrir relatório: ${err.message}`);
+      setToast({
+        type: 'error',
+        message: err.response?.data?.error || 'Erro ao abrir relatório'
+      });
+    }
+  };
+
+  const handleFilterChange = async (newFilters) => {
+    try {
+      setLoading(true);
+      setParametros(prev => ({
+        ...prev,
+        ...newFilters
+      }));
+
+      const searchParams = new URLSearchParams({
+        ...newFilters,
+        tipoDoRelatorio: 3
+      }).toString();
+      
+      window.history.pushState(
+        null, 
+        '', 
+        `${window.location.pathname}?${searchParams}`
+      );
+
+      await carregarMetaDados();
+      
+    } catch (err) {
+      console.error('Erro ao atualizar filtros:', err);
+      setToast({
+        type: 'error',
+        message: `Erro ao atualizar filtros: ${err.message}`
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,15 +177,27 @@ const Metas = () => {
         ]}
       />
 
-      <FilterSection />
+      <FilterSectionLRF 
+        onFilterChange={handleFilterChange}
+        initialValues={parametros}
+        extensoes={extensoes}
+        hideMonth={true}
+      />
+
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={5000}
+        />
+      )}
         
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
       ) : (
         <DataTableComponent
-          title="Relatórios de Metas Fiscais"
+          title="Relatórios de Metas e Riscos Fiscais"
           columns={columnsMetas}
           data={relatorios}
           pagination
@@ -118,4 +210,4 @@ const Metas = () => {
   );
 };
 
-export default Metas; 
+export default Metas;

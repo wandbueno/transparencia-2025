@@ -81,7 +81,9 @@ const HeaderPrincipal = ({ onHamburgerClick }) => {
 
   return (
     <>
-      
+      <div className={`overlay ${showResults && searchResults.length > 0 ? 'active' : ''}`} 
+           onClick={() => setShowResults(false)}
+      />
 
       <header className="header-info">
         <div className="logo-container">

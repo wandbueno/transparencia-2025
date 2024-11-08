@@ -4,14 +4,13 @@ import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
 import FilterSectionLRF from "../../../common/FilterLRF/FilterSectionLRF";
 import LoadingSpinner from '../../../common/LoadingSpinner';
+import Toast from '../../../common/Toast';
 import { config } from '../../../../assets/config';
 
 const BalancoAnual = () => {
   const [relatorios, setRelatorios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingRelatorio, setLoadingRelatorio] = useState({});
-  const [errorRelatorio, setErrorRelatorio] = useState({});
-  const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
   const [parametros, setParametros] = useState({
     ano: new Date().getFullYear() - 1,
     mes: 12,
@@ -30,22 +29,14 @@ const BalancoAnual = () => {
     { 
       name: "Visualizar",
       selector: (row) => row.path,
-      cell: (row) => {
-        if (loadingRelatorio[row.path]) {
-          return <span>Carregando...</span>;
-        }
-        if (errorRelatorio[row.path]) {
-          return <span className="text-danger">Relatório não publicado</span>;
-        }
-        return (
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => baixarRelatorio(row.path.slice(1), row.title, row.path)}
-          >
-            Abrir
-          </button>
-        );
-      },
+      cell: (row) => (
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => baixarRelatorio(row.path.slice(1), row.title, row.path)}
+        >
+          Abrir
+        </button>
+      ),
       width: '20%',
       center: true
     }
@@ -65,29 +56,33 @@ const BalancoAnual = () => {
         onDownload: baixarRelatorio
       }));
       setRelatorios(relatoriosComAcao);
-      setError(null);
     } catch (err) {
-      setError(err.message);
+      setToast({
+        type: 'error',
+        message: `Erro ao carregar dados: ${err.message}`
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const baixarRelatorio = async (tipo, titulo, path) => {
+    setToast({
+      type: 'loading',
+      message: 'Carregando relatório...'
+    });
+
     try {
-      setLoadingRelatorio(prev => ({ ...prev, [path]: true }));
-      setErrorRelatorio(prev => ({ ...prev, [path]: null }));
-      
       const response = await getRelatorioBalanco(tipo, parametros);
       
       if (response.data instanceof Blob && response.data.type === 'application/json') {
         const reader = new FileReader();
         reader.onload = async () => {
           const errorData = JSON.parse(reader.result);
-          setErrorRelatorio(prev => ({ 
-            ...prev, 
-            [path]: errorData.error || 'Relatório não publicado'
-          }));
+          setToast({
+            type: 'error',
+            message: errorData.error || 'Relatório não publicado'
+          });
         };
         reader.readAsText(response.data);
         return;
@@ -109,27 +104,28 @@ const BalancoAnual = () => {
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
       }, 100);
+
+      setToast({
+        type: 'success',
+        message: 'Relatório aberto com sucesso!'
+      });
       
     } catch (err) {
-      setErrorRelatorio(prev => ({ 
-        ...prev, 
-        [path]: err.response?.data?.error || 'Erro ao abrir relatório'
-      }));
-    } finally {
-      setLoadingRelatorio(prev => ({ ...prev, [path]: false }));
+      setToast({
+        type: 'error',
+        message: err.response?.data?.error || 'Erro ao abrir relatório'
+      });
     }
   };
 
   const handleFilterChange = async (newFilters) => {
     setLoading(true);
     try {
-      // Atualiza os parâmetros imediatamente
       setParametros(prev => ({
         ...prev,
         ...newFilters
       }));
 
-      // Atualiza a URL
       const searchParams = new URLSearchParams({
         ...newFilters,
         tipoDoRelatorio: 5
@@ -141,11 +137,13 @@ const BalancoAnual = () => {
         `${window.location.pathname}?${searchParams}`
       );
 
-      // Recarrega os dados
       await carregarMetaDados();
       
     } catch (err) {
-      setError(err.message);
+      setToast({
+        type: 'error',
+        message: `Erro ao atualizar filtros: ${err.message}`
+      });
     } finally {
       setLoading(false);
     }
@@ -165,11 +163,18 @@ const BalancoAnual = () => {
         initialValues={parametros}
         hideMonth={true}
       />
+
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={5000}
+        />
+      )}
         
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
       ) : (
         <DataTableComponent
           title="Relatórios de Balanço Anual"

@@ -167,3 +167,128 @@
     font-size: 12px;
   }
 }
+
+/* Ajustes no dropdown de resultados */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 5px;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+
+  /* Estilização da barra de rolagem */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    border: 2px solid #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Estilização para Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.search-result-item {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+  background-color: #f8f9fa;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.result-title {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.result-section {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Ajuste para mobile */
+@media (max-width: 768px) {
+  .search-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 15px 10px 15px;
+  }
+
+  .search-results-dropdown {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    margin-top: 5px;
+    max-height: 300px;
+  }
+
+  .search-results-dropdown::-webkit-scrollbar {
+    width: 6px; /* Ligeiramente menor no mobile */
+  }
+}
+
+/* Overlay escuro */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* Menor que o dropdown */
+}
+
+.overlay.active {
+  display: block;
+}
+
+/* Ajuste no z-index do dropdown */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Sombra mais pronunciada */
+  margin-top: 5px;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+}

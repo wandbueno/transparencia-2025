@@ -6,15 +6,15 @@ import PageHeader from '../../common/PageHeader';
 import FilterSection from '../../common/FilterSection';
 import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import Toast from '../../common/Toast';
 import './LicitacoesTable.css';
 import '../../../assets/global.css';
 import columnsLicitacao from "./columnsLicitacao";
 import { config } from '../../../assets/config';
 
 const LicitacoesTable = () => {
-  const [data, setData] = useState([]); // Dados completos da API
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [filters, setFilters] = useState({
@@ -26,6 +26,7 @@ const LicitacoesTable = () => {
     fornecedor: '',
     objeto: ''
   });
+  const [toast, setToast] = useState(null);
 
   // Função chamada quando há mudança nos filtros
   const handleFilterChange = (newFilters) => {
@@ -54,15 +55,29 @@ const LicitacoesTable = () => {
     
     const fetchData = async () => {
       setLoading(true);
+      // Mostra toast de loading apenas em atualizações, não no carregamento inicial
+      if (!loading) {
+        setToast({ type: 'loading', message: 'Carregando licitações...' });
+      }
+      
       try {
         const result = await getLicitacoes(filters); // Passa os filtros para a API
         if (result && result.registros) {
           setData(result.registros); // Garante que "result" seja válido
+          // Toast de sucesso apenas em atualizações
+          if (!loading) {
+            setToast({ type: 'success', message: 'Dados carregados com sucesso!' });
+          }
         } else {
           setData([]); // Caso não haja registros
         }
       } catch (err) {
-        setError(err.message);
+        setData([]); // Limpa os dados em caso de erro
+        // Sempre mostra o toast de erro, mesmo no carregamento inicial
+        setToast({ 
+          type: 'error', 
+          message: `Erro ao carregar licitações: ${err.message}` 
+        });
       } finally {
         setLoading(false);
       }
@@ -89,10 +104,17 @@ const LicitacoesTable = () => {
         <p>Veja Declarações Negativas e Demais Documentos Clicando Aqui</p>
       </InfoText>
 
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={5000}
+        />
+      )}
+
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <div>Erro ao carregar licitações: {error}</div>
       ) : (
         <DataTableComponent
           title="Licitações"
