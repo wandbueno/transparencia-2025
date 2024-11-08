@@ -81,7 +81,7 @@ const HeaderPrincipal = ({ onHamburgerClick }) => {
 
   return (
     <>
-      <div className={`overlay ${showResults && searchResults.length > 0 ? 'active' : ''}`} 
+      <div className={`overlay ${showResults ? 'active' : ''}`} 
            onClick={() => setShowResults(false)}
       />
 
@@ -101,22 +101,36 @@ const HeaderPrincipal = ({ onHamburgerClick }) => {
             <FontAwesomeIcon icon={faSearch} className="search-icon" />
           </div>
 
-          {showResults && searchResults.length > 0 && (
+          {showResults && searchTerm && (
             <div className="search-results-dropdown">
-              {searchResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="search-result-item"
-                  onClick={() => handleResultClick(result.path)}
-                  style={{ borderLeft: `4px solid ${result.cor}` }}
-                >
-                  <div className="result-content">
-                    <span className="result-title">{result.nome}</span>
-                    <span className="result-section">{result.section}</span>
+              {searchResults.length > 0 ? (
+                // Resultados encontrados
+                searchResults.map((result, index) => (
+                  <div
+                    key={index}
+                    className="search-result-item"
+                    onClick={() => handleResultClick(result.path)}
+                    style={{ borderLeft: `4px solid ${result.cor}` }}
+                  >
+                    <div className="result-content">
+                      <span className="result-title">{result.nome}</span>
+                      <span className="result-section">{result.section}</span>
+                    </div>
+                    <FontAwesomeIcon icon={result.icon} style={{ color: result.cor }} />
                   </div>
-                  <FontAwesomeIcon icon={result.icon} style={{ color: result.cor }} />
+                ))
+              ) : (
+                // Nenhum resultado encontrado
+                <div className="search-result-empty">
+                  <FontAwesomeIcon icon={faSearch} className="empty-icon" />
+                  <p className="empty-message">
+                    Nenhum resultado encontrado para "{searchTerm}"
+                  </p>
+                  <p className="empty-suggestion">
+                    Tente usar palavras diferentes ou verifique a ortografia
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
