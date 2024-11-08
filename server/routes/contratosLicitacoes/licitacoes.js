@@ -4,18 +4,18 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res) => {
   try {
-    console.log('Parâmetros recebidos:', {
-      pagina: req.query.pagina,
-      tamanhoDaPagina: req.query.tamanhoDaPagina,
-      tipoDeConsultaDeModalidade: req.query.tipoDeConsultaDeModalidade,
-      ano: req.query.ano,
-      codigoDoOrgao: req.query.codigoDoOrgao,
-      codigoDaModalidade: req.query.codigoDaModalidade,
-      situacoes: req.query.situacoes,
-      cpfCnpj: req.query.cpfCnpj,
-      fornecedor: req.query.fornecedor,
-      objeto: req.query.objeto
-    })
+    // console.log('Parâmetros recebidos:', {
+    //   pagina: req.query.pagina,
+    //   tamanhoDaPagina: req.query.tamanhoDaPagina,
+    //   tipoDeConsultaDeModalidade: req.query.tipoDeConsultaDeModalidade,
+    //   ano: req.query.ano,
+    //   codigoDoOrgao: req.query.codigoDoOrgao,
+    //   codigoDaModalidade: req.query.codigoDaModalidade,
+    //   situacoes: req.query.situacoes,
+    //   cpfCnpj: req.query.cpfCnpj,
+    //   fornecedor: req.query.fornecedor,
+    //   objeto: req.query.objeto
+    // })
 
     const response = await axios.get(`${process.env.SERVER}${path}`, {
       params: {
@@ -28,7 +28,8 @@ const fetchFromAPI = async (path, req, res) => {
         situacoes: req.query.situacoes || '',
         cpfCnpj: req.query.cpfCnpj || '',
         fornecedor: req.query.fornecedor || '',
-        objeto: req.query.objeto || ''
+        objeto: req.query.objeto || '',
+        codigo: req.query.codigo || ''
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
@@ -44,6 +45,14 @@ const fetchFromAPI = async (path, req, res) => {
     res.status(500).json({ error: 'Erro ao conectar com a API externa' })
   }
 }
+
+router.get('/data-de-atualizacao', (req, res) =>
+  fetchFromAPI(
+    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/data-de-atualizacao',
+    req,
+    res
+  )
+)
 
 // Definindo as rotas específicas
 router.get('/', (req, res) =>
@@ -63,70 +72,65 @@ router.get('/:id', (req, res) => {
   )
 })
 
-// Rotas adicionais
-router.get('/contratos/paginado', (req, res) =>
+// Rota para buscar contratos relacionados ao procedimento licitatório usando o :id
+router.get('/contratos/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/contratos/paginado',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/contratos/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/data-de-atualizacao', (req, res) =>
+// Rota para buscar empenhos relacionados ao procedimento licitatório usando o :id
+router.get('/empenhos/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/data-de-atualizacao',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empenhos/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/empenhos/paginado', (req, res) =>
+// Rota para buscar empresas credenciadas usando o :id
+router.get('/empresas-credenciadas/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empenhos/paginado',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empresas-credenciadas/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/empresas-credenciadas/paginado', (req, res) =>
+// Rota para buscar itens cancelados e substituídos usando o :id
+router.get('/itens-cancelados-e-substituidos/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/empresas-credenciadas/paginado',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-cancelados-e-substituidos/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/itens-cancelados-e-substituidos/paginado', (req, res) =>
+// Rota para buscar itens em aberto usando o :id
+router.get('/itens-em-aberto/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-cancelados-e-substituidos/paginado',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-em-aberto/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/itens-em-aberto/paginado', (req, res) =>
+// Rota para buscar itens fracassados ou desertos usando o :id
+router.get('/itens-fracassados-ou-desertos/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-em-aberto/paginado',
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-fracassados-ou-desertos/paginado?codigo=${id}`,
     req,
     res
   )
-)
-
-router.get('/itens-fracassados-ou-desertos/paginado', (req, res) =>
-  fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-fracassados-ou-desertos/paginado',
-    req,
-    res
-  )
-)
-
-router.get('/itens-vencedores/paginado', (req, res) =>
-  fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-vencedores/paginado',
-    req,
-    res
-  )
-)
+})
 
 router.post('/paginado', (req, res) =>
   fetchFromAPI(
@@ -135,5 +139,15 @@ router.post('/paginado', (req, res) =>
     res
   )
 )
+
+// Rota para buscar itens vencedores relacionados a um procedimento licitatório usando o :id
+router.get('/itens-vencedores/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/contratos-convenios-e-licitacoes/procedimento-licitatorio/itens-vencedores/paginado?codigo=${id}`,
+    req,
+    res
+  )
+})
 
 module.exports = router

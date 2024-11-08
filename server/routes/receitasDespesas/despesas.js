@@ -26,18 +26,23 @@ const fetchFromAPI = async (path, req, res) => {
   }
 }
 
-// Rotas para Empenho
-router.get('/empenho/anulacoes-da-liquidacao/paginado', (req, res) =>
+router.get('/empenho/anulacoes-da-liquidacao/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/receitas-e-despesas/empenho/anulacoes-da-liquidacao/paginado',
+    `/api/receitas-e-despesas/empenho/anulacoes-da-liquidacao/paginado?codigo=${id}`,
     req,
     res
   )
-)
+})
 
-router.get('/empenho/anulacoes/paginado', (req, res) =>
-  fetchFromAPI('/api/receitas-e-despesas/empenho/anulacoes/paginado', req, res)
-)
+router.get('/anulacoes-empenho/:id', (req, res) => {
+  const id = req.params.id // Código do empenho
+  fetchFromAPI(
+    `/api/receitas-e-despesas/empenho/anulacoes/paginado?codigo=${id}`,
+    req,
+    res
+  )
+})
 
 router.get('/empenho/data-de-atualizacao', (req, res) =>
   fetchFromAPI('/api/receitas-e-despesas/empenho/data-de-atualizacao', req, res)
@@ -92,6 +97,35 @@ router.get('/itens-empenho/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(
     `/api/receitas-e-despesas/empenho/itens/paginado?codigo=${id}`,
+    req,
+    res
+  )
+})
+
+router.get('/estornos-empenho/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/receitas-e-despesas/empenho/estornos-de-ordem-de-pagamento/paginado?codigo=${id}`,
+    req,
+    res
+  )
+})
+
+// Rota para buscar as liquidações relacionadas a um empenho
+router.get('/liquidacoes-empenho/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/receitas-e-despesas/empenho/liquidacoes/paginado?codigo=${id}`,
+    req,
+    res
+  )
+})
+
+// Rota para buscar as ordens de pagamento relacionadas a um empenho
+router.get('/ordens-pagamento-empenho/:id', (req, res) => {
+  const id = req.params.id
+  fetchFromAPI(
+    `/api/receitas-e-despesas/empenho/ordens-de-pagamento/paginado?codigo=${id}`,
     req,
     res
   )
