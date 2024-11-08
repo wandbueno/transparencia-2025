@@ -109,7 +109,8 @@ export const menuStructure = {
           'resultado anual',
           'demonstrações anuais',
           'relatório anual',
-          'contas do exercício'
+          'contas do exercício',
+          'Prestação de Contas do Ano Anterior (Balanço Geral)'
         ]
       },
       {
@@ -171,7 +172,8 @@ export const menuStructure = {
           'lista pagamentos',
           'prioridade pagamentos',
           'ordem credores',
-          'sequência credores'
+          'sequência credores',
+          'Divulga a ordem cronológica de seus pagamentos, bem como as justificativas que fundamentaram a eventual alteração dessa ordem'
         ]
       },
       {
@@ -186,7 +188,8 @@ export const menuStructure = {
           'reserva orçamentária',
           'comprometimento orçamento',
           'empenho despesa',
-          'autorização despesa'
+          'autorização despesa',
+          'Divulga as despesas do Poder ou órgão, detalhando sua execução (empenho, liquidação e pagamento) e identificando sua classificação orçamentária (unidade orçamentária, a função, a subfunção, categoria econômica, grupo de despesa, elemento de despesa e a fonte dos recursos)?'
         ]
       },
       {
@@ -336,7 +339,8 @@ export const menuStructure = {
           'créditos município',
           'dívida tributária',
           'inadimplência',
-          'recuperação créditos'
+          'recuperação créditos',
+          'Divulga a lista dos inscritos em dívida ativa, contendo, no mínimo, dados referentes ao nome do inscrito e o valor total da dívida'
         ]
       }
     ]
@@ -360,11 +364,12 @@ export const menuStructure = {
           'efetivos',
           'comissionados',
           'contratados',
-          'quadro de pessoal'
+          'quadro de pessoal',
+          'Divulga a relação nominal dos servidores/autoridades/membros, seus cargos/funções, as respectivas lotações, as suas datas de admissão/exoneração/inativação e a carga horária semanal do cargo/função ocupada/desempenhada?'
         ]
       },
       {
-        nome: 'Terceirizados',
+        nome: 'Lista de Terceirizados que Prestam de Serviços a Instituição',
         path: '/terceirizados',
         icon: faUsers,
         keywords: [
@@ -377,7 +382,7 @@ export const menuStructure = {
         ]
       },
       {
-        nome: 'Estagiários',
+        nome: 'Lista de Estagiários',
         path: '/estagiarios',
         icon: faUsers,
         keywords: [
@@ -445,7 +450,6 @@ export const menuStructure = {
           'pagamento de diárias',
           'viagens',
           'despesas com diárias',
-          'valores de diárias',
           'deslocamentos',
           'viagens a serviço',
           'prestação de contas de diárias'
@@ -473,6 +477,21 @@ export const menuStructure = {
           'quanto custa cada diária',
           'regulamentação de diárias',
           'valores por cargo',
+          'diárias por função',
+          'legislação de diárias',
+          'tabela ou relação que explicite os valores das diárias dentro do Estado, fora do Estado e fora do país, conforme legislação local'
+        ]
+      },
+      {
+        nome: 'Estrutura Organizacional e Competências',
+        path: '/estrutura-organizacional',
+        icon: faUsers,
+        keywords: [
+          'estrutura administrativa ',
+          'competências e/ou atribuições',
+          'nome dos atuais responsáveis pela gestão do Poder/Órgão?',
+          'endereços e telefones atuais do Poder ou órgão e e-mails institucionais',
+          'horário de atendimento',
           'diárias por função',
           'legislação de diárias'
         ]
@@ -528,7 +547,8 @@ export const menuStructure = {
           'prestação contas câmara',
           'aprovação contas',
           'julgamento vereadores',
-          'parecer contas'
+          'parecer contas',
+          'Divulga o resultado do julgamento das Contas do Chefe do Poder Executivo pelo Poder Legislativo?'
         ]
       },
       {
@@ -540,7 +560,8 @@ export const menuStructure = {
           'TCE',
           'parecer TCE',
           'prestação contas anual',
-          'contas anuais'
+          'contas anuais',
+          'Divulga o resultado da apreciação e/ou julgamento das contas pelo Tribunal de Contas?'
         ]
       },
       {
@@ -620,7 +641,8 @@ export const menuStructure = {
           'concorrência',
           'edital',
           'processo licitatório',
-          'compras públicas'
+          'compras públicas',
+          'íntegra dos editais de licitação?'
         ]
       },
       {
@@ -632,7 +654,8 @@ export const menuStructure = {
           'inexigibilidade',
           'contratação direta',
           'compra direta',
-          'emergencial'
+          'emergencial',
+          'Divulga a íntegra dos principais documentos dos processos de dispensa e inexigibilidade de licitação'
         ]
       },
       {
@@ -648,6 +671,12 @@ export const menuStructure = {
         ]
       },
       {
+        nome: 'Adesão à Ata de Registro de Preços',
+        path: '/adesao-a-ata-de-registro-de-precos',
+        icon: faShoppingCart,
+        keywords: ['íntegra das Atas de Adesão – SRP']
+      },
+      {
         nome: 'Sanções Administrativas',
         path: '/sancoes-administrativas',
         icon: faShoppingCart,
@@ -657,7 +686,8 @@ export const menuStructure = {
           'suspensão',
           'impedimento licitar',
           'punição empresa',
-          'sanção fornecedor'
+          'sanção fornecedor',
+          'Divulga a relação dos licitantes e/ou contratados sancionados administrativamente pelo Poder ou órgão'
         ]
       },
       {
