@@ -69,6 +69,8 @@ import NewHeader from './components/layout/Header/NewHeader/NewHeader';
 import Metas from './components/pages/lrf/Metas/Metas';
 import BalancoAnual from './components/pages/lrf/Balanco/Balanco';
 import Pcasp from './components/pages/lrf/Pcasp/Pcasp';
+import RREO from './components/pages/lrf/RREO/RREO';
+import RGF from './components/pages/lrf/RGF/RGF';
 
 function App() {
 
@@ -156,6 +158,8 @@ function App() {
         <Route path="/metas-e-riscos-fiscais" element={<Metas />} />
         <Route path="/balanco-anual" element={<BalancoAnual />} />
         <Route path="/pcasp" element={<Pcasp />} />
+        <Route path="/relatorio-resumido-da-execucao-orcamentaria" element={<RREO />} />
+        <Route path="/relatorio-de-gestao-fiscal" element={<RGF />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />

@@ -119,6 +119,10 @@ const NewMegaMenu = ({ activeMenu, closeMenu }) => {
               <p>{renderLink('/relatorio-anual-de-gestao', 'Relatório Anual de Gestão ou Atividades')}</p>
               <p>{renderLink('/relatorio-do-controle-interno', 'Relatório do Controle Interno')}</p>
             </div>
+            <div className="column">
+              <p>{renderLink('/relatorio-resumido-da-execucao-orcamentaria', 'Relatório Resumido da Execução Orçamentária')}</p>
+              <p>{renderLink('/relatorio-de-gestao-fiscal', 'Relatório de Gestão Fiscal')}</p>
+            </div>
           </div>
         )}
 

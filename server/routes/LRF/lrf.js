@@ -296,4 +296,131 @@ router.get('/meta-dados-pcasp', (req, res) => {
   res.json(pcaspRoutes)
 })
 
+// Rotas para Relatório Resumido da Execução Orçamentária (RREO)
+const rreoRoutes = [
+  {
+    path: '/rreo-anexo-1',
+    endpoint: '1',
+    title: 'RREO - Anexo I - Balanço Orçamentário'
+  },
+  {
+    path: '/rreo-anexo-2',
+    endpoint: '2',
+    title:
+      'RREO - Anexo II - Demonstrativo da Execução das Despesas por Função/Subfunção'
+  },
+  {
+    path: '/rreo-anexo-8',
+    endpoint: '10',
+    title:
+      'RREO - Anexo VIII - Demonstrativo das Receitas e Despesas com Manutenção e Desenvolvimento do Ensino - MDE'
+  },
+  {
+    path: '/rreo-anexo-12',
+    endpoint: '16',
+    title:
+      'RREO - Anexo XII - Demonstrativo das Receitas e Despesas com Ações e Serviços Públicos de Saúde'
+  }
+]
+
+// Criar rotas dinamicamente para cada relatório RREO
+rreoRoutes.forEach(route => {
+  router.get(route.path, (req, res) => {
+    // Ajusta o nome do parâmetro antes da validação
+    if (req.query.tipoRelatorio) {
+      req.query.tipoDoRelatorio = req.query.tipoRelatorio
+      delete req.query.tipoRelatorio
+    }
+
+    // Valida parâmetros obrigatórios
+    const errors = validateRequiredParams(req)
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: 'Parâmetros inválidos',
+        details: errors
+      })
+    }
+
+    // Se passou na validação, faz a requisição
+    fetchFromLRFAPI(
+      `/portal-da-transparencia/api/lrf/${route.endpoint}`,
+      req,
+      res
+    )
+  })
+})
+
+// Rota para obter metadados dos relatórios RREO
+router.get('/meta-dados-rreo', (req, res) => {
+  res.json(rreoRoutes)
+})
+
+// Rotas para Relatório de Gestão Fiscal (RGF)
+const rgfRoutes = [
+  {
+    path: '/rgf-anexo-1',
+    endpoint: '21',
+    title: 'RGF - Anexo I - Demonstrativo da Despesa com Pessoal'
+  },
+  {
+    path: '/rgf-anexo-2',
+    endpoint: '22',
+    title: 'RGF - Anexo II - Demonstrativo da Dívida Consolidada Líquida - DCL'
+  },
+  {
+    path: '/rgf-anexo-3',
+    endpoint: '23',
+    title:
+      'RGF - Anexo III - Demonstrativo das Garantias e Contragarantias de Valores'
+  },
+  {
+    path: '/rgf-anexo-4',
+    endpoint: '24',
+    title: 'RGF - Anexo IV - Demonstrativo das Operações de Crédito'
+  },
+  {
+    path: '/rgf-anexo-6',
+    endpoint: '27',
+    title:
+      'RGF - Anexo VI - Demonstrativo Simplificado do Relatório de Gestão Fiscal'
+  }
+  // {
+  //   path: '/rgf-anexo-7',
+  //   endpoint: '28',
+  //   title: 'RGF - Anexo VII - Relatório de Gestão Fiscal Consolidado'
+  // }
+]
+
+// Criar rotas dinamicamente para cada relatório RGF
+rgfRoutes.forEach(route => {
+  router.get(route.path, (req, res) => {
+    // Ajusta o nome do parâmetro antes da validação
+    if (req.query.tipoRelatorio) {
+      req.query.tipoDoRelatorio = req.query.tipoRelatorio
+      delete req.query.tipoRelatorio
+    }
+
+    // Valida parâmetros obrigatórios
+    const errors = validateRequiredParams(req)
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: 'Parâmetros inválidos',
+        details: errors
+      })
+    }
+
+    // Se passou na validação, faz a requisição
+    fetchFromLRFAPI(
+      `/portal-da-transparencia/api/lrf/${route.endpoint}`,
+      req,
+      res
+    )
+  })
+})
+
+// Rota para obter metadados dos relatórios RGF
+router.get('/meta-dados-rgf', (req, res) => {
+  res.json(rgfRoutes)
+})
+
 module.exports = router
