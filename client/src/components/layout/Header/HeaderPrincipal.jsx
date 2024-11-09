@@ -4,7 +4,7 @@ import './HeaderPrincipal.css';
 import logoFundo from '../../../assets/Logo-Concei_fundo.png.webp';
 import logo from '../../../assets/LogoPublixelOfc.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faSearch, faBook, faHeadset } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faSearch, faBook, faHeadset, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { menuStructure } from '../../../components/pages/Home/homeConfig';
 
 const HeaderPrincipal = ({ onHamburgerClick }) => {
@@ -91,33 +91,45 @@ const HeaderPrincipal = ({ onHamburgerClick }) => {
         </div>
 
         <div className="search-container" ref={searchRef}>
-          <div className="search-input-wrapper">
+          <div className={`search-input-wrapper ${showResults && searchResults.length > 0 ? 'active' : ''}`}>
+            <FontAwesomeIcon icon={faSearch} className="search-icon" />
             <input
               type="text"
               placeholder="Buscar no portal..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <FontAwesomeIcon icon={faSearch} className="search-icon" />
+            {searchTerm && (
+              <button 
+                className="clear-search" 
+                onClick={() => setSearchTerm('')}
+                aria-label="Limpar busca"
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            )}
           </div>
 
           {showResults && searchResults.length > 0 && (
-            <div className="search-results-dropdown">
-              {searchResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="search-result-item"
-                  onClick={() => handleResultClick(result.path)}
-                  style={{ borderLeft: `4px solid ${result.cor}` }}
-                >
-                  <div className="result-content">
-                    <span className="result-title">{result.nome}</span>
-                    <span className="result-section">{result.section}</span>
+            <>
+              <div className="search-divider"></div>
+              <div className="search-results-dropdown">
+                {searchResults.map((result, index) => (
+                  <div
+                    key={index}
+                    className="search-result-item"
+                    onClick={() => handleResultClick(result.path)}
+                    style={{ borderLeft: `4px solid ${result.cor}` }}
+                  >
+                    <div className="result-content">
+                      <span className="result-title">{result.nome}</span>
+                      <span className="result-section">{result.section}</span>
+                    </div>
+                    <FontAwesomeIcon icon={result.icon} style={{ color: result.cor }} />
                   </div>
-                  <FontAwesomeIcon icon={result.icon} style={{ color: result.cor }} />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
 
