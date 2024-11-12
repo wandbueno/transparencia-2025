@@ -17,6 +17,9 @@ app.use(express.json())
 // Rotas modularizadas
 const licitacoesRoutes = require('./routes/contratosLicitacoes/licitacoes')
 const contratosRoutes = require('./routes/contratosLicitacoes/contratos')
+const fiscaisContratosRoutes = require('./routes/contratosLicitacoes/fiscaisContratos')
+
+const projetosRoutes = require('./routes/PlanPolPublicas/projetos')
 
 const despesasRoutes = require('./routes/receitasDespesas/despesas')
 const receitasRoutes = require('./routes/receitasDespesas/receitas')
@@ -31,6 +34,7 @@ const RepassesTransferenciasRoutes = require('./routes/receitasDespesas/Repasses
 const DespesasFixadasRoutes = require('./routes/receitasDespesas/DespesasFixadas')
 const DespesaSinteticaRoutes = require('./routes/receitasDespesas/DespesaSintetica')
 const RestosPagarRoutes = require('./routes/receitasDespesas/RestosPagar')
+const informacoesConsolidadasRouter = require('./routes/receitasDespesas/informacoesConsolidadas')
 
 const diariasRoutes = require('./routes/orgaosServidores/diarias')
 const servidoresRoutes = require('./routes/orgaosServidores/servidores')
@@ -44,6 +48,9 @@ const comboRoutes = require('./routes/combo/combo')
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
 app.use('/api/contratos', contratosRoutes)
+app.use('/api/fiscais-de-contratos', fiscaisContratosRoutes)
+
+app.use('/api/projetos', projetosRoutes)
 
 app.use('/api/receitas', receitasRoutes)
 app.use('/api/despesas', despesasRoutes)
@@ -58,6 +65,7 @@ app.use('/api/repasse-ou-transferencia', RepassesTransferenciasRoutes)
 app.use('/api/despesas-fixadas', DespesasFixadasRoutes)
 app.use('/api/despesas-sintetica', DespesaSinteticaRoutes)
 app.use('/api/restos-a-pagar', RestosPagarRoutes)
+app.use('/api/informacoes-consolidadas', informacoesConsolidadasRouter)
 
 app.use('/api/diarias', diariasRoutes)
 app.use('/api/servidor', servidoresRoutes)
