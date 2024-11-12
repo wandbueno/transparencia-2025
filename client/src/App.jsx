@@ -71,6 +71,11 @@ import BalancoAnual from './components/pages/lrf/Balanco/Balanco';
 import Pcasp from './components/pages/lrf/Pcasp/Pcasp';
 import RREO from './components/pages/lrf/RREO/RREO';
 import RGF from './components/pages/lrf/RGF/RGF';
+import FiscaisContratos from './components/pages/Contratos/FiscaisContratos';
+import AcompanhamentoProjetos from './components/pages/PoliticasPublicas/AcompanhamentoProjetos/AcompanhamentoProjetos';
+import AcompanhamentoProjetosDetail from './components/pages/PoliticasPublicas/AcompanhamentoProjetos/AcompanhamentoProjetosDetail';
+import InformacoesConsolidadas from './components/pages/despesas/InformacoesConsolidadas/InformacoesConsolidadas';
+import InformacoesConsolidadasDetail from './components/pages/despesas/InformacoesConsolidadas/InformacoesConsolidadasDetail';
 
 function App() {
 
@@ -155,11 +160,17 @@ function App() {
         <Route path="/despesa-sintetica/:id" element={<DespesasSinteticaDetail />} />
         <Route path="/restos-a-pagar" element={<RestosPagar />} />
         <Route path="/restos-a-pagar/:id" element={<RestosPagaroDetail />} />
+        <Route path="/informacoes-consolidadas" element={<InformacoesConsolidadas />} />
+        <Route path="/informacoes-consolidadas/:id" element={<InformacoesConsolidadasDetail />} />
+
         <Route path="/metas-e-riscos-fiscais" element={<Metas />} />
         <Route path="/balanco-anual" element={<BalancoAnual />} />
         <Route path="/pcasp" element={<Pcasp />} />
         <Route path="/relatorio-resumido-da-execucao-orcamentaria" element={<RREO />} />
         <Route path="/relatorio-de-gestao-fiscal" element={<RGF />} />
+        <Route path="/lista-de-fiscal-de-contrato" element={<FiscaisContratos />} />
+        <Route path="/acoes-e-projetos" element={<AcompanhamentoProjetos />} />
+        <Route path="/acoes-e-projetos/:id" element={<AcompanhamentoProjetosDetail />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />
