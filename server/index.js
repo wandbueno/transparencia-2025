@@ -20,7 +20,7 @@ const contratosRoutes = require('./routes/contratosLicitacoes/contratos')
 const fiscaisContratosRoutes = require('./routes/contratosLicitacoes/fiscaisContratos')
 
 const projetosRoutes = require('./routes/PlanPolPublicas/projetos')
-
+const programasRoutes = require('./routes/PlanPolPublicas/programas')
 const despesasRoutes = require('./routes/receitasDespesas/despesas')
 const receitasRoutes = require('./routes/receitasDespesas/receitas')
 const dividaRoutes = require('./routes/receitasDespesas/divida')
@@ -51,6 +51,7 @@ app.use('/api/contratos', contratosRoutes)
 app.use('/api/fiscais-de-contratos', fiscaisContratosRoutes)
 
 app.use('/api/projetos', projetosRoutes)
+app.use('/api/programas', programasRoutes)
 
 app.use('/api/receitas', receitasRoutes)
 app.use('/api/despesas', despesasRoutes)
