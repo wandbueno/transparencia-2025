@@ -76,6 +76,8 @@ import AcompanhamentoProjetos from './components/pages/PoliticasPublicas/Acompan
 import AcompanhamentoProjetosDetail from './components/pages/PoliticasPublicas/AcompanhamentoProjetos/AcompanhamentoProjetosDetail';
 import InformacoesConsolidadas from './components/pages/despesas/InformacoesConsolidadas/InformacoesConsolidadas';
 import InformacoesConsolidadasDetail from './components/pages/despesas/InformacoesConsolidadas/InformacoesConsolidadasDetail';
+import AcompanhamentoProgramas from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramas';
+import AcompanhamentoProgramasDetail from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramasDetail';
 
 function App() {
 
@@ -171,6 +173,8 @@ function App() {
         <Route path="/lista-de-fiscal-de-contrato" element={<FiscaisContratos />} />
         <Route path="/acoes-e-projetos" element={<AcompanhamentoProjetos />} />
         <Route path="/acoes-e-projetos/:id" element={<AcompanhamentoProjetosDetail />} />
+        <Route path="/programas" element={<AcompanhamentoProgramas />} />
+        <Route path="/programas/:id" element={<AcompanhamentoProgramasDetail />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />

@@ -103,39 +103,39 @@ const InformacoesConsolidadasDetail = () => {
       name: 'Número', 
       selector: row => row.codigoDaOrdemDePagamento, 
       sortable: true, 
-      width: '20%' 
+      width: '25%' 
     },
     { 
       name: 'Data', 
       selector: row => row.dataDaOrdemDePagamento, 
       sortable: true, 
-      width: '20%' 
+      width: '25%' 
     },
     { 
       name: 'Valor Pago', 
       selector: row => row.valorPago?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00', 
       sortable: true, 
-      width: '20%' 
+      width: '25%' 
     },
     { 
       name: 'Valor do Estorno', 
       selector: row => row.valorDoEstorno?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00', 
       sortable: true, 
-      width: '30%' 
+      width: '25%' 
     },
-    {
-      name: 'Ação',
-      selector: row => row.codigo,
-      cell: row => (
-        <ButtonTable 
-          path="/pagamentos" 
-          id={row.codigo} 
-          label="Abrir"
-        />
-      ),
-      width: '10%',
-      excludeFromExport: true
-    }
+    // {
+    //   name: 'Ação',
+    //   selector: row => row.codigo,
+    //   cell: row => (
+    //     <ButtonTable 
+    //       path="/pagamentos" 
+    //       id={row.codigo} 
+    //       label="Abrir"
+    //     />
+    //   ),
+    //   width: '10%',
+    //   excludeFromExport: true
+    // }
     
   ];
 
