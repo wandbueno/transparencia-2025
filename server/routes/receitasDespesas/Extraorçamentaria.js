@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-// const { fetchFromAPI } = require('../../services/apiService')
 const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res) => {

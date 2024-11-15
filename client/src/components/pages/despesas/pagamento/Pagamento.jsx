@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getPagamentos } from "../../../../services/receitasDespesas/pagamentos";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection/FilterSection';
+import FilterSection from '../../../common/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import ButtonTable from "../../../common/ButtonTable";
@@ -57,13 +57,6 @@ const Pagamento = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define quais filtros estarão disponíveis nesta página
-  const filtrosDisponiveis = [
-    'ano',
-    'orgao',
-    'modalidade'
-  ];
-
   useEffect(() => {
     document.title = `Pagamentos - Portal Transparência - ${config.geral.nomeOrgao}`;
     fetchData();
@@ -82,15 +75,6 @@ const Pagamento = () => {
     }
   };
 
-  const handleFilterChange = async (filters) => {
-    try {
-      console.log('Filtros recebidos:', filters); // Log para debug
-      await fetchData(filters);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   return (
     <div className="container">
       <PageHeader
@@ -100,15 +84,12 @@ const Pagamento = () => {
         ]}
       />      
       
-      <FilterSection 
-        availableFilters={filtrosDisponiveis}
-        onFilterChange={handleFilterChange}
-      />
+      <FilterSection />
       
       <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
       </InfoText>        
-         
+
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
