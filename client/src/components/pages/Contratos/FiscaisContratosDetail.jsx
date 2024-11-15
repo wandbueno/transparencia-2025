@@ -63,7 +63,7 @@ const truncateText = (text, maxLength) => {
     { name: 'Data', selector: row => row.data, sortable: true, width: '7%' },
     { name: 'Vigência', selector: row => row.vigencia, sortable: true, width: '7%' },
     { name: 'Situação', selector: row => row.situacao, sortable: true, width: '8%' },
-    { name: 'Objeto', selector: row => truncateText(row.objeto, 40), sortable: true, width: '25%' },
+    { name: 'Objeto', selector: row => truncateText(row.objeto, 40), sortable: true, width: '24%' },
     { name: 'Valor', selector: row => row.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '10%' },
     {
       name: 'Abrir',
@@ -72,7 +72,7 @@ const truncateText = (text, maxLength) => {
         const id = row.codigo
         return <ButtonTable path="/contratos" id={id} label="Abrir" /> // Passa a rota e o ID
       },
-      width: '5%',
+      width: '6%',
       excludeFromExport: true
     }
 
