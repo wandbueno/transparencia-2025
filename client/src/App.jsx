@@ -78,6 +78,7 @@ import InformacoesConsolidadas from './components/pages/despesas/InformacoesCons
 import InformacoesConsolidadasDetail from './components/pages/despesas/InformacoesConsolidadas/InformacoesConsolidadasDetail';
 import AcompanhamentoProgramas from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramas';
 import AcompanhamentoProgramasDetail from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramasDetail';
+import FiscaisContratosDetail from './components/pages/Contratos/FiscaisContratosDetail';
 
 function App() {
 
@@ -171,6 +172,7 @@ function App() {
         <Route path="/relatorio-resumido-da-execucao-orcamentaria" element={<RREO />} />
         <Route path="/relatorio-de-gestao-fiscal" element={<RGF />} />
         <Route path="/lista-de-fiscal-de-contrato" element={<FiscaisContratos />} />
+        <Route path="/lista-de-fiscal-de-contrato/:id" element={<FiscaisContratosDetail />} />
         <Route path="/acoes-e-projetos" element={<AcompanhamentoProjetos />} />
         <Route path="/acoes-e-projetos/:id" element={<AcompanhamentoProjetosDetail />} />
         <Route path="/programas" element={<AcompanhamentoProgramas />} />
