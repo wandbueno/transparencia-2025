@@ -21,7 +21,7 @@ const columns = [
     selector: row => row.codigo, 
     cell: row => {
       const id = row.codigo;
-      return <ButtonTable path="/despesas-empenho" id={id} label="Ver Detalhes" />; // Usa o botão de detalhes
+      return <ButtonTable path="/despesas-empenho" id={id} label="Ver Detalhes" />;
     },
     width: '11%', 
     excludeFromExport: true

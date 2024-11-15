@@ -5,13 +5,13 @@ const API_BASE_URL = `${
   import.meta.env.VITE_BACKEND_URL
 }/api/fiscais-de-contratos`
 
-// Função para buscar lista de fiscais
-export const getFiscaisContratos = async () => {
+// Função para buscar data de atualização
+export const getDataAtualizacao = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/lista`)
+    const response = await axios.get(`${API_BASE_URL}/data-de-atualizacao`)
     return response.data
   } catch (error) {
-    console.error('Erro ao buscar Fiscais de Contratos:', error)
+    console.error('Erro ao buscar data de atualização:', error)
     throw error
   }
 }
@@ -38,10 +38,9 @@ export const getFiscalContratosById = async chavePrimaria => {
 export const getContratosByFiscal = async codigo => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/contratos-do-fiscal/paginado`,
+      `${API_BASE_URL}/contratos-do-fiscal/${codigo}`,
       {
         params: {
-          codigo: codigo,
           pagina: 1,
           tamanhoDaPagina: 2500
         }
@@ -54,13 +53,16 @@ export const getContratosByFiscal = async codigo => {
   }
 }
 
-// Função para buscar data de atualização
-export const getDataAtualizacao = async () => {
+// Função para buscar fiscais paginados
+export const getFiscaisPaginados = async filtro => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/data-de-atualizacao`)
+    const response = await axios.post(`${API_BASE_URL}/paginado`, filtro) // Envia o filtro diretamente
     return response.data
   } catch (error) {
-    console.error('Erro ao buscar data de atualização:', error)
+    console.error(
+      'Erro ao buscar dados paginados dos fiscais de contratos:',
+      error
+    )
     throw error
   }
 }
