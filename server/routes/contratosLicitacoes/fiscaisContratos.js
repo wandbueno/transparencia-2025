@@ -8,7 +8,8 @@ const fetchFromAPI = async (path, req, res) => {
       params: {
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        chavePrimaria: req.query.chavePrimaria || ''
+        chavePrimaria: req.query.chavePrimaria || '',
+        codigo: req.query.codigo || ''
       },
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
@@ -44,12 +45,24 @@ router.get('/detalhe', (req, res) => {
 })
 
 // Rota para buscar dados paginados
-router.post('/paginado', (req, res) => {
-  fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/paginado',
-    req,
-    res
-  )
+router.post('/paginado', async (req, res) => {
+  try {
+    const filtro = req.body
+    const response = await axios.post(
+      `${process.env.SERVER}/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/paginado`,
+      filtro,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TOKEN}`,
+          'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        }
+      }
+    )
+    res.json(response.data)
+  } catch (error) {
+    console.error('Erro ao buscar dados paginados:', error)
+    res.status(500).json({ error: 'Erro ao buscar dados paginados' })
+  }
 })
 
 // Rota para buscar contratos do fiscal paginados
@@ -61,19 +74,20 @@ router.get('/contratos-do-fiscal/paginado', (req, res) => {
   )
 })
 
-router.get('/:id', (req, res) => {
+// Rota para buscar contratos do fiscal by id
+router.get('/contratos-do-fiscal/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(
-    `/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/detalhe?chavePrimaria=${id}`,
+    `/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/contratos-do-fiscal/paginado?codigo=${id}`,
     req,
     res
   )
 })
 
-// Rota para listar fiscais (GET)
-router.get('/lista', (req, res) => {
+router.get('/:id', (req, res) => {
+  const id = req.params.id
   fetchFromAPI(
-    '/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/paginado',
+    `/api/contratos-convenios-e-licitacoes/fiscais-de-contratos/detalhe?chavePrimaria=${id}`,
     req,
     res
   )
