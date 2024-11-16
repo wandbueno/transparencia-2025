@@ -81,6 +81,7 @@ import AcompanhamentoProgramasDetail from './components/pages/PoliticasPublicas/
 import FiscaisContratosDetail from './components/pages/Contratos/FiscaisContratosDetail';
 import OrdensDeFornecimento from './components/pages/Contratos/OrdensDeFornecimento';
 import OrdemDeFornecimentoDetalhe from './components/pages/Contratos/OrdemDeFornecimentoDetalhe';
+import OrdemCronologicaPagamentos from './components/pages/despesas/OrdemCronologicaPagamentos/OrdemCronologicaPagamentos';
 
 function App() {
 
@@ -181,6 +182,7 @@ function App() {
         <Route path="/programas/:id" element={<AcompanhamentoProgramasDetail />} />
         <Route path="/ordem-de-fornecimento" element={<OrdensDeFornecimento />} />
         <Route path="/ordem-de-fornecimento/:id" element={<OrdemDeFornecimentoDetalhe />} />
+        <Route path="/ordem-cronologica-de-pagamentos" element={<OrdemCronologicaPagamentos />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />
