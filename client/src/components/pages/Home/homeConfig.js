@@ -672,6 +672,29 @@ export const menuStructure = {
           'patrimônio municipal',
           'almoxarifado'
         ]
+      },
+      {
+        nome: 'Fiscais de Contratos',
+        path: '/lista-de-fiscal-de-contrato',
+        icon: faShoppingCart,
+        keywords: [
+          'Fiscal de contratos',
+          'Fiscal do contrato',
+          'Fiscais dos contratos Vigentes',
+          'Fiscais dos contratos Encerrados'
+        ]
+      },
+      {
+        nome: 'Ordens de Fornecimentos',
+        path: '/ordem-de-fornecimento',
+        icon: faShoppingCart,
+        keywords: [
+          'Ordem de Fornecimento',
+          'Compras',
+          'Relação de Compras',
+          'Relacao de Compras',
+          'Fornecedor da Compra ou Serviço'
+        ]
       }
     ]
   },

@@ -41,6 +41,7 @@ const servidoresRoutes = require('./routes/orgaosServidores/servidores')
 const estruturaremuneracaoRoutes = require('./routes/orgaosServidores/EstruturaRemuneracao')
 
 const legislacaoRoutes = require('./routes/legislacaoPublicacoes/legislacao')
+const ordensDeFornecimentoRoutes = require('./routes/contratosLicitacoes/ordensDeFornecimento')
 
 const lrfRoutes = require('./routes/LRF/lrf')
 const comboRoutes = require('./routes/combo/combo')
@@ -71,6 +72,7 @@ app.use('/api/informacoes-consolidadas', informacoesConsolidadasRouter)
 app.use('/api/diarias', diariasRoutes)
 app.use('/api/servidor', servidoresRoutes)
 app.use('/api/estrutura-de-remuneracao', estruturaremuneracaoRoutes)
+app.use('/api/ordem-de-fornecimento', ordensDeFornecimentoRoutes)
 
 app.use('/api/legislacao', legislacaoRoutes)
 

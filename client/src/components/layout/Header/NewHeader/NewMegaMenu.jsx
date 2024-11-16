@@ -134,12 +134,21 @@ const NewMegaMenu = ({ activeMenu, closeMenu }) => {
             <div className="column">
               <p>{renderLink('/licitacoes', 'Procedimentos Licitatórios')}</p>
               <p>{renderLink('/dispensas-e-inexigibilidades', 'Dispensas e Inexigibilidades')}</p>
+              <p>{renderLink('#', 'Adesão à Ata de Registro de Preços')}</p>
               <p>{renderLink('/contratos', 'Contratos e Aditivos')}</p>
               <p>{renderLink('/lista-de-fiscal-de-contrato', 'Fiscais de Contratos')}</p>
-              <p>{renderLink('/sancoes-administrativas', 'Sanções Administrativas')}</p>
+              
             </div>
             <div className="column">
+            <p>{renderLink('#', 'Ordem Cronológica de Pagamentos')}</p>
+              <p>{renderLink('/ordem-de-fornecimento', 'Ordem de Fornecimento')}</p>
               <p>{renderLink('/patrimonio-e-almoxarifado', 'Patrimônio e Almoxarifado')}</p>
+              <p>{renderLink('/convenios-e-transferencias', 'Convênios e Transferências')}</p>              
+            </div>
+            <div className="column">
+              <p>{renderLink('#', 'Plano de Contratações Anual (PCA)')}</p>
+              <p>{renderLink('/sancoes-administrativas', 'Sanções Administrativas')}</p>
+              
             </div>
           </div>
         )}

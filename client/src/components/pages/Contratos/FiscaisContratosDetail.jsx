@@ -14,9 +14,9 @@ const FiscaisContratosDetail = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const contentRef = useRef();  // Referência para capturar o conteúdo principal
-  const tableRef = useRef(); // Referência para capturar as tabelas separadamente
-  const [contratos, setContratos] = useState(null); // Estado para os contratos do fiscal
+  const contentRef = useRef();  
+  const tableRef = useRef(); 
+  const [contratos, setContratos] = useState(null); 
 
   useEffect(() => {
     const fetchData = async () => {

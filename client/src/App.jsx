@@ -79,6 +79,8 @@ import InformacoesConsolidadasDetail from './components/pages/despesas/Informaco
 import AcompanhamentoProgramas from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramas';
 import AcompanhamentoProgramasDetail from './components/pages/PoliticasPublicas/AcompanhamentoProgramas/AcompanhamentoProgramasDetail';
 import FiscaisContratosDetail from './components/pages/Contratos/FiscaisContratosDetail';
+import OrdensDeFornecimento from './components/pages/Contratos/OrdensDeFornecimento';
+import OrdemDeFornecimentoDetalhe from './components/pages/Contratos/OrdemDeFornecimentoDetalhe';
 
 function App() {
 
@@ -177,6 +179,8 @@ function App() {
         <Route path="/acoes-e-projetos/:id" element={<AcompanhamentoProjetosDetail />} />
         <Route path="/programas" element={<AcompanhamentoProgramas />} />
         <Route path="/programas/:id" element={<AcompanhamentoProgramasDetail />} />
+        <Route path="/ordem-de-fornecimento" element={<OrdensDeFornecimento />} />
+        <Route path="/ordem-de-fornecimento/:id" element={<OrdemDeFornecimentoDetalhe />} />
       </Routes>
       <Footer />
         <AccessibilityButton onOpen={handleOpenPopup} />
