@@ -19,7 +19,7 @@ const NewMenuPrincipal = ({ isMenuActive, toggleMenu, closeMenu, isMobileMenuOpe
       orgaos: ['/servidores', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo', '/estrutura-de-remuneracao', '/saude', '/diarias', '/liquidacoes', '/tabela-explicativa-de-valores-de-diarias'],
       politicas: ['/obras', '/obras-paralisadas', '/metas-e-riscos-fiscais', '/julgamento-de-contas', '/prestacao-de-contas', '/incentivos-a-projetos-culturais', '/planos'],
       fiscal: ['/relatorio-anual-de-gestao', '/relatorio-do-controle-interno', '/relatorio-resumido-da-execucao-orcamentaria', '/relatorio-de-gestao-fiscal'],
-      licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos', '/sancoes-administrativas', '/patrimonio-e-almoxarifado', '/lista-de-fiscal-de-contrato'],
+      licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos', '/sancoes-administrativas', '/patrimonio-e-almoxarifado', '/lista-de-fiscal-de-contrato', '/ordem-de-fornecimento'],
       legislacao: ['/leis', '/acordos', '/convenio-pre-convenio-celebrados', '/emendas-parlamentares'],
       ouvidoria: ['/rol-de-informacoes']
     };

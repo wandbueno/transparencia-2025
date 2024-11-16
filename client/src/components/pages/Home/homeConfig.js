@@ -683,6 +683,18 @@ export const menuStructure = {
           'Fiscais dos contratos Vigentes',
           'Fiscais dos contratos Encerrados'
         ]
+      },
+      {
+        nome: 'Ordens de Fornecimentos',
+        path: '/ordem-de-fornecimento',
+        icon: faShoppingCart,
+        keywords: [
+          'Ordem de Fornecimento',
+          'Compras',
+          'Relação de Compras',
+          'Relacao de Compras',
+          'Fornecedor da Compra ou Serviço'
+        ]
       }
     ]
   },
