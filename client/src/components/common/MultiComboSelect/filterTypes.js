@@ -1,11 +1,8 @@
-import axios from 'axios'
-
-const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/combo`
-
-// Lista de todos os filtros disponíveis
-export const COMBO_FILTERS = {
+// Tipos de filtros disponíveis
+export const FILTER_TYPES = {
   // Filtros Gerais
   ANO: 'ano',
+  MES: 'mes',
   ORGAO: 'orgao',
   DEPARTAMENTO: 'departamento',
   UNIDADE: 'unidade',
@@ -68,76 +65,71 @@ export const COMBO_FILTERS = {
   TIPO_ENTE_FEDERADO: 'tipoDeEnteFederadoVidaFuncionalDisposicao'
 }
 
-// Função principal para buscar dados do combo
-export const getComboData = async (filtros = []) => {
-  try {
-    const filtrosArray = Array.isArray(filtros) ? filtros : [filtros]
+// Tipos de campos de entrada
+export const INPUT_TYPES = {
+  COMBO: 'combo',
+  TEXT: 'text',
+  NUMBER: 'number',
+  DATE: 'date'
+}
 
-    // Validação dos filtros
-    const invalidFilters = filtrosArray.filter(
-      filtro => !Object.values(COMBO_FILTERS).includes(filtro)
-    )
+// Mapeamento de labels para os filtros
+export const FILTER_LABELS = {
+  [FILTER_TYPES.ANO]: 'Ano',
+  [FILTER_TYPES.MES]: 'Mês',
+  [FILTER_TYPES.ORGAO]: 'Órgão',
+  [FILTER_TYPES.DEPARTAMENTO]: 'Departamento',
+  [FILTER_TYPES.UNIDADE]: 'Unidade',
+  [FILTER_TYPES.MODALIDADE]: 'Modalidade',
+  [FILTER_TYPES.MODALIDADE_LICITACAO]: 'Modalidade de Licitação',
+  [FILTER_TYPES.SITUACAO_CONTRATO]: 'Situação do Contrato',
+  [FILTER_TYPES.ADITIVO_CONTRATO]: 'Aditivo do Contrato',
+  [FILTER_TYPES.ASSUNTO_CONTRATO]: 'Assunto do Contrato',
+  [FILTER_TYPES.CONTRATO_COVID19]: 'Covid-19'
+  // Adicione mais labels conforme necessário
+}
 
-    if (invalidFilters.length > 0) {
-      throw new Error(`Filtros inválidos: ${invalidFilters.join(', ')}`)
-    }
-
-    // Cria os parâmetros de query
-    const params = new URLSearchParams()
-    filtrosArray.forEach(filtro => {
-      params.append('filtro', filtro)
-    })
-
-    const response = await axios.get(`${API_BASE_URL}?${params.toString()}`)
-    return response.data
-  } catch (error) {
-    console.error('Erro ao buscar dados do combo:', error)
-    throw error
+// Configurações padrão dos campos de texto
+export const TEXT_FIELDS = {
+  CPF_CNPJ: {
+    id: 'cpfCnpj',
+    label: 'CPF/CNPJ',
+    type: INPUT_TYPES.TEXT,
+    placeholder: 'Digite o CPF ou CNPJ'
+  },
+  FORNECEDOR: {
+    id: 'fornecedor',
+    label: 'Fornecedor',
+    type: INPUT_TYPES.TEXT,
+    placeholder: 'Digite o nome do fornecedor'
+  },
+  OBJETO: {
+    id: 'objeto',
+    label: 'Objeto',
+    type: INPUT_TYPES.TEXT,
+    placeholder: 'Digite o objeto'
+  },
+  NUMERO_CONTRATO: {
+    id: 'numeroContrato',
+    label: 'Número do Contrato',
+    type: INPUT_TYPES.TEXT,
+    placeholder: 'Digite o número do contrato'
+  },
+  // Novos campos para Ordens de Fornecimento
+  CODIGO_COMPRA: {
+    id: 'codigoDaCompra',
+    label: 'Código da Compra',
+    type: INPUT_TYPES.TEXT,
+    placeholder: 'Digite o código da compra'
+  },
+  DATA_INICIAL: {
+    id: 'dataInicial',
+    label: 'Data Inicial',
+    type: INPUT_TYPES.DATE
+  },
+  DATA_FINAL: {
+    id: 'dataFinal',
+    label: 'Data Final',
+    type: INPUT_TYPES.DATE
   }
-}
-
-// Funções auxiliares para combos específicos
-export const getAnosCombo = async () => {
-  return getComboData([COMBO_FILTERS.ANO])
-}
-
-export const getOrgaosCombo = async () => {
-  return getComboData([COMBO_FILTERS.ORGAO])
-}
-
-export const getDepartamentosCombo = async () => {
-  return getComboData([COMBO_FILTERS.DEPARTAMENTO])
-}
-
-export const getModalidadesLicitacaoCombo = async () => {
-  return getComboData([COMBO_FILTERS.MODALIDADE_LICITACAO])
-}
-
-export const getFuncoesCombo = async () => {
-  return getComboData([COMBO_FILTERS.FUNCAO])
-}
-
-export const getSubfuncoesCombo = async () => {
-  return getComboData([COMBO_FILTERS.SUBFUNCAO])
-}
-
-export const getProgramasCombo = async () => {
-  return getComboData([COMBO_FILTERS.PROGRAMA])
-}
-
-export const getFontesReceitaCombo = async () => {
-  return getComboData([COMBO_FILTERS.FONTE_RECEITA])
-}
-
-// Função para buscar múltiplos combos de uma vez
-export const getMultiplosCombo = async filtros => {
-  if (!Array.isArray(filtros)) {
-    throw new Error('O parâmetro filtros deve ser um array')
-  }
-  return getComboData(filtros)
-}
-
-// Função para validar filtros
-export const isValidFilter = filtro => {
-  return Object.values(COMBO_FILTERS).includes(filtro)
 }

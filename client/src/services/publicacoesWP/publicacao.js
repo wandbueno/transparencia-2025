@@ -137,4 +137,41 @@ export const getDocumentsWithUrls = async documents => {
 
   return documentData
 }
-//teste
+
+export const getPublicacoesFiltered = async (filters = {}) => {
+  try {
+    let params = {
+      per_page: 100,
+      page: 1
+    }
+
+    // Adiciona os filtros de taxonomia se existirem
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        params[key] = value
+      }
+    })
+
+    const response = await axios.get(VITE_SITE_OFICIAL, { params })
+
+    let filteredResults = response.data
+
+    // Aplica filtro de busca por texto se existir
+    if (filters.searchTerm) {
+      filteredResults = filteredResults.filter(
+        item =>
+          item.title.rendered
+            .toLowerCase()
+            .includes(filters.searchTerm.toLowerCase()) ||
+          item.content.rendered
+            .toLowerCase()
+            .includes(filters.searchTerm.toLowerCase())
+      )
+    }
+
+    return filteredResults
+  } catch (error) {
+    console.error('Erro ao buscar publicações filtradas:', error)
+    throw error
+  }
+}

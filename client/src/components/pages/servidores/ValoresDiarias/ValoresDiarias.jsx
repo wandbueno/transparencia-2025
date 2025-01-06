@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getPublicacoesPorTipo } from "../../../../services/publicacoesWP/publicacao";
+import { TAXONOMIES } from "../../../../services/publicacoesWP/taxonomies";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterWP from '../../../common/FilterWP/FilterWP';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
@@ -35,41 +36,93 @@ const columnsValoresDiarias = [
 
 const ValoresDiarias = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
-    document.title = `Tabela Explicativa de Valores de Diárias - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        
-        // Usando a função genérica para buscar publicações do tipo "Terceirizados"
-        const data = await getPublicacoesPorTipo('Valores de Diárias');
-        setData(data); // Armazena os dados filtrados
-
-      } catch (error) {
-        console.error('Erro ao carregar Tabela Explicativa de Valores de Diárias:', error);
-        setError('Erro ao carregar dados da API');
-      } finally {
-        setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
-      }
-    };
-    
+    document.title = `Tabela Explicativa de Valores de Diárias - ${config.geral.nomeOrgao}`;
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const result = await getPublicacoesPorTipo('Valores de Diárias');
+      setData(result);
+      setFilteredData(result);
+    } catch (error) {
+      console.error('Erro ao carregar Tabela Explicativa de Valores de Diárias:', error);
+      setError('Erro ao carregar dados da API');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchInObject = (obj, searchTerm) => {
+    if (!obj) return false;
+    
+    searchTerm = searchTerm.toLowerCase();
+    
+    if (typeof obj === 'string' || typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(searchTerm);
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.some(item => searchInObject(item, searchTerm));
+    }
+    
+    if (typeof obj === 'object') {
+      return Object.values(obj).some(value => searchInObject(value, searchTerm));
+    }
+    
+    return false;
+  };
+
+  const handleFilterChange = (filters) => {
+    let filtered = [...data];
+
+    // Filtrar por taxonomias
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        filtered = filtered.filter(item => 
+          item[key]?.includes(Number(value))
+        );
+      }
+    });
+
+    // Filtrar por termo de busca
+    if (filters.searchTerm) {
+      filtered = filtered.filter(item => {
+        return (
+          searchInObject(item.title?.rendered, filters.searchTerm) ||
+          searchInObject(item.content?.rendered, filters.searchTerm) ||
+          searchInObject(item.excerpt?.rendered, filters.searchTerm) ||
+          searchInObject(item.meta, filters.searchTerm) ||
+          searchInObject(item.slug, filters.searchTerm)
+        );
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Tabela Explicativa de Valores de Diárias"
         breadcrumb={[
           { label: 'Tabela Explicativa de Valores de Diárias' },
         ]}
       />      
-      <FilterSection  />
+      
+      <FilterWP 
+        onFilterChange={handleFilterChange}
+        customWidths={{
+          [TAXONOMIES.ANO]: '30%',
+          'searchTerm': '70%'
+        }}
+        enabledFilters={[TAXONOMIES.ANO]} 
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -83,11 +136,9 @@ const ValoresDiarias = () => {
         <DataTableComponent
           title="Tabela Explicativa de Valores de Diárias"
           columns={columnsValoresDiarias}
-          data={data}
+          data={filteredData}
         />
       )}
-
-   
     </div>
   );
 };

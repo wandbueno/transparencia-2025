@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getPlanosMunicipal } from "../../../../services/publicacoesWP/publicacao";
+import { TAXONOMIES } from "../../../../services/publicacoesWP/taxonomies";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterWP from '../../../common/FilterWP/FilterWP';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
@@ -41,41 +42,104 @@ const columnsPlanosMunicipal = [
 
 const PlanosMunicipal = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
     document.title = `Planos Municipal - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        
-        // Usando a função genérica para buscar publicações do tipo "Terceirizados"
-        const data = await getPlanosMunicipal('Planos Municipal');
-        setData(data); // Armazena os dados filtrados
-
-      } catch (error) {
-        console.error('Erro ao carregar Planos Municipal:', error);
-        setError('Erro ao carregar dados da API');
-      } finally {
-        setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
-      }
-    };
-    
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const result = await getPlanosMunicipal('Planos Municipal');
+      setData(result);
+      setFilteredData(result);
+    } catch (error) {
+      console.error('Erro ao carregar Planos Municipal:', error);
+      setError('Erro ao carregar dados da API');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchInObject = (obj, searchTerm) => {
+    if (!obj) return false;
+    
+    // Convert search term to lower case for case-insensitive search
+    searchTerm = searchTerm.toLowerCase();
+    
+    // Search in strings and numbers directly
+    if (typeof obj === 'string' || typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(searchTerm);
+    }
+    
+    // Search in arrays
+    if (Array.isArray(obj)) {
+      return obj.some(item => searchInObject(item, searchTerm));
+    }
+    
+    // Search in objects
+    if (typeof obj === 'object') {
+      return Object.values(obj).some(value => searchInObject(value, searchTerm));
+    }
+    
+    return false;
+  };
+
+  const handleFilterChange = (filters) => {
+    let filtered = [...data];
+
+    // Filtrar por taxonomias
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        filtered = filtered.filter(item => 
+          item[key]?.includes(Number(value))
+        );
+      }
+    });
+
+    // Filtrar por termo de busca
+    if (filters.searchTerm) {
+      filtered = filtered.filter(item => {
+        // Search in all fields
+        return (
+          // Search in title
+          searchInObject(item.title?.rendered, filters.searchTerm) ||
+          // Search in content
+          searchInObject(item.content?.rendered, filters.searchTerm) ||
+          // Search in excerpt
+          searchInObject(item.excerpt?.rendered, filters.searchTerm) ||
+          // Search in meta fields
+          searchInObject(item.meta, filters.searchTerm) ||
+          // Search in slug
+          searchInObject(item.slug, filters.searchTerm) ||
+          // Search in object field
+          searchInObject(item.meta?.objeto_, filters.searchTerm)
+        );
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Planos Municipal"
         breadcrumb={[
           { label: 'Planos Municipal' },
         ]}
       />      
-      <FilterSection  />
+      <FilterWP 
+        onFilterChange={handleFilterChange}
+        customWidths={{
+          [TAXONOMIES.ANO]: '30%',
+          'searchTerm': '70%'
+        }}
+        enabledFilters={[TAXONOMIES.ANO]} 
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -89,11 +153,9 @@ const PlanosMunicipal = () => {
         <DataTableComponent
           title="Planos Municipal"
           columns={columnsPlanosMunicipal}
-          data={data}
+          data={filteredData}
         />
       )}
-
-   
     </div>
   );
 };

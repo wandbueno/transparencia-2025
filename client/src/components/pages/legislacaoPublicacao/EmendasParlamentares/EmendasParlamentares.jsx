@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getPublicacoesPorTipo } from "../../../../services/publicacoesWP/publicacao";
+import { TAXONOMIES } from "../../../../services/publicacoesWP/taxonomies";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterWP from '../../../common/FilterWP/FilterWP';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
@@ -73,41 +74,75 @@ const columnsEmendasParlamentares = [
 
 const EmendasParlamentares = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
     document.title = `Emendas Parlamentares - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        
-        // Usando a função genérica para buscar publicações do tipo "Terceirizados"
-        const data = await getPublicacoesPorTipo('Emenda Parlamentar');
-        setData(data); // Armazena os dados filtrados
-
-      } catch (error) {
-        console.error('Erro ao carregar Emendas Parlamentares:', error);
-        setError('Erro ao carregar dados da API');
-      } finally {
-        setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
-      }
-    };
-    
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const result = await getPublicacoesPorTipo('Emenda Parlamentar');
+      setData(result);
+      setFilteredData(result);
+    } catch (error) {
+      console.error('Erro ao carregar Emendas Parlamentares:', error);
+      setError('Erro ao carregar dados da API');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filters) => {
+    let filtered = [...data];
+
+    // Filtrar por taxonomias
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        filtered = filtered.filter(item => 
+          item[key]?.includes(Number(value))
+        );
+      }
+    });
+
+    // Filtrar por termo de busca
+    if (filters.searchTerm) {
+      const searchLower = filters.searchTerm.toLowerCase();
+      filtered = filtered.filter(item => {
+        // Busca em vários campos incluindo os campos meta específicos de emendas parlamentares
+        return (
+          item.title?.rendered.toLowerCase().includes(searchLower) ||
+          item.content?.rendered.toLowerCase().includes(searchLower) ||
+          item.meta?.n_emenda?.toLowerCase().includes(searchLower) ||
+          item.meta?.autor_da_emenda?.toLowerCase().includes(searchLower) ||
+          item.meta?.valor_convenio?.toLowerCase().includes(searchLower) ||
+          item.meta?.objeto_?.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Emendas Parlamentares"
         breadcrumb={[
           { label: 'Emendas Parlamentares' },
         ]}
       />      
-      <FilterSection  />
+      <FilterWP 
+        onFilterChange={handleFilterChange}
+        customWidths={{
+          [TAXONOMIES.ANO]: '30%',
+          'searchTerm': '70%'
+        }}
+        enabledFilters={[TAXONOMIES.ANO]} 
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -121,11 +156,9 @@ const EmendasParlamentares = () => {
         <DataTableComponent
           title="Emendas Parlamentares"
           columns={columnsEmendasParlamentares}
-          data={data}
+          data={filteredData}
         />
       )}
-
-   
     </div>
   );
 };

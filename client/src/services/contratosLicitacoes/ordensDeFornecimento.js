@@ -53,15 +53,39 @@ export const getProdutosPaginados = async codigo => {
   }
 }
 
-export const postOrdensDeFornecimentoPaginadas = async filtro => {
+export const postOrdensDeFornecimentoPaginadas = async (filters = {}) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/paginado`, filtro) // Envia o filtro diretamente
+    // Parâmetros base
+    const params = {
+      pagina: 1,
+      tamanhoDaPagina: 10000,
+      ordenarPor: 'data',
+      ordem: 'desc'
+    }
+
+    // Mapeia os filtros para arrays quando necessário
+    if (filters.modalidade) {
+      params.codigosDasModalidades = [Number(filters.modalidade)]
+    }
+
+    // Filtros de texto
+    if (filters.ano) params.ano = Number(filters.ano)
+    if (filters.mes) params.mes = Number(filters.mes)
+    if (filters.codigoDaCompra) params.codigoDaCompra = filters.codigoDaCompra
+    if (filters.cpfCnpj) params.cpfCnpj = filters.cpfCnpj
+    if (filters.fornecedor) params.fornecedor = filters.fornecedor
+
+    console.log('Requisição para API:', {
+      url: `${API_BASE_URL}/paginado`,
+      method: 'post',
+      params: undefined,
+      data: params
+    })
+
+    const response = await axios.post(`${API_BASE_URL}/paginado`, params)
     return response.data
   } catch (error) {
-    console.error(
-      'Erro ao buscar dados paginados dos fiscais de contratos:',
-      error
-    )
+    console.error('Erro ao buscar Ordens de Fornecimento:', error)
     throw error
   }
 }

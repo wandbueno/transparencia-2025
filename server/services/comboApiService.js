@@ -1,40 +1,34 @@
-const axios = require('axios')
+const express = require('express')
+const router = express.Router()
+const ComboService = require('../../services/comboService')
 
-const fetchComboData = async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    console.log('Requisição de combo recebida:', req.query)
+    const filtros = req.query.filtro
 
-    // Garante que filtro seja um array
-    const filtros = Array.isArray(req.query.filtro)
-      ? req.query.filtro
-      : [req.query.filtro]
+    // Verifica se o filtro está presente
+    if (!filtros) {
+      return res.status(400).json({
+        error: 'O parâmetro filtro é obrigatório'
+      })
+    }
 
-    const response = await axios.get(`${process.env.SERVER}/api/combo`, {
-      params: {
-        filtro: filtros
-      },
-      headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
-      },
-      paramsSerializer: params => {
-        // Serializa o array de filtros no formato correto
-        return `filtro=${params.filtro.join('&filtro=')}`
-      }
+    // Busca dados do combo
+    const data = await ComboService.fetchComboData(filtros)
+    res.json(data)
+  } catch (error) {
+    console.error('Erro na requisição do combo:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url
     })
 
-    console.log('Resposta do combo:', response.data)
-    res.json(response.data)
-  } catch (error) {
-    console.error(
-      'Erro ao conectar com a API externa:',
-      error.response ? error.response.data : error.message
-    )
-    res.status(500).json({
+    res.status(error.response?.status || 500).json({
       error: 'Erro ao buscar dados do combo',
       details: error.response?.data || error.message
     })
   }
-}
+})
 
-module.exports = { fetchComboData }
+module.exports = router

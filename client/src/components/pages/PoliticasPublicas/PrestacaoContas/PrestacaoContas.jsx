@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { getPublicacoesPorTipo } from "../../../../services/publicacoesWP/publicacao";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
 import ButtonTable from "../../../common/ButtonTable";
+import { TAXONOMIES } from "../../../../services/publicacoesWP/taxonomies";
+import FilterWP from '../../../common/FilterWP/FilterWP';
 
 const columnsPrestacaoContas = [
   { 
@@ -53,41 +54,103 @@ const columnsPrestacaoContas = [
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
     document.title = `Prestação de Contas e Parecer Prévio do TCE - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        
-        // Usando a função genérica para buscar publicações do tipo "Terceirizados"
-        const data = await getPublicacoesPorTipo('Prestação de Contas');
-        setData(data); // Armazena os dados filtrados
-
-      } catch (error) {
-        console.error('Erro ao carregar Prestação de Contas e Parecer Prévio do TCE:', error);
-        setError('Erro ao carregar dados da API');
-      } finally {
-        setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
-      }
-    };
-    
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const result = await getPublicacoesPorTipo('Prestação de Contas');
+      setData(result);
+      setFilteredData(result);
+    } catch (error) {
+      console.error('Erro ao carregar Prestação de Contas e Parecer Prévio do TCE:', error);
+      setError('Erro ao carregar dados da API');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchInObject = (obj, searchTerm) => {
+    if (!obj) return false;
+    
+    // Convert search term to lower case for case-insensitive search
+    searchTerm = searchTerm.toLowerCase();
+    
+    // Search in strings and numbers directly
+    if (typeof obj === 'string' || typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(searchTerm);
+    }
+    
+    // Search in arrays
+    if (Array.isArray(obj)) {
+      return obj.some(item => searchInObject(item, searchTerm));
+    }
+    
+    // Search in objects
+    if (typeof obj === 'object') {
+      return Object.values(obj).some(value => searchInObject(value, searchTerm));
+    }
+    
+    return false;
+  };
+
+  const handleFilterChange = (filters) => {
+    let filtered = [...data];
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        filtered = filtered.filter(item => 
+          item[key]?.includes(Number(value))
+        );
+      }
+    });
+
+     // Filtrar por termo de busca
+     if (filters.searchTerm) {
+      filtered = filtered.filter(item => {
+        // Search in all fields
+        return (
+          // Search in title
+          searchInObject(item.title?.rendered, filters.searchTerm) ||
+          // Search in content
+          searchInObject(item.content?.rendered, filters.searchTerm) ||
+          // Search in excerpt
+          searchInObject(item.excerpt?.rendered, filters.searchTerm) ||
+          // Search in meta fields
+          searchInObject(item.meta, filters.searchTerm) ||
+          // Search in slug
+          searchInObject(item.slug, filters.searchTerm) ||
+          // Search in object field
+          searchInObject(item.meta?.objeto_, filters.searchTerm)
+        );
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Prestação de Contas e Parecer Prévio do TCE"
         breadcrumb={[
           { label: 'Prestação de Contas e Parecer Prévio do TCE' },
         ]}
       />      
-      <FilterSection  />
+      <FilterWP 
+        onFilterChange={handleFilterChange}
+        customWidths={{
+          [TAXONOMIES.ANO]: '30%',
+          'searchTerm': '70%'
+        }}
+        enabledFilters={[TAXONOMIES.ANO]} 
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -101,11 +164,9 @@ const PrestacaoContas = () => {
         <DataTableComponent
           title="Prestação de Contas e Parecer Prévio do TCE"
           columns={columnsPrestacaoContas}
-          data={data}
+          data={filteredData}
         />
       )}
-
-   
     </div>
   );
 };

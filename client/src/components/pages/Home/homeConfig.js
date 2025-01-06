@@ -766,12 +766,17 @@ export const menuStructure = {
         icon: faHeadset,
         keywords: [
           'informações classificadas',
+          'sigilosas',
           'acesso informação',
           'LAI',
           'transparência passiva',
           'pedido informação',
           'solicitação informação',
-          'e-SIC'
+          'e-SIC',
+          'Rol das Informações Desclassificadas nos Últimos 12 (Doze) Meses',
+          'Rol de Documentos Classificados em Cada Grau de Sigilo',
+          'Documentos Classificados',
+          'Informações Desclassificadas'
         ]
       }
     ]

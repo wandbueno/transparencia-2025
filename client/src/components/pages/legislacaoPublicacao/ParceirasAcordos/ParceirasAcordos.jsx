@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getPublicacoesPorTipo } from "../../../../services/publicacoesWP/publicacao";
+import { TAXONOMIES, META_FIELDS, isMetaField } from "../../../../services/publicacoesWP/taxonomies";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterWP from '../../../common/FilterWP/FilterWP';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
@@ -17,91 +18,134 @@ function decodeHtmlEntities(text) {
 const columnsParceirasAcordos = [
   { 
     name: "Publicação", 
-    selector: (row) => row.date ? new Date(row.date).toLocaleDateString('pt-BR') : 'Não informado', // Formata a data para dd/mm/yyyy ou exibe 'Não informado'
+    selector: (row) => row.date ? new Date(row.date).toLocaleDateString('pt-BR') : 'Não informado',
     sortable: true, 
     width: '10%' 
   },
   { 
     name: "Tipo", 
-    selector: (row) => row.meta["tipo-acordo"] || 'Não informado', // Verifica o campo "tipo-acordo" ou exibe 'Não informado' se estiver vazio
+    selector: (row) => row.meta["tipo-acordo"] || 'Não informado',
     sortable: true, 
     width: '15%' 
   },
   { 
     name: "Origem", 
-    selector: (row) => row.meta["origem"] || 'Não informado', // Verifica o campo "tipo-acordo" ou exibe 'Não informado' se estiver vazio
+    selector: (row) => row.meta["origem"] || 'Não informado',
     sortable: true, 
     width: '15%' 
   },
-
   { 
     name: "Destino", 
-    selector: (row) => row.meta["destino"] || '', // Verifica o campo "tipo-acordo" ou exibe 'Não informado' se estiver vazio
+    selector: (row) => row.meta["destino"] || '',
     sortable: true, 
     width: '15%' 
   },
   { 
     name: "Vigência", 
-    selector: (row) => row.meta["data-fim"] || '', // Verifica o campo "tipo-acordo" ou exibe 'Não informado' se estiver vazio
+    selector: (row) => row.meta["data-fim"] || '',
     sortable: true, 
     width: '10%' 
   },
-  
   { 
     name: "Descrição", 
-    selector: (row) => row.title?.rendered ? decodeHtmlEntities(row.title?.rendered) : 'Sem título', 
+    selector: (row) => row.title?.rendered ? decodeHtmlEntities(row.title?.rendered) : 'Sem título',
     sortable: true, 
     width: '25%' 
   },
-    
   { 
     name: 'Mais Detalhes', 
     selector: (row) => (
-      <ButtonLink link={row.meta["link-externo"]} label="Ver Detalhes" /> // Usa ButtonLink diretamente, sem verificação
+      <ButtonLink link={row.meta["link-externo"]} label="Ver Detalhes" />
     ),
     width: '10%',
     excludeFromExport: true
   }
-  
 ];
 
 const ParceirasAcordos = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
-    document.title = `Parceiras e Acordos Firmados - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        
-        // Usando a função genérica para buscar publicações do tipo "Terceirizados"
-        const data = await getPublicacoesPorTipo('Parceiras e Acordos');
-        setData(data); // Armazena os dados filtrados
-
-      } catch (error) {
-        console.error('Erro ao carregar Parceiras e Acordos Firmados:', error);
-        setError('Erro ao carregar dados da API');
-      } finally {
-        setLoading(false); // Garantir que o carregamento termine após sucesso ou erro
-      }
-    };
-    
+    document.title = `Parceiras e Acordos Firmados - ${config.geral.nomeOrgao}`;
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const result = await getPublicacoesPorTipo('Parceiras e Acordos');
+      setData(result);
+      setFilteredData(result);
+    } catch (error) {
+      console.error('Erro ao carregar Parceiras e Acordos Firmados:', error);
+      setError('Erro ao carregar dados da API');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filters) => {
+    let filtered = [...data];
+
+    // Filtrar por taxonomias e campos meta
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && key !== 'searchTerm') {
+        if (isMetaField(key)) {
+          // Filtrar por campo meta
+          filtered = filtered.filter(item => 
+            item.meta[key] === value
+          );
+        } else {
+          // Filtrar por taxonomia
+          filtered = filtered.filter(item => 
+            item[key]?.includes(Number(value))
+          );
+        }
+      }
+    });
+
+    // Filtrar por termo de busca
+    if (filters.searchTerm) {
+      const searchLower = filters.searchTerm.toLowerCase();
+      filtered = filtered.filter(item => {
+        const searchableFields = [
+          item.title?.rendered,
+          item.content?.rendered,
+          item.meta?.["tipo-acordo"],
+          item.meta?.origem,
+          item.meta?.destino,
+          item.meta?.["data-fim"],
+          item.meta?.objeto_
+        ];
+
+        return searchableFields.some(field => 
+          field?.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Parceiras e Acordos Firmados"
         breadcrumb={[
           { label: 'Parceiras e Acordos Firmados' },
         ]}
       />      
-      <FilterSection  />
+      <FilterWP 
+        onFilterChange={handleFilterChange}
+        enabledFilters={[TAXONOMIES.ANO, META_FIELDS.TIPO_ACORDO]} 
+        customWidths={{
+          [TAXONOMIES.ANO]: '20%',
+          [META_FIELDS.TIPO_ACORDO]: '20%',
+          'searchTerm': '60%'
+        }}
+      />
       
       <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/?jsf=jet-data-table:filter_declaracao&tax=tipo-declaracao:116">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
@@ -115,9 +159,9 @@ const ParceirasAcordos = () => {
         <DataTableComponent
           title="Parceiras e Acordos Firmados"
           columns={columnsParceirasAcordos}
-          data={data}
+          data={filteredData}
         />
-      )}   
+      )}
     </div>
   );
 };
