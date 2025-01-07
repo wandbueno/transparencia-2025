@@ -166,7 +166,7 @@ const FilterWP = ({
               <div className="filter-buttons">
                 {hasFiltersApplied && (
                   <button className="clear-button" onClick={handleClearFilters}>
-                    Limpar
+                    Limpar filtros
                   </button>
                 )}
                 <button className="search-button" onClick={handleFilterSubmit}>
