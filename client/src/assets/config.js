@@ -1,4 +1,4 @@
-import logo from '../assets/LogoPublixelOfc.png'
+import logo from '../assets/PUBLIXELBRANCO_min.png'
 
 const config = {
   geral: {

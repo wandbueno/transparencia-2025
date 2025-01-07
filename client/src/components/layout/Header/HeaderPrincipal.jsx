@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HeaderPrincipal.css';
 import logoFundo from '../../../assets/Logo-Concei_fundo.png.webp';
-import logo from '../../../assets/LogoPublixelOfc.png';
+import logo from '../../../assets/PUBLIXEL2025min.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faSearch, faBook, faHeadset, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { menuStructure } from '../../../components/pages/Home/homeConfig';

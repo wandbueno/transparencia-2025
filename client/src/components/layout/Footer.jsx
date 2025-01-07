@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faEnvelope, faClock, faPhone, } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import seloQualidade from '../../assets/certificado_diamante.png';
-
-
 import { config } from '../../assets/config'; 
 
 const Footer = () => {

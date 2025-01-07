@@ -1,3 +1,5 @@
+/* FilterWP.css */
+
 .filter-wp {
   background: #fcfcfc;
   border: 1px solid #e2e2e2;
@@ -50,35 +52,36 @@
 }
 
 .filter-content {
-  padding: 0 20px 20px 20px;
+  padding: 15px 20px;
 }
 
 .filter-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  width: calc(100% + 40px);
+  gap: 15px;
+  margin: -7.5px;
 }
 
 .filter-group {
-  display: flex;
-  flex-direction: column;
-  padding: 0px;
+  flex: 1;
+  min-width: 200px; /* Minimum width to prevent too narrow fields */
+  padding: 7.5px;
   box-sizing: border-box;
 }
 
-/* Larguras simples */
-.filter-group[data-width="20"] { width: 20%; }
-.filter-group[data-width="30"] { width: 30%; }
-.filter-group[data-width="33"] { width: 33.333%; }
-.filter-group[data-width="40"] { width: 40%; }
-.filter-group[data-width="50"] { width: 50%; }
-.filter-group[data-width="60"] { width: 60%; }
-.filter-group[data-width="70"] { width: 70%; }
+/* Width classes */
+.filter-group[data-width="20"] { width: calc(20% - 15px); min-width: 150px; }
+.filter-group[data-width="25"] { width: calc(25% - 15px); min-width: 180px; }
+.filter-group[data-width="30"] { width: calc(30% - 15px); min-width: 200px; }
+.filter-group[data-width="33"] { width: calc(33.333% - 15px); min-width: 220px; }
+.filter-group[data-width="40"] { width: calc(40% - 15px); min-width: 250px; }
+.filter-group[data-width="50"] { width: calc(50% - 15px); min-width: 300px; }
+.filter-group[data-width="60"] { width: calc(60% - 15px); min-width: 350px; }
+.filter-group[data-width="70"] { width: calc(70% - 15px); min-width: 400px; }
 .filter-group[data-width="100"] { width: 100%; }
 
-
 .filter-group label {
+  display: block;
   font-weight: 500;
   margin-bottom: 5px;
   color: var(--text-color);
@@ -88,29 +91,29 @@
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #d0d0d0;
   background: #fff;
   font-size: var(--font-size-small);
   color: var(--text-color);
-  box-sizing: border-box;
+  transition: border-color 0.2s ease;
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  box-shadow: 0 0 0 2px rgba(47, 55, 149, 0.1);
 }
 
 .filter-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 20px;
-  padding: 20px 10px 0;
-  border-top: 1px solid #eee;
+  gap: 10px;
+  padding-top: 20px;
   margin-top: 10px;
+  border-top: 1px solid #eee;
 }
 
 .filter-buttons button {
@@ -123,12 +126,12 @@
 }
 
 .filter-buttons .clear-button {
-  background: #d0d0d0;
+  background: #dc3545;
   color: #fff;
 }
 
 .filter-buttons .clear-button:hover {
-  background: #bbb;
+  background: #c82333;
 }
 
 .filter-buttons .search-button {
@@ -151,14 +154,26 @@
   border: 1px dashed #d0d0d0;
 }
 
+/* Responsiveness */
 @media (max-width: 768px) {
   .filter-row {
+    flex-direction: column;
     margin: 0;
-    width: 100%;
+    gap: 10px;
   }
 
   .filter-group {
-    width: 100% !important;
+    width: 100% !important; /* Override all width classes */
+    min-width: 100%;
     padding: 5px 0;
+  }
+
+  .filter-buttons {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .filter-buttons button {
+    width: 100%;
   }
 }

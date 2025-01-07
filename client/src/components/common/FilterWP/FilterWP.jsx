@@ -72,13 +72,10 @@ const FilterWP = ({
     onFilterChange({});
   };
 
-  const getFilterStyle = (filterId) => {
-    const width = customWidths[filterId];
-    if (!width) {
-      const totalFilters = enabledFilters.length + (showSearch ? 1 : 0);
-      return { flex: `0 0 ${100 / totalFilters}%` };
-    }
-    return { flex: `0 0 ${width}` };
+  // Helper function to convert width string to number
+  const getWidthValue = (width) => {
+    if (typeof width === 'number') return width;
+    return parseInt(width, 10) || 100;
   };
 
   return (
@@ -102,7 +99,11 @@ const FilterWP = ({
               <div className="filter-row">
                 {/* Render select filters first */}
                 {enabledFilters.map(filter => (
-                  <div key={filter} className="filter-group" style={getFilterStyle(filter)}>
+                  <div 
+                    key={filter} 
+                    className="filter-group" 
+                    data-width={getWidthValue(customWidths[filter])}
+                  >
                     <label>{TAXONOMY_LABELS[filter] || filter}</label>
                     <select
                       name={filter}
@@ -111,7 +112,10 @@ const FilterWP = ({
                     >
                       <option value="">Todos...</option>
                       {filterOptions[filter]?.map(option => (
-                        <option key={option.id} value={isMetaField(filter) ? option.name : option.id}>
+                        <option 
+                          key={option.id} 
+                          value={isMetaField(filter) ? option.name : option.id}
+                        >
                           {option.name}
                         </option>
                       ))}
@@ -121,7 +125,10 @@ const FilterWP = ({
 
                 {/* Render search field last */}
                 {showSearch && (
-                  <div className="filter-group" style={getFilterStyle('searchTerm')}>
+                  <div 
+                    className="filter-group" 
+                    data-width={getWidthValue(customWidths['searchTerm'])}
+                  >
                     <label>Palavras-chave</label>
                     <input
                       type="text"

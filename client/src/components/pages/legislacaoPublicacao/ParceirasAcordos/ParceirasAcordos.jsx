@@ -141,9 +141,9 @@ const ParceirasAcordos = () => {
         onFilterChange={handleFilterChange}
         enabledFilters={[TAXONOMIES.ANO, META_FIELDS.TIPO_ACORDO]} 
         customWidths={{
-          [TAXONOMIES.ANO]: '20%',
-          [META_FIELDS.TIPO_ACORDO]: '20%',
-          'searchTerm': '60%'
+          [TAXONOMIES.ANO]: '20',
+          [META_FIELDS.TIPO_ACORDO]: '20',
+          'searchTerm': '60'
         }}
       />
       

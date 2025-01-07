@@ -138,8 +138,8 @@ const EmendasParlamentares = () => {
       <FilterWP 
         onFilterChange={handleFilterChange}
         customWidths={{
-          [TAXONOMIES.ANO]: '30%',
-          'searchTerm': '70%'
+          [TAXONOMIES.ANO]: 30, 
+          'searchTerm': 70 
         }}
         enabledFilters={[TAXONOMIES.ANO]} 
       />
