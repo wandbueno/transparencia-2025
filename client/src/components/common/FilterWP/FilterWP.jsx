@@ -1,36 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getTaxonomyTerms, getMetaFieldOptions, TAXONOMY_LABELS, isMetaField } from '../../../services/publicacoesWP/taxonomies';
+import LoadingSpinner from '../../common/LoadingSpinner';
 import './FilterWP.css';
-import { 
-  getTaxonomyTerms, 
-  getMetaFieldOptions,
-  TAXONOMY_LABELS,
-  isMetaField 
-} from '../../../services/publicacoesWP/taxonomies';
-import LoadingSpinner from '../LoadingSpinner';
 
 const FilterWP = ({ 
-  onFilterChange, 
-  title = "Filtros de Pesquisa",
-  enabledFilters = ['ano-publicacao'],
-  showSearch = true,
+  onFilterChange,
+  enabledFilters = [],
   customWidths = {},
-  initialValues = {}
+  title = "Filtros de Pesquisa",
+  showSearch = true
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasFiltersApplied, setHasFiltersApplied] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [filterOptions, setFilterOptions] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState({
-    searchTerm: '',
-    ...initialValues
-  });
+  const [loading, setLoading] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    loadFilterOptions();
+    if (enabledFilters?.length > 0) {
+      loadFilterData();
+    }
   }, [enabledFilters]);
 
-  const loadFilterOptions = async () => {
+  const loadFilterData = async () => {
     try {
       setLoading(true);
       const optionsPromises = enabledFilters.map(async filter => {
@@ -45,8 +38,9 @@ const FilterWP = ({
 
       const options = await Promise.all(optionsPromises);
       setFilterOptions(Object.fromEntries(options));
-    } catch (error) {
-      console.error('Erro ao carregar filtros:', error);
+      setError('');
+    } catch (err) {
+      console.error('Erro ao carregar filtros:', err);
       setError('Erro ao carregar filtros');
     } finally {
       setLoading(false);
@@ -67,15 +61,87 @@ const FilterWP = ({
   };
 
   const handleClearFilters = () => {
-    setSelectedFilters({ searchTerm: '' });
+    setSelectedFilters({});
     setHasFiltersApplied(false);
     onFilterChange({});
   };
 
-  // Helper function to convert width string to number
-  const getWidthValue = (width) => {
-    if (typeof width === 'number') return width;
-    return parseInt(width, 10) || 100;
+  const renderFilterFields = () => {
+    let currentRowWidth = 0;
+    const rows = [];
+    let currentRow = [];
+
+    const addCurrentRowToRows = () => {
+      if (currentRow.length > 0) {
+        rows.push([...currentRow]);
+        currentRow = [];
+        currentRowWidth = 0;
+      }
+    };
+
+    const allFilters = [...enabledFilters];
+    if (showSearch) {
+      allFilters.push('searchTerm');
+    }
+
+    allFilters.forEach(filter => {
+      const width = parseFloat(customWidths[filter] || '100');
+      
+      if (currentRowWidth + width > 100) {
+        addCurrentRowToRows();
+      }
+
+      currentRow.push(renderFilterField(filter));
+      currentRowWidth += width;
+    });
+
+    addCurrentRowToRows();
+
+    return rows.map((row, index) => (
+      <div key={index} className="filter-row">
+        {row}
+      </div>
+    ));
+  };
+
+  const renderFilterField = (filter) => {
+    const width = customWidths[filter] || '100%';
+    
+    if (filter === 'searchTerm') {
+      return (
+        <div key={filter} className="filter-group" style={{ width }}>
+          <label>Palavras-chave</label>
+          <input
+            type="text"
+            name="searchTerm"
+            value={selectedFilters.searchTerm || ''}
+            onChange={handleInputChange}
+            placeholder="Digite sua busca..."
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div key={filter} className="filter-group" style={{ width }}>
+        <label>{TAXONOMY_LABELS[filter] || filter}</label>
+        <select
+          name={filter}
+          value={selectedFilters[filter] || ''}
+          onChange={handleInputChange}
+        >
+          <option value="">Todos...</option>
+          {filterOptions[filter]?.map(option => (
+            <option 
+              key={option.id} 
+              value={isMetaField(filter) ? option.name : option.id}
+            >
+              {option.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
   };
 
   return (
@@ -96,51 +162,7 @@ const FilterWP = ({
             <div className="error-message">{error}</div>
           ) : (
             <>
-              <div className="filter-row">
-                {/* Render select filters first */}
-                {enabledFilters.map(filter => (
-                  <div 
-                    key={filter} 
-                    className="filter-group" 
-                    data-width={getWidthValue(customWidths[filter])}
-                  >
-                    <label>{TAXONOMY_LABELS[filter] || filter}</label>
-                    <select
-                      name={filter}
-                      value={selectedFilters[filter] || ''}
-                      onChange={handleInputChange}
-                    >
-                      <option value="">Todos...</option>
-                      {filterOptions[filter]?.map(option => (
-                        <option 
-                          key={option.id} 
-                          value={isMetaField(filter) ? option.name : option.id}
-                        >
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-
-                {/* Render search field last */}
-                {showSearch && (
-                  <div 
-                    className="filter-group" 
-                    data-width={getWidthValue(customWidths['searchTerm'])}
-                  >
-                    <label>Palavras-chave</label>
-                    <input
-                      type="text"
-                      name="searchTerm"
-                      value={selectedFilters.searchTerm || ''}
-                      onChange={handleInputChange}
-                      placeholder="Digite sua busca..."
-                    />
-                  </div>
-                )}
-              </div>
-
+              {renderFilterFields()}
               <div className="filter-buttons">
                 {hasFiltersApplied && (
                   <button className="clear-button" onClick={handleClearFilters}>

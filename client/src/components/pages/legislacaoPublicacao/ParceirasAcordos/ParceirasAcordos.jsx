@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
 import ButtonLink from "../../../common/ButtonLink";
 
-// Função utilitária para decodificar entidades HTML
+// Function to decode HTML entities
 function decodeHtmlEntities(text) {
   const doc = new DOMParser().parseFromString(text, "text/html");
   return doc.documentElement.textContent;
@@ -141,9 +141,9 @@ const ParceirasAcordos = () => {
         onFilterChange={handleFilterChange}
         enabledFilters={[TAXONOMIES.ANO, META_FIELDS.TIPO_ACORDO]} 
         customWidths={{
-          [TAXONOMIES.ANO]: '20',
-          [META_FIELDS.TIPO_ACORDO]: '20',
-          'searchTerm': '60'
+          [TAXONOMIES.ANO]: '20%',
+          [META_FIELDS.TIPO_ACORDO]: '20%',
+          'searchTerm': '60%'
         }}
       />
       

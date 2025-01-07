@@ -135,11 +135,11 @@ const IncentivosProjetos = () => {
       />      
       <FilterWP 
         onFilterChange={handleFilterChange}
+        enabledFilters={[TAXONOMIES.ANO]} // Apenas filtros adicionais
         customWidths={{
           [TAXONOMIES.ANO]: '30%',
-          'searchTerm': '70%'
+          'searchTerm': '70%', 
         }}
-        enabledFilters={[TAXONOMIES.ANO]} 
       />
       
       <InfoText href="/transparencia/declaracoes/">
