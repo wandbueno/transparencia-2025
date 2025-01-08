@@ -4,13 +4,27 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res) => {
   try {
+    const params = {
+      pagina: req.query.pagina || 1,
+      tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
+      ano: req.query.ano
+        ? parseInt(req.query.ano, 10)
+        : new Date().getFullYear(),
+      codigoDoOrgao: req.query.codigoDoOrgao
+        ? parseInt(req.query.codigoDoOrgao, 10)
+        : '',
+      codigoDaModalidade: req.query.codigoDaModalidade
+        ? parseInt(req.query.codigoDaModalidade, 10)
+        : '',
+      codigoDoElemento: req.query.codigoDoElemento
+        ? parseInt(req.query.codigoDoElemento, 10)
+        : ''
+    }
+
+    console.log('Requesting API with params:', params)
+
     const response = await axios.get(`${process.env.SERVER}${path}`, {
-      params: {
-        pagina: req.query.pagina || 1,
-        tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        chavePrimaria: req.query.chavePrimaria || '',
-        codigo: req.query.codigo || ''
-      },
+      params,
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
         'cliente-integrado': process.env.CLIENTE_INTEGRADO
@@ -18,14 +32,10 @@ const fetchFromAPI = async (path, req, res) => {
     })
     res.json(response.data)
   } catch (error) {
-    console.error(
-      'Erro ao conectar com a API externa:',
-      error.response ? error.response.data : error.message
-    )
+    console.error('Erro ao conectar com a API externa:', error.message)
     res.status(500).json({ error: 'Erro ao conectar com a API externa' })
   }
 }
-
 router.get('/empenho/anulacoes-da-liquidacao/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(

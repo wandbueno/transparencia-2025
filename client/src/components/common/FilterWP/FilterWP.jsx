@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getTaxonomyTerms, getMetaFieldOptions, TAXONOMY_LABELS, isMetaField } from '../../../services/publicacoesWP/taxonomies';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import './FilterWP.css';
@@ -10,17 +11,35 @@ const FilterWP = ({
   title = "Filtros de Pesquisa",
   showSearch = true
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hasFiltersApplied, setHasFiltersApplied] = useState(false);
   const [filterOptions, setFilterOptions] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [selectedFilters, setSelectedFilters] = useState({});
+  const [loading, setLoading] = useState(false); // Changed to false initially
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (enabledFilters?.length > 0) {
-      loadFilterData();
+  // Initialize filters from URL params
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const initialFilters = {};
+    for (const [key, value] of searchParams.entries()) {
+      initialFilters[key] = value;
     }
+    return initialFilters;
+  });
+
+  useEffect(() => {
+    const initializeFilters = async () => {
+      if (enabledFilters?.length > 0) {
+        await loadFilterData();
+      }
+      // Apply initial filters from URL if they exist
+      if (Object.keys(selectedFilters).length > 0) {
+        onFilterChange(selectedFilters);
+        setHasFiltersApplied(true);
+      }
+    };
+
+    initializeFilters();
   }, [enabledFilters]);
 
   const loadFilterData = async () => {
@@ -57,12 +76,23 @@ const FilterWP = ({
 
   const handleFilterSubmit = () => {
     setHasFiltersApplied(true);
+    
+    // Update URL parameters
+    const params = new URLSearchParams();
+    Object.entries(selectedFilters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
     onFilterChange(selectedFilters);
   };
 
   const handleClearFilters = () => {
     setSelectedFilters({});
     setHasFiltersApplied(false);
+    setSearchParams({}); // Clear URL parameters
     onFilterChange({});
   };
 
@@ -144,6 +174,11 @@ const FilterWP = ({
     );
   };
 
+  // Only show loading spinner when loading filter options
+  if (loading && !Object.keys(filterOptions).length) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="filter-wp">
       <div className="filter-header" onClick={() => setIsOpen(!isOpen)}>
@@ -156,9 +191,7 @@ const FilterWP = ({
 
       {isOpen ? (
         <div className="filter-content">
-          {loading ? (
-            <LoadingSpinner />
-          ) : error ? (
+          {error ? (
             <div className="error-message">{error}</div>
           ) : (
             <>

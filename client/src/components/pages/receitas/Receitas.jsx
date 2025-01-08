@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getReceitas } from "../../../services/receitasDespesas/receitas";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
-import FilterSection from '../../common/FilterSection';
+import FilterSection from '../../common/FilterSection/FilterSection';
 import InfoText from '../../common/InfoText';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import './Receitas.css';
@@ -85,7 +85,6 @@ const Receitas = () => {
     const fetchData = async () => {
       try {
         const { data, url } = await getReceitas();
-        console.log(data.registros);
         setData(data.registros);  
         setUrl(url);  
       } catch (err) {

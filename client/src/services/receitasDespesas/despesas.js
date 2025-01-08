@@ -3,12 +3,32 @@ import axios from 'axios'
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/despesas`
 
 // Função para buscar a lista paginada de despesas (empenhos)
-export const getDespesas = async () => {
+export const getDespesas = async (filters = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/empenho/paginado`)
+    // Mapeia os filtros para os parâmetros esperados pela API
+    const params = {
+      pagina: 1,
+      tamanhoDaPagina: 2500,
+      ordenarPor: 'data',
+      ordem: 'desc'
+    }
+
+    // Mapeia os filtros simples - convertendo para número quando necessário
+    if (filters.ano) params.ano = parseInt(filters.ano, 10)
+    if (filters.orgao) params.codigoDoOrgao = parseInt(filters.orgao, 10)
+    if (filters.modalidade)
+      params.codigoDaModalidade = parseInt(filters.modalidade, 10)
+    if (filters.elemento)
+      params.codigoDoElemento = parseInt(filters.elemento, 10)
+
+    console.log('Parâmetros enviados para API:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/empenho/paginado`, {
+      params
+    })
     return response.data
   } catch (error) {
-    console.error('Erro ao buscar despesas:', error)
+    console.error('Erro ao buscar Empenhos:', error)
     throw error
   }
 }
