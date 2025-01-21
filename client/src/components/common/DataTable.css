@@ -69,3 +69,52 @@
 .dLHSn{
   padding: 0 8px!important;
 }
+
+.no-data-message {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.no-data-icon {
+  color: var(--primary-color);
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.no-data-message h3 {
+  color: var(--titulo-color);
+  font-size: var(--font-size-large);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.no-data-message p {
+  color: var(--text-color);
+  font-size: var(--font-size-base);
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.no-data-link {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.no-data-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.no-data-link a:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}

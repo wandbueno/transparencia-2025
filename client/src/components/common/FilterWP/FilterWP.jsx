@@ -1,36 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { getTaxonomyTerms, getMetaFieldOptions, TAXONOMY_LABELS, isMetaField } from '../../../services/publicacoesWP/taxonomies';
+import LoadingSpinner from '../../common/LoadingSpinner';
 import './FilterWP.css';
-import { 
-  getTaxonomyTerms, 
-  getMetaFieldOptions,
-  TAXONOMY_LABELS,
-  isMetaField 
-} from '../../../services/publicacoesWP/taxonomies';
-import LoadingSpinner from '../LoadingSpinner';
 
 const FilterWP = ({ 
-  onFilterChange, 
-  title = "Filtros de Pesquisa",
-  enabledFilters = ['ano-publicacao'],
-  showSearch = true,
+  onFilterChange,
+  enabledFilters = [],
   customWidths = {},
-  initialValues = {}
+  title = "Filtros de Pesquisa",
+  showSearch = true
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hasFiltersApplied, setHasFiltersApplied] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [filterOptions, setFilterOptions] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState({
-    searchTerm: '',
-    ...initialValues
+  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [error, setError] = useState('');
+
+  // Initialize filters from URL params
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const initialFilters = {};
+    for (const [key, value] of searchParams.entries()) {
+      initialFilters[key] = value;
+    }
+    return initialFilters;
   });
 
   useEffect(() => {
-    loadFilterOptions();
+    const initializeFilters = async () => {
+      if (enabledFilters?.length > 0) {
+        await loadFilterData();
+      }
+      // Apply initial filters from URL if they exist
+      if (Object.keys(selectedFilters).length > 0) {
+        onFilterChange(selectedFilters);
+        setHasFiltersApplied(true);
+      }
+    };
+
+    initializeFilters();
   }, [enabledFilters]);
 
-  const loadFilterOptions = async () => {
+  const loadFilterData = async () => {
     try {
       setLoading(true);
       const optionsPromises = enabledFilters.map(async filter => {
@@ -45,8 +57,9 @@ const FilterWP = ({
 
       const options = await Promise.all(optionsPromises);
       setFilterOptions(Object.fromEntries(options));
-    } catch (error) {
-      console.error('Erro ao carregar filtros:', error);
+      setError('');
+    } catch (err) {
+      console.error('Erro ao carregar filtros:', err);
       setError('Erro ao carregar filtros');
     } finally {
       setLoading(false);
@@ -63,23 +76,108 @@ const FilterWP = ({
 
   const handleFilterSubmit = () => {
     setHasFiltersApplied(true);
+    
+    // Update URL parameters
+    const params = new URLSearchParams();
+    Object.entries(selectedFilters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
     onFilterChange(selectedFilters);
   };
 
   const handleClearFilters = () => {
-    setSelectedFilters({ searchTerm: '' });
+    setSelectedFilters({});
     setHasFiltersApplied(false);
+    setSearchParams({}); // Clear URL parameters
     onFilterChange({});
   };
 
-  const getFilterStyle = (filterId) => {
-    const width = customWidths[filterId];
-    if (!width) {
-      const totalFilters = enabledFilters.length + (showSearch ? 1 : 0);
-      return { flex: `0 0 ${100 / totalFilters}%` };
+  const renderFilterFields = () => {
+    let currentRowWidth = 0;
+    const rows = [];
+    let currentRow = [];
+
+    const addCurrentRowToRows = () => {
+      if (currentRow.length > 0) {
+        rows.push([...currentRow]);
+        currentRow = [];
+        currentRowWidth = 0;
+      }
+    };
+
+    const allFilters = [...enabledFilters];
+    if (showSearch) {
+      allFilters.push('searchTerm');
     }
-    return { flex: `0 0 ${width}` };
+
+    allFilters.forEach(filter => {
+      const width = parseFloat(customWidths[filter] || '100');
+      
+      if (currentRowWidth + width > 100) {
+        addCurrentRowToRows();
+      }
+
+      currentRow.push(renderFilterField(filter));
+      currentRowWidth += width;
+    });
+
+    addCurrentRowToRows();
+
+    return rows.map((row, index) => (
+      <div key={index} className="filter-row">
+        {row}
+      </div>
+    ));
   };
+
+  const renderFilterField = (filter) => {
+    const width = customWidths[filter] || '100%';
+    
+    if (filter === 'searchTerm') {
+      return (
+        <div key={filter} className="filter-group" style={{ width }}>
+          <label>Palavras-chave</label>
+          <input
+            type="text"
+            name="searchTerm"
+            value={selectedFilters.searchTerm || ''}
+            onChange={handleInputChange}
+            placeholder="Digite sua busca..."
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div key={filter} className="filter-group" style={{ width }}>
+        <label>{TAXONOMY_LABELS[filter] || filter}</label>
+        <select
+          name={filter}
+          value={selectedFilters[filter] || ''}
+          onChange={handleInputChange}
+        >
+          <option value="">Todos...</option>
+          {filterOptions[filter]?.map(option => (
+            <option 
+              key={option.id} 
+              value={isMetaField(filter) ? option.name : option.id}
+            >
+              {option.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
+  // Only show loading spinner when loading filter options
+  if (loading && !Object.keys(filterOptions).length) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="filter-wp">
@@ -93,51 +191,15 @@ const FilterWP = ({
 
       {isOpen ? (
         <div className="filter-content">
-          {loading ? (
-            <LoadingSpinner />
-          ) : error ? (
+          {error ? (
             <div className="error-message">{error}</div>
           ) : (
             <>
-              <div className="filter-row">
-                {/* Render select filters first */}
-                {enabledFilters.map(filter => (
-                  <div key={filter} className="filter-group" style={getFilterStyle(filter)}>
-                    <label>{TAXONOMY_LABELS[filter] || filter}</label>
-                    <select
-                      name={filter}
-                      value={selectedFilters[filter] || ''}
-                      onChange={handleInputChange}
-                    >
-                      <option value="">Todos...</option>
-                      {filterOptions[filter]?.map(option => (
-                        <option key={option.id} value={isMetaField(filter) ? option.name : option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-
-                {/* Render search field last */}
-                {showSearch && (
-                  <div className="filter-group" style={getFilterStyle('searchTerm')}>
-                    <label>Palavras-chave</label>
-                    <input
-                      type="text"
-                      name="searchTerm"
-                      value={selectedFilters.searchTerm || ''}
-                      onChange={handleInputChange}
-                      placeholder="Digite sua busca..."
-                    />
-                  </div>
-                )}
-              </div>
-
+              {renderFilterFields()}
               <div className="filter-buttons">
                 {hasFiltersApplied && (
                   <button className="clear-button" onClick={handleClearFilters}>
-                    Limpar
+                    Limpar filtros
                   </button>
                 )}
                 <button className="search-button" onClick={handleFilterSubmit}>

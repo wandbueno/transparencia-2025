@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getExtra } from "../../../../services/receitasDespesas/extraorcamentaria";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterSection from '../../../common/FilterSection/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 // import './Despesas.css';

@@ -10,29 +10,24 @@ export const COMBO_FILTERS = {
   DEPARTAMENTO: 'departamento',
   UNIDADE: 'unidade',
 
-  // Documentos e Legislação
-  TIPO_DOCUMENTO_LEGISLACAO: 'tipoDeDocumentoLegislacaoMunicipal',
-  TIPO_DOCUMENTO_CONSELHO: 'tipoDeDocumentoConselho',
-  TIPO_DOCUMENTO_OUTRAS_PUBLICACOES: 'tipoDeDocumentoOutrasPublicacoes',
-  TIPO_DOCUMENTO_VERSAO_SIMPLIFICADA: 'tipoDeDocumentoVersaoSimplificada',
-  TIPO_DOCUMENTO_COVID19: 'tipoDeDocumentoCovid19',
-  TIPO_DOCUMENTO_PLANOS: 'tipoDeDocumentoPlanos',
-
-  // Financeiro
-  ELEMENTO: 'elemento',
+  // Filtros de Despesas
   FUNCAO: 'funcao',
   SUBFUNCAO: 'subfuncao',
   PROGRAMA: 'programa',
   FONTE_EMPENHO: 'fonteDoEmpenho',
-  FONTE_RECEITA: 'fonteDaReceita',
+  ELEMENTO: 'elemento',
+  CATEGORIA_EMPENHO: 'categoriaDeEmpenho',
+  FASE_LIQUIDACAO: 'faseDaLiquidacao',
+  FASE_ORDEM_PAGAMENTO: 'faseDaOrdemDePagamento',
+  MODALIDADE: 'modalidade',
+
+  // Filtros de Receitas
   CATEGORIA_RECEITA: 'categoriaDaReceita',
   ORIGEM_RECEITA: 'origemDaReceita',
-  ORIGEM_RECURSOS: 'origemDeRecursos',
-  TIPO_EXTRA: 'tipoDeExtra',
+  FONTE_RECEITA: 'fonteDaReceita',
   TITULO_RECEITA: 'tituloDeReceita',
 
-  // Licitações e Contratos
-  MODALIDADE: 'modalidade',
+  // Filtros de Licitações e Contratos
   MODALIDADE_LICITACAO: 'modalidadeProcedimentoLicitatorios',
   MODALIDADE_DISPENSA: 'modalidadeDispensasInexigibilidades',
   NATUREZA_PROCEDIMENTO: 'naturezaDoProcedimento',
@@ -41,7 +36,7 @@ export const COMBO_FILTERS = {
   ASSUNTO_CONTRATO: 'assuntoDeContrato',
   SITUACAO_ATA_REGISTRO: 'situacaoDaAtaDeRegistroDePreco',
 
-  // Servidores
+  // Filtros de Servidores
   CARGO: 'cargo',
   TIPO_CARGO: 'tipoDeCargo',
   SITUACAO_FUNCIONARIO: 'situacaoFuncionario',
@@ -49,95 +44,66 @@ export const COMBO_FILTERS = {
   TIPO_VINCULO: 'tipoDeVinculo',
   TIPO_LICENCA: 'tipoDeLicenca',
 
-  // Outros
-  CONSELHO: 'conselho',
+  // Filtros de Documentos e Publicações
+  TIPO_DOCUMENTO_LEGISLACAO: 'tipoDeDocumentoLegislacaoMunicipal',
+  TIPO_DOCUMENTO_CONSELHO: 'tipoDeDocumentoConselho',
+  TIPO_DOCUMENTO_OUTRAS_PUBLICACOES: 'tipoDeDocumentoOutrasPublicacoes',
+  TIPO_DOCUMENTO_VERSAO_SIMPLIFICADA: 'tipoDeDocumentoVersaoSimplificada',
+  TIPO_DOCUMENTO_COVID19: 'tipoDeDocumentoCovid19',
+  TIPO_DOCUMENTO_PLANOS: 'tipoDeDocumentoPlanos',
+  SITUACAO_DOCUMENTO: 'situacaoDoDocumentoDoPortalDaTransparencia',
+  VEICULO_PUBLICACAO: 'veiculoDePublicacao',
+
+  // Filtros de Recursos e Convênios
+  ORIGEM_RECURSOS: 'origemDeRecursos',
+  TIPO_EXTRA: 'tipoDeExtra',
+  TIPO_CONVENIO: 'tipoDeConvenio',
+
+  // Filtros de Patrimônio
   TIPO_BEM: 'tipoDeBem',
-  CONTRATO_COVID19: 'contratoCovid19',
+
+  // Filtros de Pareceres e Conselhos
+  CONSELHO: 'conselho',
   PARECER_PREVIO_MODALIDADE: 'parecerPrevioModalidade',
   PARECER_PREVIO_STATUS: 'parecerPrevioStatus',
-  CATEGORIA_VIDEO: 'categoriaDeVideo',
-  TIPO_CONVENIO: 'tipoDeConvenio',
-  FASE_LIQUIDACAO: 'faseDaLiquidacao',
-  FASE_ORDEM_PAGAMENTO: 'faseDaOrdemDePagamento',
-  SITUACAO_DOCUMENTO: 'situacaoDoDocumentoDoPortalDaTransparencia',
-  SITUACAO_HOMOLOGACAO: 'situacaoDaHomologacao',
+
+  // Filtros de Concursos
   SITUACAO_CONCURSO: 'situacaoDoConcurso',
-  VEICULO_PUBLICACAO: 'veiculoDePublicacao',
   TIPO_PROCESSO_SELETIVO: 'tipoDeProcessoSeletivoDoConcurso',
-  CATEGORIA_EMPENHO: 'categoriaDeEmpenho',
+  SITUACAO_HOMOLOGACAO: 'situacaoDaHomologacao',
+
+  // Outros Filtros
+  CATEGORIA_VIDEO: 'categoriaDeVideo',
   TIPO_ENTE_FEDERADO: 'tipoDeEnteFederadoVidaFuncionalDisposicao'
 }
 
-// Função principal para buscar dados do combo
-export const getComboData = async (filtros = []) => {
+// Função para buscar dados de múltiplos combos
+export const getMultiplosCombo = async (filtros = []) => {
   try {
-    const filtrosArray = Array.isArray(filtros) ? filtros : [filtros]
-
-    // Validação dos filtros
-    const invalidFilters = filtrosArray.filter(
-      filtro => !Object.values(COMBO_FILTERS).includes(filtro)
-    )
-
-    if (invalidFilters.length > 0) {
-      throw new Error(`Filtros inválidos: ${invalidFilters.join(', ')}`)
+    if (!Array.isArray(filtros) || filtros.length === 0) {
+      console.warn('No filters provided to getMultiplosCombo')
+      return {}
     }
 
-    // Cria os parâmetros de query
-    const params = new URLSearchParams()
-    filtrosArray.forEach(filtro => {
-      params.append('filtro', filtro)
-    })
+    // Constrói a query string com múltiplos parâmetros filtro
+    const queryString = filtros
+      .map(filtro => `filtro=${encodeURIComponent(filtro)}`)
+      .join('&')
 
-    const response = await axios.get(`${API_BASE_URL}?${params.toString()}`)
+    console.log('Requesting combos with query:', queryString)
+
+    const response = await axios.get(`${API_BASE_URL}/?${queryString}`)
+
+    // Verifica se a resposta tem a estrutura esperada
+    if (!response.data || typeof response.data !== 'object') {
+      console.error('Invalid response format:', response.data)
+      return {}
+    }
+
+    console.log('Combo response:', response.data)
     return response.data
   } catch (error) {
     console.error('Erro ao buscar dados do combo:', error)
     throw error
   }
-}
-
-// Funções auxiliares para combos específicos
-export const getAnosCombo = async () => {
-  return getComboData([COMBO_FILTERS.ANO])
-}
-
-export const getOrgaosCombo = async () => {
-  return getComboData([COMBO_FILTERS.ORGAO])
-}
-
-export const getDepartamentosCombo = async () => {
-  return getComboData([COMBO_FILTERS.DEPARTAMENTO])
-}
-
-export const getModalidadesLicitacaoCombo = async () => {
-  return getComboData([COMBO_FILTERS.MODALIDADE_LICITACAO])
-}
-
-export const getFuncoesCombo = async () => {
-  return getComboData([COMBO_FILTERS.FUNCAO])
-}
-
-export const getSubfuncoesCombo = async () => {
-  return getComboData([COMBO_FILTERS.SUBFUNCAO])
-}
-
-export const getProgramasCombo = async () => {
-  return getComboData([COMBO_FILTERS.PROGRAMA])
-}
-
-export const getFontesReceitaCombo = async () => {
-  return getComboData([COMBO_FILTERS.FONTE_RECEITA])
-}
-
-// Função para buscar múltiplos combos de uma vez
-export const getMultiplosCombo = async filtros => {
-  if (!Array.isArray(filtros)) {
-    throw new Error('O parâmetro filtros deve ser um array')
-  }
-  return getComboData(filtros)
-}
-
-// Função para validar filtros
-export const isValidFilter = filtro => {
-  return Object.values(COMBO_FILTERS).includes(filtro)
 }

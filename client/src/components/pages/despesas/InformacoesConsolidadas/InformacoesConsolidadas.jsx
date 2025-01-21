@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getConsolidadosPaginados } from "../../../../services/receitasDespesas/InformacoesConsolidadas";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection';
+import FilterSection from '../../../common/FilterSection/FilterSection';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import ButtonTable from "../../../common/ButtonTable";

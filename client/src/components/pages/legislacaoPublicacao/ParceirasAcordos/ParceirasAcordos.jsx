@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../common/LoadingSpinner';
 import { config } from '../../../../assets/config';
 import ButtonLink from "../../../common/ButtonLink";
 
-// Função utilitária para decodificar entidades HTML
+// Function to decode HTML entities
 function decodeHtmlEntities(text) {
   const doc = new DOMParser().parseFromString(text, "text/html");
   return doc.documentElement.textContent;

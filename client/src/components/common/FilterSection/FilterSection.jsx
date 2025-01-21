@@ -1,36 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { getComboData } from '../../../services/combo/comboService';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { getMultiplosCombo } from '../../../services/combo/comboService';
+import LoadingSpinner from '../LoadingSpinner';
 import './FilterSection.css';
 
-const FilterSection = ({ availableFilters, onFilterChange }) => {
+const FilterSection = ({ 
+  onFilterChange,
+  enabledFilters = [],
+  customWidths = {},
+  title = "Filtros de Pesquisa",
+  initialFilters = {}
+}) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hasFiltersApplied, setHasFiltersApplied] = useState(false);
   const [filterData, setFilterData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [selectedFilters, setSelectedFilters] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState(initialFilters);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (availableFilters?.length > 0) {
+    if (enabledFilters?.length > 0) {
       loadFilterData();
     }
-  }, [availableFilters]);
+  }, [enabledFilters]);
 
   const loadFilterData = async () => {
     try {
       setLoading(true);
-      const data = await getComboData(availableFilters);
-      console.log('Dados recebidos do combo:', data);
-
-      if (data && typeof data === 'object') {
-        setFilterData(data);
-      } else {
-        console.error('Formato de dados inesperado:', data);
-        setError('Formato de dados inválido');
-      }
-    } catch (error) {
-      console.error('Erro ao carregar filtros:', error);
-      setError(error.message);
+      const data = await getMultiplosCombo(enabledFilters);
+      
+      // Transform the data into the correct format
+      const formattedData = {};
+      Object.entries(data).forEach(([key, value]) => {
+        // Ensure value is an array and has the correct structure
+        formattedData[key] = Array.isArray(value) ? value.map(item => ({
+          value: item.value || item.id || '',
+          label: item.label || item.name || ''
+        })) : [];
+      });
+      
+      setFilterData(formattedData);
+      setError('');
+    } catch (err) {
+      console.error('Erro ao carregar filtros:', err);
+      setError('Erro ao carregar filtros');
     } finally {
       setLoading(false);
     }
@@ -46,103 +60,77 @@ const FilterSection = ({ availableFilters, onFilterChange }) => {
 
   const handleFilterSubmit = () => {
     setHasFiltersApplied(true);
-    onFilterChange(selectedFilters);
+    
+    // Update URL parameters
+    const params = new URLSearchParams();
+    Object.entries(selectedFilters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
+    if (onFilterChange) {
+      onFilterChange(selectedFilters);
+    }
   };
 
   const handleClearFilters = () => {
     setSelectedFilters({});
     setHasFiltersApplied(false);
-    onFilterChange({});
+    setSearchParams({}); // Clear URL parameters
+    if (onFilterChange) {
+      onFilterChange({});
+    }
   };
 
   const renderFilter = (filterType) => {
-    console.log('Renderizando filtro:', filterType);
-    console.log('Dados disponíveis:', filterData[filterType]);
-
     const options = filterData[filterType] || [];
-
-    switch (filterType) {
-      case 'ano':
-        return (
-          <div className="filter-group" key={filterType}>
-            <label>Ano</label>
-            <select 
-              name={filterType}
-              value={selectedFilters[filterType] || ''}
-              onChange={handleInputChange}
+    const width = customWidths[filterType] || '100%';
+    
+    return (
+      <div className="filter-group" key={filterType} style={{ width }}>
+        <label>{filterType}</label>
+        <select 
+          name={filterType}
+          value={selectedFilters[filterType] || ''}
+          onChange={handleInputChange}
+        >
+          <option value="">Selecione...</option>
+          {Array.isArray(options) && options.map((option) => (
+            <option 
+              key={`${filterType}-${option.value}-${Math.random().toString(36).substr(2, 9)}`} 
+              value={option.value}
             >
-              <option value="">Selecione o ano...</option>
-              {options.map(ano => (
-                <option key={ano} value={ano}>{ano}</option>
-              ))}
-            </select>
-          </div>
-        );
-
-      case 'orgao':
-        return (
-          <div className="filter-group" key={filterType}>
-            <label>Órgão</label>
-            <select 
-              name={filterType}
-              value={selectedFilters[filterType] || ''}
-              onChange={handleInputChange}
-            >
-              <option value="">Selecione o órgão...</option>
-              {options.map(orgao => (
-                <option key={orgao.codigo} value={orgao.codigo}>
-                  {orgao.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-        );
-
-      case 'modalidade':
-        return (
-          <div className="filter-group" key={filterType}>
-            <label>Modalidade</label>
-            <select 
-              name={filterType}
-              value={selectedFilters[filterType] || ''}
-              onChange={handleInputChange}
-            >
-              <option value="">Selecione a modalidade...</option>
-              {options.map(modalidade => (
-                <option key={modalidade.codigo} value={modalidade.codigo}>
-                  {modalidade.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-        );
-
-      // Adicione mais cases conforme necessário para outros tipos de filtros
-      default:
-        return null;
-    }
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
   };
 
   return (
     <div className="filter-section">
       <div className="filter-header" onClick={() => setIsOpen(!isOpen)}>
-        <div className="filter-header-title">Filtros de Pesquisa</div>
+        <div className="filter-header-title">{title}</div>
         <div className="filter-toggle">
           {isOpen ? "Esconder Filtros" : "Mostrar Filtros"}
           <span className={`arrow ${isOpen ? "up" : "down"}`}></span>
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen ? (
         <div className="filter-content">
           {loading ? (
-            <div>Carregando filtros...</div>
+            <LoadingSpinner />
+          ) : error ? (
+            <div className="error-message">{error}</div>
           ) : (
             <>
               <div className="filter-row">
-                {availableFilters?.map(filter => renderFilter(filter))}
+                {enabledFilters.map(filter => renderFilter(filter))}
               </div>
-
               <div className="filter-buttons">
                 {hasFiltersApplied && (
                   <button className="clear-button" onClick={handleClearFilters}>
@@ -156,9 +144,15 @@ const FilterSection = ({ availableFilters, onFilterChange }) => {
             </>
           )}
         </div>
+      ) : (
+        <div className="filter-placeholder">
+          Utilize os campos do formulário para filtrar a sua pesquisa. Para isso,
+          clique em <strong>MOSTRAR FILTROS</strong> e preencha os campos com os dados
+          do seu interesse.
+        </div>
       )}
     </div>
   );
 };
 
-export default FilterSection; 
+export default FilterSection;
