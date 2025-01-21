@@ -4,38 +4,105 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res) => {
   try {
+    const tenant = req.tenant
+    if (!tenant) {
+      throw new Error('Tenant não configurado')
+    }
+
+    // Parâmetros da API de Empenho
     const params = {
       pagina: req.query.pagina || 1,
       tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-      ano: req.query.ano
-        ? parseInt(req.query.ano, 10)
-        : new Date().getFullYear(),
-      codigoDoOrgao: req.query.codigoDoOrgao
-        ? parseInt(req.query.codigoDoOrgao, 10)
-        : '',
+      cnpjDoFornecedor: req.query.cnpjDoFornecedor,
+      codigoDaFuncao: req.query.codigoDaFuncao
+        ? parseInt(req.query.codigoDaFuncao)
+        : undefined,
       codigoDaModalidade: req.query.codigoDaModalidade
-        ? parseInt(req.query.codigoDaModalidade, 10)
-        : '',
+        ? parseInt(req.query.codigoDaModalidade)
+        : undefined,
+      codigoDaSubFuncao: req.query.codigoDaSubFuncao
+        ? parseInt(req.query.codigoDaSubFuncao)
+        : undefined,
+      codigoDaUnidade: req.query.codigoDaUnidade
+        ? parseInt(req.query.codigoDaUnidade)
+        : undefined,
+      codigoDoCliente: req.query.codigoDoCliente
+        ? parseInt(req.query.codigoDoCliente)
+        : undefined,
       codigoDoElemento: req.query.codigoDoElemento
-        ? parseInt(req.query.codigoDoElemento, 10)
-        : ''
+        ? parseInt(req.query.codigoDoElemento)
+        : undefined,
+      codigoDoOrgao: req.query.codigoDoOrgao
+        ? parseInt(req.query.codigoDoOrgao)
+        : undefined,
+      codigoDoPrograma: req.query.codigoDoPrograma
+        ? parseInt(req.query.codigoDoPrograma)
+        : undefined,
+      codigoTituloDaFonte: req.query.codigoTituloDaFonte
+        ? parseInt(req.query.codigoTituloDaFonte)
+        : undefined,
+      covid19: req.query.covid19,
+      dataFinal: req.query.dataFinal,
+      dataInicial: req.query.dataInicial,
+      estadoDoCliente: req.query.estadoDoCliente,
+      etapaDaDespesa: req.query.etapaDaDespesa
+        ? parseInt(req.query.etapaDaDespesa)
+        : undefined,
+      faseDoEmpenho: req.query.faseDoEmpenho
+        ? parseInt(req.query.faseDoEmpenho)
+        : undefined,
+      fonteDoEmpenho: req.query.fonteDoEmpenho,
+      logotipoDoCliente: req.query.logotipoDoCliente,
+      nomeDoFornecedor: req.query.nomeDoFornecedor,
+      numeroDoTcm: req.query.numeroDoTcm,
+      numeroEAnoDaLicitacao: req.query.numeroEAnoDaLicitacao,
+      orgaoDoCliente: req.query.orgaoDoCliente,
+      rubricaDaDespesa: req.query.rubricaDaDespesa,
+      servicoDoPrestador: req.query.servicoDoPrestador,
+      valorDoEmpenho: req.query.valorDoEmpenho
+        ? parseFloat(req.query.valorDoEmpenho)
+        : undefined,
+      chavePrimaria: req.query.chavePrimaria,
+      codigo: req.query.codigo
     }
 
-    // console.log('Requesting API with params:', params)
+    // Remove parâmetros undefined
+    Object.keys(params).forEach(
+      key => params[key] === undefined && delete params[key]
+    )
 
-    const response = await axios.get(`${process.env.SERVER}${path}`, {
-      params,
+    console.log('Requisição para API:', {
+      url: `${tenant.api_url}${path}`,
+      method: 'GET',
+      params: params,
+      tenant: tenant.name
+    })
+
+    const response = await axios.get(`${tenant.api_url}${path}`, {
+      params: params,
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        Authorization: `Bearer ${tenant.token}`,
+        'cliente-integrado': tenant.cliente_integrado
       }
     })
+
     res.json(response.data)
   } catch (error) {
-    console.error('Erro ao conectar com a API externa:', error.message)
-    res.status(500).json({ error: 'Erro ao conectar com a API externa' })
+    console.error('Erro na requisição:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      path: path,
+      tenant: req.tenant?.name
+    })
+
+    res.status(error.response?.status || 500).json({
+      error: 'Erro ao conectar com a API externa',
+      details: error.response?.data || error.message
+    })
   }
 }
+
 router.get('/empenho/anulacoes-da-liquidacao/:id', (req, res) => {
   const id = req.params.id
   fetchFromAPI(
