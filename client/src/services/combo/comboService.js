@@ -92,7 +92,12 @@ export const getMultiplosCombo = async (filtros = []) => {
 
     console.log('Requesting combos with query:', queryString)
 
-    const response = await axios.get(`${API_BASE_URL}/?${queryString}`)
+    const response = await axios.get(`${API_BASE_URL}/?${queryString}`, {
+      headers: {
+        'x-tenant-id': 'conceicaodotocantins', // Adiciona o tenant ID no header
+        Accept: 'application/json'
+      }
+    })
 
     // Verifica se a resposta tem a estrutura esperada
     if (!response.data || typeof response.data !== 'object') {

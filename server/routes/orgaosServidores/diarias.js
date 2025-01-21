@@ -2,6 +2,19 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 
+const formatDate = dateString => {
+  if (!dateString) return undefined
+
+  try {
+    // Converte de YYYY-MM-DD para DD/MM/YYYY
+    const [year, month, day] = dateString.split('-')
+    return `${day}/${month}/${year}`
+  } catch (error) {
+    console.error('Erro ao formatar data:', error)
+    return undefined
+  }
+}
+
 const fetchFromAPI = async (path, req, res) => {
   try {
     const tenant = req.tenant
@@ -9,26 +22,43 @@ const fetchFromAPI = async (path, req, res) => {
       throw new Error('Tenant não configurado')
     }
 
+    // Extrai e formata as datas
+    const { dataInicial, dataFinal, ...otherParams } = req.query
+
+    // Prepara os parâmetros da requisição
+    const params = {
+      pagina: otherParams.pagina || 1,
+      tamanhoDaPagina: otherParams.tamanhoDaPagina || 2500,
+      anoDaPortaria: otherParams.anoDaPortaria,
+      codigoDoOrgao: otherParams.codigoDoOrgao,
+      data: otherParams.data,
+      destino: otherParams.destino,
+      matriculaDoFuncionario: otherParams.matriculaDoFuncionario,
+      nomeDoFuncionario: otherParams.nomeDoFuncionario,
+      numeroDaLiquidacao: otherParams.numeroDaLiquidacao,
+      numeroDaPortaria: otherParams.numeroDaPortaria,
+      numeroDoEmpenho: otherParams.numeroDoEmpenho,
+      numeroDoPagamento: otherParams.numeroDoPagamento,
+      numeroDoProcesso: otherParams.numeroDoProcesso,
+      valor: otherParams.valor,
+      chavePrimaria: otherParams.chavePrimaria,
+      // Adiciona as datas formatadas se existirem
+      ...(dataInicial && { dataInicial: formatDate(dataInicial) }),
+      ...(dataFinal && { dataFinal: formatDate(dataFinal) })
+    }
+
+    // Remove parâmetros undefined
+    Object.keys(params).forEach(
+      key => params[key] === undefined && delete params[key]
+    )
+
+    console.log('Parâmetros da requisição:', {
+      url: `${tenant.api_url}${path}`,
+      params: params
+    })
+
     const response = await axios.get(`${tenant.api_url}${path}`, {
-      params: {
-        pagina: req.query.pagina || 1,
-        tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        anoDaPortaria: req.query.anoDaPortaria,
-        codigoDoOrgao: req.query.codigoDoOrgao,
-        data: req.query.data,
-        dataFinal: req.query.dataFinal,
-        dataInicial: req.query.dataInicial,
-        destino: req.query.destino,
-        matriculaDoFuncionario: req.query.matriculaDoFuncionario,
-        nomeDoFuncionario: req.query.nomeDoFuncionario,
-        numeroDaLiquidacao: req.query.numeroDaLiquidacao,
-        numeroDaPortaria: req.query.numeroDaPortaria,
-        numeroDoEmpenho: req.query.numeroDoEmpenho,
-        numeroDoPagamento: req.query.numeroDoPagamento,
-        numeroDoProcesso: req.query.numeroDoProcesso,
-        valor: req.query.valor,
-        chavePrimaria: req.query.chavePrimaria
-      },
+      params,
       headers: {
         Authorization: `Bearer ${tenant.token}`,
         'cliente-integrado': tenant.cliente_integrado
