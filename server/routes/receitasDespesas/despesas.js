@@ -21,7 +21,7 @@ const fetchFromAPI = async (path, req, res) => {
         : ''
     }
 
-    console.log('Requesting API with params:', params)
+    // console.log('Requesting API with params:', params)
 
     const response = await axios.get(`${process.env.SERVER}${path}`, {
       params,

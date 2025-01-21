@@ -85,6 +85,7 @@ const Receitas = () => {
     const fetchData = async () => {
       try {
         const { data, url } = await getReceitas();
+        console.log(data.registros);
         setData(data.registros);  
         setUrl(url);  
       } catch (err) {
