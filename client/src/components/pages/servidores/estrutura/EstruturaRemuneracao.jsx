@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getEstruturaRemuneracao } from "../../../../services/orgãosServidores/estruturaRemuneracao";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection/FilterSection';
+import MultiComboSelect from '../../../common/MultiComboSelect/MultiComboSelect';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
-// import './Empenho.css';
+import Toast from '../../../common/Toast';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
+import {
+  ESTRUTURA_REMUNERACAO_COMBO_FILTERS,
+  ESTRUTURA_REMUNERACAO_TEXT_FIELDS,
+  ESTRUTURA_REMUNERACAO_SELECT_FIELDS,
+  ESTRUTURA_REMUNERACAO_CUSTOM_WIDTHS,
+  ESTRUTURA_REMUNERACAO_CUSTOM_LABELS,
+  ESTRUTURA_REMUNERACAO_FIELD_ORDER
+} from '../../../../services/filters/orgaosServidores/estruturaRemuneracao';
 
 const columnsEstruturaRemuneracao = [
   { name: "Cargo", selector: (row) => row.cargo, sortable: true, width: '22%' },
@@ -32,19 +41,14 @@ const columnsEstruturaRemuneracao = [
     selector: row => row.chave.codigoDoNivel,
     cell: row => {
       const id = row.chave.codigoDoNivel;
-  
-      // Verifique se "ano" e "mes" realmente existem antes de criar a URL
-      const ano = row.chave.ano || new Date().getFullYear(); // Se "row.chave.ano" for undefined, use o ano atual
-      const mes = row.chave.mes || (new Date().getMonth() + 1).toString().padStart(2, '0'); // Se "row.chave.mes" for undefined, use o mês atual formatado
+      const ano = row.chave.ano || new Date().getFullYear();
+      const mes = row.chave.mes || (new Date().getMonth() + 1).toString().padStart(2, '0');
       
-      // Verifique se ano e mes foram atribuídos corretamente
-      console.log(`ID: ${id}, Ano: ${ano}, Mês: ${mes}`);
-  
       return (
         <ButtonTable
           path="/estrutura-de-remuneracao"
           id={id}
-          queryParams={`?ano=${ano}&mes=${mes}`}  // Passe o ano e o mês como parâmetros da query string
+          queryParams={`?ano=${ano}&mes=${mes}`}
           label="Ver Detalhes"
         />
       );
@@ -52,48 +56,127 @@ const columnsEstruturaRemuneracao = [
     width: '10%',
     excludeFromExport: true
   }
-  
 ];
 
-
-
 const EstruturaRemuneracao = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  // Get initial filters - if no year/month in URL, use current year/month
+  const getInitialFilters = () => {
+    const filters = {};
+    for (const [key, value] of searchParams.entries()) {
+      filters[key] = value;
+    }
+    
+    // If no year filter exists, add current year
+    if (!filters.ano) {
+      filters.ano = new Date().getFullYear().toString();
+    }
+    
+    // If no month filter exists, add current month
+    if (!filters.mes) {
+      filters.mes = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    }
+    
+    return filters;
+  };
 
   useEffect(() => {
+    document.title = `Estrutura de Remuneração - Portal Transparência - ${config.geral.nomeOrgao}`;
+    const initialFilters = getInitialFilters();
     
-    // Atualiza o título da aba do navegador
-    document.title = `Estrutura de Remuneração - Portal Transparência - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        const result = await getEstruturaRemuneracao();
-        setData(result.registros); 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Always update URL with initial filters
+    const params = new URLSearchParams(searchParams);
+    if (!params.has('ano')) {
+      params.set('ano', initialFilters.ano);
+      params.set('mes', initialFilters.mes);
+      setSearchParams(params);
+    }
+    
+    // Always fetch data with initial filters
+    fetchData(initialFilters);
   }, []);
+
+  const fetchData = async (filters = {}) => {
+    try {
+      setLoading(true);
+      console.log('Buscando estrutura de remuneração com filtros:', filters);
+      
+      const result = await getEstruturaRemuneracao(filters);
+      setData(result.registros);
+      
+      if (Object.keys(filters).length > 0) {
+        setToast({
+          type: 'success',
+          message: 'Filtros aplicados com sucesso!'
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao buscar estrutura de remuneração:', err);
+      setError(err.message);
+      setToast({
+        type: 'error',
+        message: 'Erro ao aplicar filtros: ' + err.message
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filters) => {
+    console.log('Filtros recebidos:', filters);
+    
+    // Atualiza a URL com os novos filtros
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
+    // Busca os dados com os novos filtros
+    fetchData(filters);
+  };
 
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Estrutura de Remuneração"
         breadcrumb={[
           { label: 'Estrutura de Remuneração' },
         ]}
       />      
-      <FilterSection  />
+      
+      <MultiComboSelect
+        title="Filtros de Pesquisa"
+        availableFilters={ESTRUTURA_REMUNERACAO_COMBO_FILTERS}
+        textFields={ESTRUTURA_REMUNERACAO_TEXT_FIELDS}
+        selectFields={ESTRUTURA_REMUNERACAO_SELECT_FIELDS}
+        customWidths={ESTRUTURA_REMUNERACAO_CUSTOM_WIDTHS}
+        customLabels={ESTRUTURA_REMUNERACAO_CUSTOM_LABELS}
+        onFilterChange={handleFilterChange}
+        initialValues={getInitialFilters()}
+        requiredFilters={['ano', 'mes']}
+        fieldOrder={ESTRUTURA_REMUNERACAO_FIELD_ORDER}
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
       </InfoText>        
+      
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={3000}
+        />
+      )}
          
       {loading ? (
         <LoadingSpinner />
@@ -106,8 +189,6 @@ const EstruturaRemuneracao = () => {
           data={data}
         />
       )}
-
-   
     </div>
   );
 };

@@ -13,7 +13,7 @@ import {
   DIARIAS_COMBO_FILTERS,
   DIARIAS_TEXT_FIELDS,
   DIARIAS_CUSTOM_WIDTHS 
-} from '../../../../services/filters/diarias';
+} from '../../../../services/filters/orgaosServidores/diarias';
 
 const columnsDiarias = [
   { name: "Matrícula", selector: (row) => row.matriculaDoFuncionario, sortable: true, width: '10%' },
