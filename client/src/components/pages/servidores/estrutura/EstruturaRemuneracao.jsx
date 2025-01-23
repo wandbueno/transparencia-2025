@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../common/LoadingSpinner';
 import Toast from '../../../common/Toast';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
-import {
+import { 
   ESTRUTURA_REMUNERACAO_COMBO_FILTERS,
   ESTRUTURA_REMUNERACAO_TEXT_FIELDS,
   ESTRUTURA_REMUNERACAO_SELECT_FIELDS,

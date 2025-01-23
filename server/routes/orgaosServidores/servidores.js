@@ -4,37 +4,85 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res) => {
   try {
-    const response = await axios.get(`${process.env.SERVER}${path}`, {
-      params: {
-        pagina: req.query.pagina || 1,
-        tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-        ano: req.query.ano || '',
-        mes: req.query.mes || '',
-        matricula: req.query.matricula || ''
-        // codigoDoOrgao: req.query.codigoDoOrgao || ''
-        // categoriaDoTrabalhadorNoESocial:
-        // req.query.categoriaDoTrabalhadorNoESocial,
-        // codigoDaSituacao: req.query.codigoDaSituacao,
-        // codigoDoCargo: req.query.codigoDoCargo,
-        // codigoDoCliente: req.query.codigoDoCliente,
-        // codigoDoTipoDeVinculo: req.query.codigoDoTipoDeVinculo,
-        // cpf: req.query.cpf,
-        // estadoDoCliente: req.query.estadoDoCliente,
-        // logotipoDoCliente: req.query.logotipoDoCliente,
+    const tenant = req.tenant
+    if (!tenant) {
+      throw new Error('Tenant não configurado')
+    }
 
-        // nomeDoDepartamento: req.query.nomeDoDepartamento,
-        // nomeDoFuncionario: req.query.nomeDoFuncionario,
-        // orgaoDoCliente: req.query.orgaoDoCliente
-      },
+    // Obter a data atual
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const lastMonth = currentDate.getMonth() === 0 ? 12 : currentDate.getMonth()
+    const lastMonthYear =
+      currentDate.getMonth() === 0 ? currentYear - 1 : currentYear
+
+    // Prepara os parâmetros da requisição
+    const params = {
+      pagina: req.query.pagina || 1,
+      tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
+
+      // Parâmetros de data - usa o mês anterior por padrão
+      ano: req.query.ano || lastMonthYear,
+      mes: req.query.mes || lastMonth.toString().padStart(2, '0'),
+
+      // Parâmetros de identificação
+      matriculaDoFuncionario: req.query.matriculaDoFuncionario,
+      cpf: req.query.cpf,
+      nomeDoFuncionario: req.query.nomeDoFuncionario,
+
+      // Parâmetros de estrutura organizacional
+      codigoDoOrgao: req.query.codigoDoOrgao,
+      nomeDoDepartamento: req.query.nomeDoDepartamento,
+
+      // Parâmetros de cargo e vínculo
+      codigoDoCargo: req.query.codigoDoCargo,
+      codigoDoTipoDeVinculo: req.query.codigoDoTipoDeVinculo,
+      codigoDaSituacao: req.query.codigoDaSituacao,
+      categoriaDoTrabalhadorNoESocial:
+        req.query.categoriaDoTrabalhadorNoESocial,
+
+      // Parâmetros do cliente
+      codigoDoCliente: req.query.codigoDoCliente,
+      estadoDoCliente: req.query.estadoDoCliente,
+      orgaoDoCliente: req.query.orgaoDoCliente,
+      logotipoDoCliente: req.query.logotipoDoCliente,
+
+      // Parâmetros específicos para detalhes
+      matricula: req.query.matricula
+    }
+
+    // Remove parâmetros undefined
+    Object.keys(params).forEach(
+      key => params[key] === undefined && delete params[key]
+    )
+
+    console.log('Parâmetros da requisição:', {
+      url: `${tenant.api_url}${path}`,
+      params: params
+    })
+
+    const response = await axios.get(`${tenant.api_url}${path}`, {
+      params,
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        Authorization: `Bearer ${tenant.token}`,
+        'cliente-integrado': tenant.cliente_integrado,
+        Accept: 'application/json'
       }
     })
+
     res.json(response.data)
   } catch (error) {
-    console.error('Erro ao conectar com a API externa:', error.message)
-    res.status(500).json({ error: 'Erro ao conectar com a API externa' })
+    console.error('Erro na requisição:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      path: path
+    })
+
+    res.status(error.response?.status || 500).json({
+      error: 'Erro ao conectar com a API externa',
+      details: error.response?.data || error.message
+    })
   }
 }
 
@@ -104,15 +152,6 @@ router.get('/movimento13-salario/paginado', (req, res) =>
     res
   )
 )
-
-// router.get('/:id', (req, res) => {
-//   const id = req.params.id
-//   fetchFromAPI(
-//     `/api/orgaos-e-servidores/servidor/detalhe?matricula=${id}`,
-//     req,
-//     res
-//   )
-// })
 
 // Rota para acessar detalhes de um servidor pela matrícula, ano e mês
 router.get('/:matricula', (req, res) => {
