@@ -20,12 +20,14 @@ export const getReceitas = async (filters = {}) => {
       mes: filters.mes || currentMonth,
 
       // Parâmetros de estrutura
-      codigoDoOrgao: filters.orgao,
+      codigoDoOrgao: filters.orgao ? parseInt(filters.orgao) : undefined,
 
       // Parâmetros de classificação
       naturezaDaReceita: filters.naturezaDaReceita,
       detalhamentoDaNaturezaDaReceita: filters.detalhamentoDaNaturezaDaReceita,
-      origemDoRecurso: filters.origemDoRecurso,
+      origemDoRecurso: filters.origemDoRecurso
+        ? parseInt(filters.origemDoRecurso)
+        : undefined,
       fonteDaReceita: filters.fonteDaReceita,
 
       // Parâmetros de configuração

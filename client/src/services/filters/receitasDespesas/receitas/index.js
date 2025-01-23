@@ -82,10 +82,8 @@ export const RECEITAS_CUSTOM_WIDTHS = {
   ano: '25%',
   mes: '25%',
   naturezaDaReceita: '25%',
-  detalhamentoDaNaturezaDaReceita: '50%',
   origemDoRecurso: '25%',
-  totalizarReceitas: '25%',
-  fonteDaReceita: '25%',
+  fonteDaReceita: '50%',
   covid19: '25%'
 }
 
@@ -103,10 +101,8 @@ export const RECEITAS_FIELD_ORDER = [
   'ano', // Ano * (combo)
   'mes', // Mês * (select)
   'naturezaDaReceita', // Natureza da Receita Por (select)
-  'detalhamentoDaNaturezaDaReceita', // Detalhamento (text)
-  'origemDoRecurso', // Origem do Recurso (combo)
-  'totalizarReceitas', // Totalizar Receitas (select)
   'fonteDaReceita', // Fonte de Recurso (combo)
+  'origemDoRecurso', // Origem do Recurso (select)
   'covid19' // Covid 19 (select)
 ]
 

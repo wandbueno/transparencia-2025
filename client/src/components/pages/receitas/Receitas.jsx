@@ -67,12 +67,13 @@ const columns = [
       const id = row.chave.codigoDaReceita;
       const ano = row.chave.ano || new Date().getFullYear();
       const mes = row.chave.mes || (new Date().getMonth() + 1).toString().padStart(2, '0');
+      const codigoDoOrgao = row.chave.codigoDoOrgao;
       
       return (
         <ButtonTable
           path="/receitas"
           id={id}
-          queryParams={`?ano=${ano}&mes=${mes}`}
+          queryParams={`?ano=${ano}&mes=${mes}&codigoDoOrgao=${codigoDoOrgao}`} 
           label="Ver Detalhes"
         />
       );
