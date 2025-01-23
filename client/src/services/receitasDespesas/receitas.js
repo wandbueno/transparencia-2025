@@ -3,26 +3,47 @@ import axios from 'axios'
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/receitas`
 
 // Função para buscar receitas
-export const getReceitas = async (
-  ano = new Date().getFullYear(),
-  mes = new Date().getMonth() + 1
-) => {
+export const getReceitas = async (filters = {}) => {
   try {
-    const mesFormatado = mes.toString().padStart(2, '0')
-    console.log(`Chamando a API com ano=${ano} e mes=${mesFormatado}`)
+    // Obter o ano e mês atual se não fornecidos
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0')
 
-    // Faz a requisição para a API com os parâmetros
-    const response = await axios.get(`${API_BASE_URL}/paginado`, {
-      params: {
-        ano,
-        mes: mesFormatado
+    // Mapeia os filtros para os parâmetros esperados pela API
+    const params = {
+      pagina: 1,
+      tamanhoDaPagina: 2500,
+
+      // Parâmetros de data - sempre presentes
+      ano: filters.ano || currentYear,
+      mes: filters.mes || currentMonth,
+
+      // Parâmetros de estrutura
+      codigoDoOrgao: filters.orgao,
+
+      // Parâmetros de classificação
+      naturezaDaReceita: filters.naturezaDaReceita,
+      detalhamentoDaNaturezaDaReceita: filters.detalhamentoDaNaturezaDaReceita,
+      origemDoRecurso: filters.origemDoRecurso,
+      fonteDaReceita: filters.fonteDaReceita,
+
+      // Parâmetros de configuração
+      totalizarReceitas: filters.totalizarReceitas === 'true',
+      covid19: filters.covid19 === 'true'
+    }
+
+    // Remove parâmetros undefined ou vazios
+    Object.keys(params).forEach(key => {
+      if (params[key] === undefined || params[key] === '') {
+        delete params[key]
       }
     })
 
-    return {
-      data: response.data,
-      url: `${API_BASE_URL}/paginado?ano=${ano}&mes=${mesFormatado}` // Retorna a URL da API
-    }
+    console.log('Parâmetros enviados para API:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/paginado`, { params })
+    return response.data
   } catch (error) {
     console.error('Erro ao buscar receitas:', error)
     throw error
@@ -32,9 +53,26 @@ export const getReceitas = async (
 // Função para buscar detalhes de uma receita
 export const getReceitasId = async (id, ano, mes, codigoDoOrgao) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/${id}`, {
-      params: { ano, mes, codigoDoOrgao }
-    })
+    // Verifica se todos os parâmetros necessários estão presentes
+    if (!id || !ano || !mes || !codigoDoOrgao) {
+      throw new Error(
+        'Parâmetros obrigatórios ausentes: id, ano, mes e codigoDoOrgao são necessários'
+      )
+    }
+
+    // Formata o mês para garantir que tenha dois dígitos
+    const mesFormatado = mes.toString().padStart(2, '0')
+
+    const params = {
+      codigoDaReceita: id,
+      ano,
+      mes: mesFormatado,
+      codigoDoOrgao
+    }
+
+    console.log('Buscando detalhes da receita com parâmetros:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/detalhe`, { params })
     return response.data
   } catch (error) {
     console.error(`Erro ao buscar detalhes da Receita com id ${id}:`, error)
@@ -42,28 +80,32 @@ export const getReceitasId = async (id, ano, mes, codigoDoOrgao) => {
   }
 }
 
-// Função para buscar movimentos de uma receita específica
-export const getMovimentosReceita = async (id, codigoDoOrgao) => {
+// Função para buscar movimentos de uma receita
+export const getMovimentosReceita = async (id, ano, mes, codigoDoOrgao) => {
   try {
-    const ano = new Date().getFullYear()
-    const mes = (new Date().getMonth() + 1).toString().padStart(2, '0') // Formata o mês com dois dígitos
-
-    console.log(
-      `Chamando a API para movimentos com ano=${ano}, mes=${mes}, receitaId=${id}, codigoDoOrgao=${codigoDoOrgao}`
-    )
-
-    const response = await axios.get(`${API_BASE_URL}/movimentos/${id}`, {
-      params: {
-        ano,
-        mes,
-        codigoDoOrgao
-      }
-    })
-
-    return {
-      data: response.data,
-      url: `${API_BASE_URL}/movimentos/${id}?ano=${ano}&mes=${mes}&codigoDoOrgao=${codigoDoOrgao}` // Retorna a URL da API
+    // Verifica se todos os parâmetros necessários estão presentes
+    if (!id || !ano || !mes || !codigoDoOrgao) {
+      throw new Error(
+        'Parâmetros obrigatórios ausentes: id, ano, mes e codigoDoOrgao são necessários'
+      )
     }
+
+    // Formata o mês para garantir que tenha dois dígitos
+    const mesFormatado = mes.toString().padStart(2, '0')
+
+    const params = {
+      codigoDaReceita: id,
+      ano,
+      mes: mesFormatado,
+      codigoDoOrgao
+    }
+
+    console.log('Buscando movimentos da receita com parâmetros:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/movimentos/paginado`, {
+      params
+    })
+    return response
   } catch (error) {
     console.error(`Erro ao buscar movimentos da Receita com id ${id}:`, error)
     throw error

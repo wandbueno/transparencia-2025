@@ -162,6 +162,13 @@ const Servidores = () => {
   const handleFilterChange = (filters) => {
     console.log('Filtros recebidos:', filters);
     
+    // Se os filtros estiverem vazios (limpar filtros foi clicado)
+    if (Object.keys(filters).length === 0) {
+      // Mantém apenas ano e mês com valores do mês anterior
+      const { mes, ano } = getLastMonth();
+      filters = { ano, mes };
+    }
+    
     // Atualiza a URL com os novos filtros
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
