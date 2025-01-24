@@ -1,17 +1,120 @@
-.data-table-container {
+/* Contêiner principal da tabela */
+.data-table {
   width: 100%;
-  overflow-x: auto; /* Adiciona rolagem horizontal apenas se necessário */
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: auto;
 }
 
-.data-table-title {
-  font-size: 1.25rem;
+/* Estilos da tabela */
+.data-table .rdt_Table {
+  border: 1px solid #eee; 
+  border-radius: 5px 5px 0 0; 
+  overflow: hidden;
+}
+
+.data-table .rdt_TableHead {
+  background-color: #f0f0f0; 
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.data-table .rdt_TableCol {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: var(--font-size-small);
+  
+}
+
+.data-table .rdt_TableRow {
+  padding: 5px 0px; 
+  border-bottom: 1px solid #ddd;
+ 
+}
+
+.data-table .rdt_TableRow:hover {
+  background-color: #f9f9f9; 
+}
+
+.data-table .rdt_TableHeadRow {
+  border-bottom: none
+}
+
+.data-table .rdt_TableRow:last-child {
+  border-bottom: none; /* Remove a borda da última linha */
+}
+
+.data-table .rdt_Pagination {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  background-color: #f7f7f7; /* Fundo claro para a paginação */
+  border-top: 1px solid #ddd; /* Borda superior na paginação */
+}
+
+
+.iGxMlw{
+  font-size: var(--font-size-small)!important;
+  font-weight: 400!important;
+  color: var(--text-color)!important;
+  background-color: #FFFFFF;
+  min-height: 10px!important;
+
+}
+.hudJpJ {
+  min-height: 30px!important;
+    
+}
+.bzEluS,
+.dLHSn{
+  padding: 0 8px!important;
+}
+
+.no-data-message {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.no-data-icon {
+  color: var(--primary-color);
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.no-data-message h3 {
+  color: var(--titulo-color);
+  font-size: var(--font-size-large);
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
-.react-data-table-component {
-  font-size: 0.75rem; /* Ajusta o tamanho da fonte da tabela */
+.no-data-message p {
+  color: var(--text-color);
+  font-size: var(--font-size-base);
+  margin-bottom: 15px;
+  line-height: 1.5;
 }
 
-.react-data-table-component .rdt_TableCol {
-  padding: 4px; /* Reduz o padding das colunas */
+.no-data-link {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.no-data-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.no-data-link a:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
 }

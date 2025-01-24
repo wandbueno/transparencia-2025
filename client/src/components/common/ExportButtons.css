@@ -1,0 +1,89 @@
+.export-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end; 
+  padding-bottom: 10px;
+}
+
+.export-buttons button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.export-buttons button .icon-container {
+  width: 55px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px; /* Cantos arredondados */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.export-buttons button:hover .icon-container {
+  transform: translateY(-5px); /* Efeito de levantar o ícone */
+}
+
+.export-buttons button::before {
+  content: attr(title); /* Usa o atributo title como conteúdo do texto */
+  font-size: 12px;
+  color: #ffffff; /* Texto branco */
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
+  padding: 5px 10px; /* Espaçamento ao redor do texto */
+  border-radius: 4px;
+  position: absolute;
+  bottom: 100%; /* Posiciona o texto acima do ícone */
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px); /* Centraliza horizontalmente e move para cima */
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10; /* Garante que o texto apareça sobre os outros elementos */
+}
+
+.export-buttons button::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% - 0px); /* Ajusta a posição da seta para estar fora do padding */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px; /* Tamanho da seta */
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.7) transparent transparent transparent; /* Define a cor da seta */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9; /* Garante que a seta apareça sobre os outros elementos */
+}
+
+.export-buttons button:hover::before,
+.export-buttons button:hover::after {
+  opacity: 1; /* Mostra o texto e a seta quando o botão é hover */
+}
+
+.export-buttons .icon-container.excel {
+  background-color: #28a745; /* Verde para Excel */
+}
+
+.export-buttons .icon-container.csv {
+  background-color: #ff9a00; /* Laranja para CSV */
+}
+
+.export-buttons .icon-container.pdf {
+  background-color: #e03c31; /* Vermelho para PDF */
+}
+
+.export-buttons .icon-container.txt {
+  background-color: #6c757d; /* Cinza para TXT */
+}
+
+.export-buttons .icon-container.print {
+  background-color: #007bff; /* Azul para Imprimir */
+}
+
+.export-buttons .icon-container svg {
+  color: #ffffff; /* Ícones brancos */
+  font-size: 20px; /* Ajusta o tamanho do ícone */
+}

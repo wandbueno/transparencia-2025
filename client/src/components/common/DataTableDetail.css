@@ -1,0 +1,81 @@
+/* Contêiner principal da tabela */
+.data-table {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: auto; /* Permite rolagem horizontal se necessário */
+}
+
+/* Estilos da tabela */
+.data-table .rdt_Table {
+  border: 1px solid #eee; 
+  border-radius: 5px 5px 0 0; 
+  overflow: hidden;
+  table-layout: fixed; /* Garante que a tabela respeite a largura das colunas */
+}
+
+/* Cabeçalho da tabela */
+.data-table .rdt_TableHead {
+  background-color: #f0f0f0; 
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Estilos das colunas do cabeçalho */
+.data-table .rdt_TableCol {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: var(--font-size-small);
+  word-wrap: break-word; /* Quebra o texto longo nas colunas do cabeçalho */
+  overflow-wrap: break-word; /* Quebra o texto longo nas colunas do cabeçalho */
+}
+
+/* Linhas da tabela */
+.data-table .rdt_TableRow {
+  padding: 5px 0px; 
+  border-bottom: 1px solid #ddd;
+  word-wrap: break-word; /* Quebra o texto longo nas células */
+  overflow-wrap: break-word; /* Quebra o texto longo nas células */
+}
+
+/* Linha da tabela ao passar o mouse */
+.data-table .rdt_TableRow:hover {
+  background-color: #f9f9f9; 
+}
+
+/* Linha do cabeçalho da tabela */
+.data-table .rdt_TableHeadRow {
+  border-bottom: none;
+}
+
+/* Remove a borda da última linha */
+.data-table .rdt_TableRow:last-child {
+  border-bottom: none;
+}
+
+/* Estilos da paginação */
+.data-table .rdt_Pagination {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  background-color: #f7f7f7; /* Fundo claro para a paginação */
+  border-top: 1px solid #ddd; /* Borda superior na paginação */
+}
+
+/* Adicional para o texto da coluna Descrição */
+.data-table .descricao-col {
+  white-space: normal; /* Permite a quebra de linha */
+  overflow: hidden; /* Oculta o excesso de texto */
+  text-overflow: ellipsis; /* Adiciona reticências no texto que ultrapassa */
+}
+
+/* Aplicar a classe 'descricao-col' a todas as células da coluna "Descrição" */
+.data-table .rdt_TableCol[data-column="Descrição"] {
+  max-width: 100%; /* Ajuste de largura máxima para a coluna de descrição */
+}
+
+/* Adicional para colunas com textos longos */
+.data-table .text-wrap {
+  white-space: normal; /* Permite a quebra de linha */
+  overflow-wrap: break-word; /* Quebra o texto longo */
+}

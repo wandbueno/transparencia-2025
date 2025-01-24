@@ -1,0 +1,146 @@
+.filter-section {
+  background: #fcfcfc;
+  border: 1px solid #e2e2e2;
+  border-radius: 5px;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e2e2;
+  border-radius: 5px 5px 0 0;
+  background: #eeeeee59;
+  cursor: pointer;
+}
+
+.filter-header-title {
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--titulo-color);
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.filter-toggle .arrow {
+  margin-left: 5px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.filter-toggle .arrow.up {
+  border-bottom: 6px solid var(--primary-color);
+}
+
+.filter-toggle .arrow.down {
+  border-top: 6px solid var(--primary-color);
+}
+
+.filter-content {
+  padding: 15px 20px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: -7.5px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  padding: 7.5px;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: var(--font-size-small);
+  margin-bottom: 5px;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.filter-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.filter-buttons button {
+  padding: 8px 40px;
+  border-radius: 4px;
+  border: none;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-buttons .clear-button {
+  background: #dc3545;
+  color: #fff;
+}
+
+.filter-buttons .search-button {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.filter-placeholder {
+  text-align: center;
+  font-size: var(--font-size-small);
+  color: var(--text-color);
+  margin: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  border: 1px dashed #d0d0d0;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .filter-group {
+    width: 100%;
+    padding: 5px 0;
+  }
+}

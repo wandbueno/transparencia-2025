@@ -1,0 +1,12 @@
+.font-dados{
+  display: flex;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: var(--font-size-small);
+  text-align: right;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: end;
+  gap: 10px;
+}

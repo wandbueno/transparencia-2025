@@ -1,0 +1,162 @@
+/* Definição de variáveis de cor */
+:root {
+  --primary-color: #2f3795;
+  --secondary-color: #f69220;
+  --titulo-color: #2c3e50;
+  --text-color: #343434;
+  --background-color: #f8f9fc;
+  --link-color: #1d62b5;
+  --link-hover-color: #f69220;
+
+  /* Tamanhos de fontes */
+  --font-size-min: 0.688rem;  /* 11px */
+  --font-size-small: 0.75rem;  /* 12px */
+  --font-size-xsmall: 0.8125rem; /* 13px */
+  --font-size-base: 0.875rem;   /* 14px */
+  --font-size-large: 1rem;    /* 16px */
+  --font-size-xl: 1.375rem;       /* 22px */
+  --font-size-xxl: 2rem;        /* 32px */
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--titulo-color);
+  margin: 0;
+}
+.subtitle {
+  font-size: var(--font-size-large);
+  font-weight: 600;
+  color: var(--titulo-color);
+  margin: 0;
+}
+.texto {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: var(--font-size-min);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.breadcrumb a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+.breadcrumb-separator {
+  margin: 0 2px;
+}
+
+.link {
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
+
+
+/* Responsividade para tablets (máx: 1024px) */
+@media (max-width: 1024px) {
+  .title {
+    font-size: var(--font-size-large);
+    font-weight: 600;
+    color: var(--titulo-color);
+    margin: 0;
+  }
+  .subtitle {
+    font-size: var(--font-size-xsmall);
+    font-weight: 600;
+    color: var(--titulo-color);
+    margin: 0;
+  }
+  .texto {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+  }
+  
+  .breadcrumb {
+    font-size: var(--font-size-min);
+    color: var(--text-color);
+    text-decoration: none;
+  }
+  
+  .breadcrumb a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+
+  .link {
+    font-size: var(--font-size-small);
+    font-weight: 400;
+    color: var(--link-color);
+    text-decoration: none;
+  }
+  
+  .link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+  }
+}
+
+/* Responsividade para celulares (máx: 768px) */
+@media (max-width: 768px) {
+
+  .title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--titulo-color);
+    margin: 0;
+  }
+  .subtitle {
+    font-size: var(--font-size-xsmall);
+    font-weight: 600;
+    color: var(--titulo-color);
+    margin: 0;
+  }
+  .texto {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+  }
+  
+  .breadcrumb {
+    font-size: var(--font-size-min);
+    color: var(--text-color);
+    text-decoration: none;
+  }
+  
+  .breadcrumb a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+
+  .link {
+    font-size: var(--font-size-small);
+    font-weight: 400;
+    color: var(--link-color);
+    text-decoration: none;
+  }
+  
+  .link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+  }
+  
+
+}

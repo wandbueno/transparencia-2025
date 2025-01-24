@@ -1,0 +1,36 @@
+/* NewHeader.css */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--primary-color);
+  position: relative;
+  z-index: 10;
+}
+
+/* Estilos para o título ou logo do cabeçalho */
+.header-title {
+  font-size: var(--font-size-large);
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.mobile-menu-button {
+  display: none; /* Oculto por padrão */
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex; /* Mostrar apenas em mobile */
+  }
+} 

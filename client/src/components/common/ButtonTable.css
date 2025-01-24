@@ -1,0 +1,26 @@
+/* Estilo base para o botão */
+.btn {
+  background-color: var(--primary-color); 
+  color: #fff; 
+  padding: 5px 10px; 
+  font-size: var(--font-size-min); 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+.btn:hover {
+  background-color: var(--secondary-color); 
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); 
+}
+
+/* Estilo desativado */
+.btn:disabled {
+  background-color: #d0d0d0; /* Cor para quando estiver desativado */
+  color: #888; /* Cor do texto desativado */
+  cursor: not-allowed; /* Cursor de não permitido */
+  box-shadow: none; /* Remover a sombra */
+}

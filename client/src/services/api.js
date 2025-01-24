@@ -1,15 +1,18 @@
-// import axios from 'axios'
+// client/src/services/api.js
 
-// const api = axios.create({
-//   baseURL: import.meta.env.VITE_BACKEND_URL
-// })
+import axios from 'axios'
 
-// export const getLicitacoes = async () => {
-//   try {
-//     const response = await api.get('/api/licitacoes')
-//     return response.data
-//   } catch (error) {
-//     console.error('Erro ao obter licitações:', error)
-//     throw error
-//   }
-// }
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL
+})
+
+// Interceptor para adicionar o tenant ID em todas as requisições
+api.interceptors.request.use(config => {
+  // Pega o tenant do localStorage ou de onde estiver armazenado
+  const tenant = localStorage.getItem('tenant') || 'conceicaodotocantins'
+
+  config.headers['x-tenant-id'] = tenant
+  return config
+})
+
+export default api
