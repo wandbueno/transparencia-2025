@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getDiarias } from "../../../../services/orgãosServidores/diarias";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection/FilterSection';
+import MultiComboSelect from '../../../common/MultiComboSelect/MultiComboSelect';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
-// import './Empenho.css';
+import Toast from '../../../common/Toast';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
+import { 
+  DIARIAS_COMBO_FILTERS,
+  DIARIAS_TEXT_FIELDS,
+  DIARIAS_CUSTOM_WIDTHS 
+} from '../../../../services/filters/orgaosServidores/diarias';
 
 const columnsDiarias = [
   { name: "Matrícula", selector: (row) => row.matriculaDoFuncionario, sortable: true, width: '10%' },
@@ -23,58 +29,116 @@ const columnsDiarias = [
     sortable: true, 
     width: '15%'
   },
-  
-
   {
     name: 'Detalhes',
     selector: row => row.codigoDaViagem, 
     cell: row => {
       const id = row.codigoDaViagem;
-      return <ButtonTable path="/diarias" id={id} label="Ver Detalhes" />; // Usa o botão de detalhes
+      return <ButtonTable path="/diarias" id={id} label="Ver Detalhes" />;
     },
     width: '11%', 
     excludeFromExport: true
   },
 ];
 
-
 const Diarias = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  // Recupera os filtros iniciais da URL
+  const getInitialFilters = () => {
+    const filters = {};
+    for (const [key, value] of searchParams.entries()) {
+      filters[key] = value;
+    }
+    return filters;
+  };
 
   useEffect(() => {
-    
-    // Atualiza o título da aba do navegador
-    document.title = `Diárias Pagas a Servidores - Portal Transparência - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        const result = await getDiarias();
-        setData(result.registros); 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    document.title = `Diárias Pagas a Servidores - Portal Transparência - ${config.geral.nomeOrgao}`;
+    const initialFilters = getInitialFilters();
+    if (Object.keys(initialFilters).length > 0) {
+      fetchData(initialFilters);
+    } else {
+      fetchData();
+    }
   }, []);
+
+  const fetchData = async (filters = {}) => {
+    try {
+      setLoading(true);
+      console.log('Buscando diárias com filtros:', filters);
+      
+      const result = await getDiarias(filters);
+      setData(result.registros);
+      
+      if (Object.keys(filters).length > 0) {
+        setToast({
+          type: 'success',
+          message: 'Filtros aplicados com sucesso!'
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao buscar diárias:', err);
+      setError(err.message);
+      setToast({
+        type: 'error',
+        message: 'Erro ao aplicar filtros: ' + err.message
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filters) => {
+    console.log('Filtros recebidos:', filters);
+    
+    // Atualiza a URL com os novos filtros
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
+    // Busca os dados com os novos filtros
+    fetchData(filters);
+  };
 
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Diárias Pagas a Servidores"
         breadcrumb={[
           { label: 'Diárias Pagas a Servidores' },
         ]}
       />      
-      <FilterSection  />
+      
+      <MultiComboSelect
+        title="Filtros de Pesquisa"
+        availableFilters={DIARIAS_COMBO_FILTERS}
+        textFields={DIARIAS_TEXT_FIELDS}
+        customWidths={DIARIAS_CUSTOM_WIDTHS}
+        onFilterChange={handleFilterChange}
+        initialValues={getInitialFilters()}
+      />
       
       <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
       </InfoText>        
+      
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={3000}
+        />
+      )}
          
       {loading ? (
         <LoadingSpinner />
@@ -87,8 +151,6 @@ const Diarias = () => {
           data={data}
         />
       )}
-
-   
     </div>
   );
 };

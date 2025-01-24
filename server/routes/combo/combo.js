@@ -4,8 +4,12 @@ const axios = require('axios')
 
 router.get('/', async (req, res) => {
   try {
-    const filtros = req.query.filtro
+    const tenant = req.tenant
+    if (!tenant) {
+      throw new Error('Tenant não configurado')
+    }
 
+    const filtros = req.query.filtro
     if (!filtros) {
       return res.status(400).json({
         error: 'O parâmetro filtro é obrigatório'
@@ -17,16 +21,20 @@ router.get('/', async (req, res) => {
       try {
         console.log(`Requesting combo data for filter: ${filtro}`)
 
-        const url = `${
-          process.env.SERVER
-        }/api/combo/?filtro=${encodeURIComponent(filtro)}`
+        const url = `${tenant.api_url}/api/combo/?filtro=${encodeURIComponent(
+          filtro
+        )}`
+        console.log('Requesting URL:', url)
+
         const response = await axios.get(url, {
           headers: {
-            Authorization: `Bearer ${process.env.TOKEN}`,
-            'cliente-integrado': process.env.CLIENTE_INTEGRADO,
+            Authorization: `Bearer ${tenant.token}`,
+            'cliente-integrado': tenant.cliente_integrado,
             Accept: 'application/json'
           }
         })
+
+        console.log(`Response for ${filtro}:`, response.data)
 
         // Handle different response formats
         if (
@@ -34,7 +42,6 @@ router.get('/', async (req, res) => {
           response.data[filtro] &&
           Array.isArray(response.data[filtro])
         ) {
-          // Format is { filtro: [...items] }
           return {
             [filtro]: response.data[filtro].map(item => ({
               value: item.value?.toString() || item.id?.toString() || '',
@@ -46,7 +53,6 @@ router.get('/', async (req, res) => {
           response.data.lista &&
           Array.isArray(response.data.lista)
         ) {
-          // Format is { lista: [...items] }
           return {
             [filtro]: response.data.lista.map(item => ({
               value: item.codigo?.toString() || '',

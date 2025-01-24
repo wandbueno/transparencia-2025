@@ -8,7 +8,7 @@ export const getDespesas = async (filters = {}) => {
     // Mapeia os filtros para os parâmetros esperados pela API
     const params = {
       pagina: 1,
-      tamanhoDaPagina: 2500,
+      tamanhoDaPagina: -1,
       ordenarPor: 'data',
       ordem: 'desc'
     }

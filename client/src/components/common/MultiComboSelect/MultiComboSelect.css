@@ -29,8 +29,9 @@
   display: flex;
   align-items: center;
   font-size: var(--font-size-small);
-  color: var(--primary-color);
+  color: var(--titulo-color);
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .multi-combo-toggle .arrow {
@@ -88,7 +89,8 @@
 
 .filter-group label {
   font-weight: 500;
-  color: var(--text-color);
+  /* color: var(--text-color); */
+  color: var(--titulo-color)!important;
   font-size: var(--font-size-small);
   margin-bottom: 5px;
 }
@@ -125,7 +127,7 @@
 }
 
 .multi-combo-buttons button {
-  padding: 8px 40px;
+  padding: 8px 60px;
   border-radius: 4px;
   border: none;
   font-size: var(--font-size-base);

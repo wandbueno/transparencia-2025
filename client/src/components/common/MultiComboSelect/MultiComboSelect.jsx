@@ -8,24 +8,28 @@ const MultiComboSelect = ({
   title = "Filtros de Pesquisa",
   availableFilters = [],
   textFields = [],
+  selectFields = [],
   onFilterChange,
   initialValues = {},
   customLabels = {},
   customWidths = {},
   disabledFilters = [],
-  requiredFilters = []
+  requiredFilters = [],
+  fieldOrder = []
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasFiltersApplied, setHasFiltersApplied] = useState(false);
   const [filterData, setFilterData] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedFilters, setSelectedFilters] = useState(initialValues);
-  const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (availableFilters?.length > 0) {
       loadFilterData();
+    } else {
+      setLoading(false);
     }
   }, [availableFilters]);
 
@@ -85,7 +89,7 @@ const MultiComboSelect = ({
 
   const getWidthClass = (fieldId) => {
     const width = customWidths[fieldId] || '25%';
-    return width.replace('%', ''); // Remove o % para usar como data-attribute
+    return width.replace('%', '');
   };
 
   const renderComboField = (filterKey) => {
@@ -153,6 +157,66 @@ const MultiComboSelect = ({
     );
   };
 
+  const renderSelectField = (field) => {
+    const isRequired = requiredFilters.includes(field.id);
+    
+    return (
+      <div 
+        className="filter-group" 
+        key={field.id} 
+        data-width={getWidthClass(field.id)}
+      >
+        <label>
+          {field.label}
+          {isRequired && <span className="required-mark">*</span>}
+        </label>
+        <select
+          name={field.id}
+          value={selectedFilters[field.id] || ''}
+          onChange={handleInputChange}
+          className={validationErrors[field.id] ? 'error' : ''}
+        >
+          <option value="">Selecione...</option>
+          {field.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {validationErrors[field.id] && (
+          <span className="error-message">{validationErrors[field.id]}</span>
+        )}
+      </div>
+    );
+  };
+
+  const renderFields = () => {
+    const allFields = [];
+    
+    // Se fieldOrder está definido, use-o para ordenar os campos
+    if (fieldOrder && fieldOrder.length > 0) {
+      return fieldOrder.map(fieldId => {
+        // Verifica em qual categoria o campo está
+        const textField = textFields.find(f => f.id === fieldId);
+        if (textField) return renderTextField(textField);
+
+        const selectField = selectFields.find(f => f.id === fieldId);
+        if (selectField) return renderSelectField(selectField);
+
+        if (availableFilters.includes(fieldId)) return renderComboField(fieldId);
+
+        return null;
+      }).filter(Boolean);
+    }
+
+    // Caso contrário, renderiza na ordem padrão
+    availableFilters.forEach(filter => allFields.push(renderComboField(filter)));
+    textFields.forEach(field => allFields.push(renderTextField(field)));
+    selectFields.forEach(field => allFields.push(renderSelectField(field)));
+
+    return allFields;
+  };
+
   return (
     <div className="multi-combo-section">
       <div className="multi-combo-header" onClick={() => setIsOpen(!isOpen)}>
@@ -172,8 +236,7 @@ const MultiComboSelect = ({
           ) : (
             <>
               <div className="multi-combo-row">
-                {availableFilters.map(filterKey => renderComboField(filterKey))}
-                {textFields.map(field => renderTextField(field))}
+                {renderFields()}
               </div>
 
               <div className="multi-combo-buttons">

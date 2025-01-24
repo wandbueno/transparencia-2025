@@ -4,28 +4,26 @@ const API_BASE_URL = `${
   import.meta.env.VITE_BACKEND_URL
 }/api/estrutura-de-remuneracao`
 
-export const getEstruturaRemuneracao = async (
-  ano = new Date().getFullYear(),
-  mes = new Date().getMonth() + 1, // Corrige o mês para o formato correto (1 a 12)
-  pagina = 1,
-  tamanhoDaPagina = 2500
-) => {
+export const getEstruturaRemuneracao = async (filters = {}) => {
   try {
-    // Formatação do mês para dois dígitos
-    const mesFormatado = mes.toString().padStart(2, '0')
-    console.log(`Chamando a API com ano=${ano} e mes=${mesFormatado}`)
+    // Mapeia os filtros para os parâmetros esperados pela API
+    const params = {
+      pagina: 1,
+      tamanhoDaPagina: 2500,
+      ano: filters.ano || new Date().getFullYear(),
+      mes: filters.mes || String(new Date().getMonth() + 1).padStart(2, '0'),
+      tipoDeCargo: filters.tipoDeCargo,
+      nomeDoCargo: filters.nomeDoCargo
+    }
 
-    // Faz a requisição para a API com os parâmetros ano e mes formatados
-    const response = await axios.get(`${API_BASE_URL}/paginado`, {
-      params: {
-        ano: ano,
-        mes: mesFormatado,
-        pagina: pagina,
-        tamanhoDaPagina: tamanhoDaPagina
-      }
-    })
+    // Remove parâmetros undefined
+    Object.keys(params).forEach(
+      key => params[key] === undefined && delete params[key]
+    )
 
-    // Retorna os dados recebidos da API
+    console.log('Parâmetros enviados para API:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/paginado`, { params })
     return response.data
   } catch (error) {
     console.error('Erro ao buscar estrutura de remuneração:', error)
@@ -38,7 +36,7 @@ export const getEstruturaRemuneracaoId = async (codigoDoNivel, ano, mes) => {
     const response = await axios.get(`${API_BASE_URL}/${codigoDoNivel}`, {
       params: { ano, mes }
     })
-    return response.data // Certifique-se de que isso está retornando os dados corretamente
+    return response.data
   } catch (error) {
     console.error(
       `Erro ao buscar detalhes da Estrutura de Remuneração com código ${codigoDoNivel}:`,

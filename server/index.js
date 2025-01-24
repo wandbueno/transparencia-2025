@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
+const tenantMiddleware = require('./middleware/tenantMiddleware')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -8,11 +9,32 @@ const PORT = process.env.PORT || 5000
 // Configurar CORS
 app.use(
   cors({
-    origin: 'http://localhost:5173'
+    origin: function (origin, callback) {
+      // Lista de domínios permitidos
+      const allowedDomains = [
+        'http://localhost:5173',
+        'https://conceicaodotocantins.to.gov.br'
+        // Adicione outros domínios conforme necessário
+      ]
+
+      // Permite requisições sem origin (como mobile apps, curl, etc)
+      if (!origin) return callback(null, true)
+
+      if (allowedDomains.indexOf(origin) === -1) {
+        const msg = 'A política CORS não permite acesso deste domínio.'
+        return callback(new Error(msg), false)
+      }
+      return callback(null, true)
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id']
   })
 )
 
 app.use(express.json())
+
+// Aplicar middleware de tenant em todas as rotas da API
+app.use('/api', tenantMiddleware)
 
 // Rotas modularizadas
 const licitacoesRoutes = require('./routes/contratosLicitacoes/licitacoes')
@@ -24,7 +46,7 @@ const programasRoutes = require('./routes/PlanPolPublicas/programas')
 const despesasRoutes = require('./routes/receitasDespesas/despesas')
 const receitasRoutes = require('./routes/receitasDespesas/receitas')
 const dividaRoutes = require('./routes/receitasDespesas/divida')
-const ExtraRoutes = require('./routes/receitasDespesas/Extraorçamentaria')
+const ExtraRoutes = require('./routes/receitasDespesas/ExtraOrcamentaria')
 const PagamentoRoutes = require('./routes/receitasDespesas/Pagamento')
 const LiquidacaoRoutes = require('./routes/receitasDespesas/Liquidacoes')
 const PatrimonioAlmoxarifadoRoutes = require('./routes/receitasDespesas/PatrimonioAlmoxarifado')
@@ -82,6 +104,18 @@ app.use('/api/legislacao', legislacaoRoutes)
 
 app.use('/api/lrf', lrfRoutes)
 app.use('/api/combo', comboRoutes)
+
+// Rota de teste para verificar configurações do tenant
+app.get('/api/test-tenant', tenantMiddleware, (req, res) => {
+  res.json({
+    message: 'Tenant configurado com sucesso',
+    tenant: {
+      name: req.tenant.name,
+      api_url: req.tenant.api_url,
+      allowed_domains: req.tenant.allowed_domains
+    }
+  })
+})
 
 // Rota básica para a raiz do servidor
 app.get('/', (req, res) => {

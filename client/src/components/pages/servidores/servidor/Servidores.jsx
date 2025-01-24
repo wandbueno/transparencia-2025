@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getServidores } from "../../../../services/orgãosServidores/servidores";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection/FilterSection';
+import MultiComboSelect from '../../../common/MultiComboSelect/MultiComboSelect';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
+import Toast from '../../../common/Toast';
 import ButtonTable from "../../../common/ButtonTable";
 import { config } from '../../../../assets/config';
+import {
+  SERVIDORES_COMBO_FILTERS,
+  SERVIDORES_TEXT_FIELDS,
+  SERVIDORES_SELECT_FIELDS,
+  SERVIDORES_CUSTOM_WIDTHS,
+  SERVIDORES_CUSTOM_LABELS,
+  SERVIDORES_FIELD_ORDER
+} from '../../../../services/filters/orgaosServidores/servidores';
 
 const columnsServidores = [
   { name: "Mês/Ano", selector: (row) => row.mesAno, sortable: true, width: '8%' },
@@ -53,18 +63,15 @@ const columnsServidores = [
     cell: row => {
       const id = row.matricula;
       
-      // Verifique se "ano" e "mes" realmente existem antes de criar a URL
-      const ano = row.ano || new Date().getFullYear(); // Se "row.ano" for undefined, use o ano atual
-      const mes = row.mes || (new Date().getMonth() + 1).toString().padStart(2, '0'); // Se "row.mes" for undefined, use o mês atual formatado
+      // Pega o ano e mês da linha atual
+      const ano = row.ano || new Date().getFullYear();
+      const mes = row.mes || (new Date().getMonth() + 1).toString().padStart(2, '0');
       
-      // Verifique se ano e mes foram atribuídos corretamente
-      console.log(`ID: ${id}, Ano: ${ano}, Mês: ${mes}`);
-  
       return (
         <ButtonTable
           path="/servidores" 
           id={id} 
-          queryParams={`?ano=${ano}&mes=${mes}`}  // Passe o ano e o mês como parâmetros da query string
+          queryParams={`?ano=${ano}&mes=${mes}`}
           label="Ver Detalhes"
         />
       );
@@ -73,47 +80,142 @@ const columnsServidores = [
     excludeFromExport: true
   }
   
-  
 ];
 
-
 const Servidores = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  // Função para obter o mês anterior
+  const getLastMonth = () => {
+    const today = new Date();
+    const lastMonth = today.getMonth() === 0 ? 12 : today.getMonth();
+    const lastMonthYear = today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear();
+    return {
+      mes: lastMonth.toString().padStart(2, '0'),
+      ano: lastMonthYear.toString()
+    };
+  };
+
+  // Get initial filters - if no year/month in URL, use last month
+  const getInitialFilters = () => {
+    const filters = {};
+    for (const [key, value] of searchParams.entries()) {
+      filters[key] = value;
+    }
+    
+    const { mes, ano } = getLastMonth();
+    
+    // Se não houver ano/mês nos filtros, usa o mês anterior
+    if (!filters.ano) filters.ano = ano;
+    if (!filters.mes) filters.mes = mes;
+    
+    return filters;
+  };
 
   useEffect(() => {
+    document.title = `Servidores - Portal Transparência - ${config.geral.nomeOrgao}`;
+    const initialFilters = getInitialFilters();
     
-    // Atualiza o título da aba do navegador
-    document.title = `Servidores - Portal Transparência - ${config.geral.nomeOrgao}`
-
-    const fetchData = async () => {
-      try {
-        const result = await getServidores();
-        setData(result.registros); 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Always update URL with initial filters
+    const params = new URLSearchParams(searchParams);
+    if (!params.has('ano') || !params.has('mes')) {
+      const { mes, ano } = getLastMonth();
+      if (!params.has('ano')) params.set('ano', ano);
+      if (!params.has('mes')) params.set('mes', mes);
+      setSearchParams(params);
+    }
+    
+    // Always fetch data with initial filters
+    fetchData(initialFilters);
   }, []);
+
+  const fetchData = async (filters = {}) => {
+    try {
+      setLoading(true);
+      console.log('Buscando servidores com filtros:', filters);
+      
+      const result = await getServidores(filters);
+      setData(result.registros);
+      
+      if (Object.keys(filters).length > 0) {
+        setToast({
+          type: 'success',
+          message: 'Filtros aplicados com sucesso!'
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao buscar servidores:', err);
+      setError(err.message);
+      setToast({
+        type: 'error',
+        message: 'Erro ao aplicar filtros: ' + err.message
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filters) => {
+    console.log('Filtros recebidos:', filters);
+    
+    // Se os filtros estiverem vazios (limpar filtros foi clicado)
+    if (Object.keys(filters).length === 0) {
+      // Mantém apenas ano e mês com valores do mês anterior
+      const { mes, ano } = getLastMonth();
+      filters = { ano, mes };
+    }
+    
+    // Atualiza a URL com os novos filtros
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
+    // Busca os dados com os novos filtros
+    fetchData(filters);
+  };
 
   return (
     <div className="container">
-    <PageHeader
+      <PageHeader
         title="Servidores"
         breadcrumb={[
           { label: 'Servidores' },
         ]}
       />      
-      <FilterSection  />
       
-      <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
+      <MultiComboSelect
+        title="Filtros de Pesquisa"
+        availableFilters={SERVIDORES_COMBO_FILTERS}
+        textFields={SERVIDORES_TEXT_FIELDS}
+        selectFields={SERVIDORES_SELECT_FIELDS}
+        customWidths={SERVIDORES_CUSTOM_WIDTHS}
+        customLabels={SERVIDORES_CUSTOM_LABELS}
+        onFilterChange={handleFilterChange}
+        initialValues={getInitialFilters()}
+        requiredFilters={['ano', 'mes']}
+        fieldOrder={SERVIDORES_FIELD_ORDER}
+      />
+      
+      <InfoText href="/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
       </InfoText>        
+      
+      {toast && (
+        <Toast 
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+          duration={3000}
+        />
+      )}
          
       {loading ? (
         <LoadingSpinner />
@@ -126,8 +228,6 @@ const Servidores = () => {
           data={data}
         />
       )}
-
-   
     </div>
   );
 };

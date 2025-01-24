@@ -16,7 +16,7 @@ const NewMenuPrincipal = ({ isMenuActive, toggleMenu, closeMenu, isMobileMenuOpe
 
     const menuRoutes = {
       receitas: ['/receitas', '/balanco', '/extra-orcamentaria', '/balanco-anual', '/pcasp', '/informacoes-consolidadas', '/restos-a-pagar', '/ordem-cronologica-de-pagamentos', '/despesas-empenho', '/pagamentos', '/liquidacoes', '/despesas-fixadas', '/despesa-sintetica', '/renuncias-fiscais', '/desoneracao', '/repasse-ou-transferencia', '/transferencias-voluntarias-realizadas', '/transferencias-voluntarias-recebidas', '/divida-ativa'],
-      orgaos: ['/servidores', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo', '/estrutura-de-remuneracao', '/saude', '/diarias', '/liquidacoes', '/tabela-explicativa-de-valores-de-diarias'],
+      orgaos: ['/servidores', '/terceirizados', '/estagiarios', '/concurso-processo-seletivo', '/estrutura-de-remuneracao', '/saude', '/diarias', '/tabela-explicativa-de-valores-de-diarias'],
       politicas: ['/obras', '/obras-paralisadas', '/metas-e-riscos-fiscais', '/julgamento-de-contas', '/prestacao-de-contas', '/incentivos-a-projetos-culturais', '/planos'],
       fiscal: ['/relatorio-anual-de-gestao', '/relatorio-do-controle-interno', '/relatorio-resumido-da-execucao-orcamentaria', '/relatorio-de-gestao-fiscal'],
       licitacoes: ['/licitacoes', '/dispensas-e-inexigibilidades', '/contratos', '/sancoes-administrativas', '/patrimonio-e-almoxarifado', '/lista-de-fiscal-de-contrato', '/ordem-de-fornecimento'],

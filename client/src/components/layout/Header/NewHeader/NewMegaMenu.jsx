@@ -89,7 +89,6 @@ const NewMegaMenu = ({ activeMenu, closeMenu }) => {
             </div>
             <div className="column">
               <p>{renderLink('/diarias', 'Diárias Pagas a Servidores')}</p>
-              <p>{renderLink('/liquidacoes', 'Liquidações de Diárias')}</p>
               <p>{renderLink('/tabela-explicativa-de-valores-de-diarias', 'Tabela com Valores de Diárias')}</p>
             </div>
           </div>
