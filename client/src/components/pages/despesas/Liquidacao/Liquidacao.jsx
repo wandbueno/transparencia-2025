@@ -40,7 +40,7 @@ const Liquidacao = () => {
   useEffect(() => {
     
     // Atualiza o título da aba do navegador
-    document.title = `Liquidacao - Portal Transparência - ${config.geral.nomeOrgao}`
+    document.title = `Liquidação - Portal Transparência - ${config.geral.nomeOrgao}`
 
     const fetchData = async () => {
       try {
@@ -59,9 +59,9 @@ const Liquidacao = () => {
   return (
     <div className="container">
     <PageHeader
-        title="Liquidacao"
+        title="Liquidação"
         breadcrumb={[
-          { label: 'Liquidacao' },
+          { label: 'Liquidação' },
         ]}
       />      
       <FilterSection  />
@@ -76,7 +76,7 @@ const Liquidacao = () => {
         <div>Erro ao carregar Despesas: {error}</div>
       ) : (
         <DataTableComponent
-          title="Liquidacao"
+          title="Liquidação"
           columns={columnsLiquidacao}
           data={data}
         />

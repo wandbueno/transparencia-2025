@@ -2,6 +2,19 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 
+const formatDate = dateString => {
+  if (!dateString) return undefined
+
+  try {
+    // Converte de YYYY-MM-DD para DD/MM/YYYY
+    const [year, month, day] = dateString.split('-')
+    return `${day}/${month}/${year}`
+  } catch (error) {
+    console.error('Erro ao formatar data:', error)
+    return undefined
+  }
+}
+
 const fetchFromAPI = async (path, req, res) => {
   try {
     const tenant = req.tenant
@@ -9,61 +22,39 @@ const fetchFromAPI = async (path, req, res) => {
       throw new Error('Tenant não configurado')
     }
 
-    // Parâmetros da API de Empenho
+    // Extrai e formata as datas
+    const { dataInicial, dataFinal, ...otherParams } = req.query
+
+    // Prepara os parâmetros da requisição
     const params = {
-      pagina: req.query.pagina || 1,
-      tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
-      cnpjDoFornecedor: req.query.cnpjDoFornecedor,
-      codigoDaFuncao: req.query.codigoDaFuncao
-        ? parseInt(req.query.codigoDaFuncao)
-        : undefined,
-      codigoDaModalidade: req.query.codigoDaModalidade
-        ? parseInt(req.query.codigoDaModalidade)
-        : undefined,
-      codigoDaSubFuncao: req.query.codigoDaSubFuncao
-        ? parseInt(req.query.codigoDaSubFuncao)
-        : undefined,
-      codigoDaUnidade: req.query.codigoDaUnidade
-        ? parseInt(req.query.codigoDaUnidade)
-        : undefined,
-      codigoDoCliente: req.query.codigoDoCliente
-        ? parseInt(req.query.codigoDoCliente)
-        : undefined,
-      codigoDoElemento: req.query.codigoDoElemento
-        ? parseInt(req.query.codigoDoElemento)
-        : undefined,
-      codigoDoOrgao: req.query.codigoDoOrgao
-        ? parseInt(req.query.codigoDoOrgao)
-        : undefined,
-      codigoDoPrograma: req.query.codigoDoPrograma
-        ? parseInt(req.query.codigoDoPrograma)
-        : undefined,
-      codigoTituloDaFonte: req.query.codigoTituloDaFonte
-        ? parseInt(req.query.codigoTituloDaFonte)
-        : undefined,
-      covid19: req.query.covid19,
-      dataFinal: req.query.dataFinal,
-      dataInicial: req.query.dataInicial,
-      estadoDoCliente: req.query.estadoDoCliente,
-      etapaDaDespesa: req.query.etapaDaDespesa
-        ? parseInt(req.query.etapaDaDespesa)
-        : undefined,
-      faseDoEmpenho: req.query.faseDoEmpenho
-        ? parseInt(req.query.faseDoEmpenho)
-        : undefined,
-      fonteDoEmpenho: req.query.fonteDoEmpenho,
-      logotipoDoCliente: req.query.logotipoDoCliente,
-      nomeDoFornecedor: req.query.nomeDoFornecedor,
-      numeroDoTcm: req.query.numeroDoTcm,
-      numeroEAnoDaLicitacao: req.query.numeroEAnoDaLicitacao,
-      orgaoDoCliente: req.query.orgaoDoCliente,
-      rubricaDaDespesa: req.query.rubricaDaDespesa,
-      servicoDoPrestador: req.query.servicoDoPrestador,
-      valorDoEmpenho: req.query.valorDoEmpenho
-        ? parseFloat(req.query.valorDoEmpenho)
-        : undefined,
-      chavePrimaria: req.query.chavePrimaria,
-      codigo: req.query.codigo
+      pagina: otherParams.pagina || 1,
+      tamanhoDaPagina: otherParams.tamanhoDaPagina || '-1',
+      cnpjDoFornecedor: otherParams.cnpjDoFornecedor,
+      codigoDaFuncao: otherParams.codigoDaFuncao,
+      codigoDaModalidade: otherParams.codigoDaModalidade,
+      codigoDaSubFuncao: otherParams.codigoDaSubFuncao,
+      codigoDaUnidade: otherParams.codigoDaUnidade,
+      codigoDoCliente: otherParams.codigoDoCliente,
+      codigoDoElemento: otherParams.codigoDoElemento,
+      codigoDoOrgao: otherParams.codigoDoOrgao,
+      codigoDoPrograma: otherParams.codigoDoPrograma,
+      codigoTituloDaFonte: otherParams.codigoTituloDaFonte,
+      covid19: otherParams.covid19,
+      estadoDoCliente: otherParams.estadoDoCliente,
+      etapaDaDespesa: otherParams.etapaDaDespesa,
+      faseDoEmpenho: otherParams.faseDoEmpenho,
+      fonteDoEmpenho: otherParams.fonteDoEmpenho,
+      logotipoDoCliente: otherParams.logotipoDoCliente,
+      nomeDoFornecedor: otherParams.nomeDoFornecedor,
+      numeroDoTcm: otherParams.numeroDoTcm,
+      numeroEAnoDaLicitacao: otherParams.numeroEAnoDaLicitacao,
+      orgaoDoCliente: otherParams.orgaoDoCliente,
+      rubricaDaDespesa: otherParams.rubricaDaDespesa,
+      servicoDoPrestador: otherParams.servicoDoPrestador,
+      valorDoEmpenho: otherParams.valorDoEmpenho,
+      // Adiciona as datas formatadas se existirem
+      ...(dataInicial && { dataInicial: formatDate(dataInicial) }),
+      ...(dataFinal && { dataFinal: formatDate(dataFinal) })
     }
 
     // Remove parâmetros undefined
@@ -71,15 +62,13 @@ const fetchFromAPI = async (path, req, res) => {
       key => params[key] === undefined && delete params[key]
     )
 
-    console.log('Requisição para API:', {
+    console.log('Parâmetros da requisição:', {
       url: `${tenant.api_url}${path}`,
-      method: 'GET',
-      params: params,
-      tenant: tenant.name
+      params: params
     })
 
     const response = await axios.get(`${tenant.api_url}${path}`, {
-      params: params,
+      params,
       headers: {
         Authorization: `Bearer ${tenant.token}`,
         'cliente-integrado': tenant.cliente_integrado
@@ -92,8 +81,7 @@ const fetchFromAPI = async (path, req, res) => {
       message: error.message,
       status: error.response?.status,
       data: error.response?.data,
-      path: path,
-      tenant: req.tenant?.name
+      path: path
     })
 
     res.status(error.response?.status || 500).json({
