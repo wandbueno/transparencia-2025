@@ -25,6 +25,7 @@ const fetchFromAPI = async (path, req, res, method = 'get') => {
     // Se for GET, adiciona os parâmetros na query
     else if (method === 'get') {
       config.params = {
+        tabela: 'CONTRATO',
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
         chavePrimaria: req.query.chavePrimaria || '',
