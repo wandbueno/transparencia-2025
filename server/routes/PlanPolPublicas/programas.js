@@ -28,7 +28,7 @@ const fetchFromAPI = async (path, req, res) => {
     // Prepara os parâmetros da requisição
     const params = {
       pagina: otherParams.pagina || 1,
-      tamanhoDaPagina: otherParams.tamanhoDaPagina || 2500,
+      tamanhoDaPagina: otherParams.tamanhoDaPagina || -1,
       ano: otherParams.ano,
       codigoDoCliente: otherParams.codigoDoCliente,
       codigoDoOrgao: otherParams.codigoDoOrgao,

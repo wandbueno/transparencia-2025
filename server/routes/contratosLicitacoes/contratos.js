@@ -4,12 +4,17 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res, method = 'get') => {
   try {
+    const tenant = req.tenant
+    if (!tenant) {
+      throw new Error('Tenant não configurado')
+    }
+
     const config = {
       method,
-      url: `${process.env.SERVER}${path}`,
+      url: `${tenant.api_url}${path}`,
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        Authorization: `Bearer ${tenant.token}`,
+        'cliente-integrado': tenant.cliente_integrado
       }
     }
 
