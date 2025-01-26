@@ -1,6 +1,6 @@
 {
   "name": "sicaplco-scraper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web scraper para o SICAP-LCO do TCE-TO",
   "main": "index.js",
   "scripts": {
