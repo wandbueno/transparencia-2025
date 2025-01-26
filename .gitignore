@@ -1,13 +1,19 @@
 # Ignorar dependências de Node.js para ambas as pastas
 /client/node_modules
 /server/node_modules
+/SicapLco/node_modules
+/client/package-lock.json
+/server/package-lock.json
+/SicapLco/package-lock.json
 
 # Ignorar arquivos de build do React
 /client/build
+/SicapLco/build
 
 # Ignorar arquivos de configuração locais (exemplo)
 /client/.env
 /server/.env
+/SicapLco/.env
 
 # Ignorar logs e arquivos temporários
 **/*.log
