@@ -4,12 +4,17 @@ const axios = require('axios')
 
 const fetchFromAPI = async (path, req, res, method = 'get') => {
   try {
+    const tenant = req.tenant
+    if (!tenant) {
+      throw new Error('Tenant não configurado')
+    }
+
     const config = {
       method,
-      url: `${process.env.SERVER}${path}`,
+      url: `${tenant.api_url}${path}`,
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-        'cliente-integrado': process.env.CLIENTE_INTEGRADO
+        Authorization: `Bearer ${tenant.token}`,
+        'cliente-integrado': tenant.cliente_integrado
       }
     }
 
@@ -20,6 +25,7 @@ const fetchFromAPI = async (path, req, res, method = 'get') => {
     // Se for GET, adiciona os parâmetros na query
     else if (method === 'get') {
       config.params = {
+        tabela: 'CONTRATO',
         pagina: req.query.pagina || 1,
         tamanhoDaPagina: req.query.tamanhoDaPagina || 2500,
         chavePrimaria: req.query.chavePrimaria || '',

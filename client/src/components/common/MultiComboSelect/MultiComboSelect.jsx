@@ -115,7 +115,7 @@ const MultiComboSelect = ({
           disabled={isDisabled}
           className={validationErrors[filterKey] ? 'error' : ''}
         >
-          <option value="">Selecione...</option>
+          <option value="">Todos...</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
