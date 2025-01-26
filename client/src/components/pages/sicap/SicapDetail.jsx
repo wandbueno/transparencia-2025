@@ -7,6 +7,7 @@ import DataTableDetail from '../../common/DataTableDetail';
 import { config } from "../../../assets/config";
 import './SicapDetail.css';
 
+
 const SicapDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -36,11 +37,15 @@ const SicapDetail = () => {
 
   // Definição das colunas para a tabela de anexos
   const columnsAnexos = [
-    { name: 'ID', selector: row => row.id, sortable: true, width: '5%' },
-    { name: 'Fase', selector: row => row.fase, sortable: true, width: '10%' },
-    { name: 'Tipo', selector: row => row.tipo, sortable: true, width: '15%' },
-    { name: 'Referência', selector: row => row.referencia, sortable: true, width: '20%' },
-    { name: 'Data', selector: row => row.dataAnexo, sortable: true, width: '15%' },
+    { name: 'ID', selector: row => row.id, sortable: true, width: '10%' },
+    { name: 'Fase', selector: row => row.fase, sortable: true, width: '15%' },
+    { 
+      name: 'Tipo', 
+      selector: row => row.tipo.length > 50 ? `${row.tipo.slice(0, 50)}...` : row.tipo, 
+      sortable: true, 
+      width: '35%' 
+    },
+    { name: '	Anexado em', selector: row => row.dataAnexo, sortable: true, width: '10%' },
     { 
       name: 'Arquivo', 
       selector: row => row.arquivo.nome,
@@ -49,29 +54,26 @@ const SicapDetail = () => {
           {row.arquivo.nome}
         </a>
       ),
-      width: '35%'
+      width: '30%'
     }
   ];
 
   // Definição das colunas para a tabela de situações
   const columnsSituacoes = [
     { name: 'Situação', selector: row => row.situacao, sortable: true, width: '15%' },
-    { name: 'Justificativa', selector: row => row.justificativa, sortable: true, width: '35%' },
-    { name: 'Data', selector: row => row.data, sortable: true, width: '15%' },
+    { name: 'Justificativa', selector: row => row.justificativa, sortable: true, width: '30%' },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '10%' },
     { name: 'Nº e-Contas', selector: row => row.numeroEContas, sortable: true, width: '15%' },
-    { name: 'Adicionado Por', selector: row => row.adicionadoPor, sortable: true, width: '15%' },
-    { name: 'Ativo', selector: row => row.ativo, sortable: true, width: '5%' }
+    { name: 'Adicionado Por', selector: row => row.adicionadoPor, sortable: true, width: '20%' },
+    { name: 'Ativo', selector: row => row.ativo, sortable: true, width: '10%' }
   ];
 
   // Definição das colunas para a tabela de habilitados
   const columnsHabilitados = [
     { name: 'Resultado', selector: row => row.resultado, sortable: true, width: '15%' },
-    { name: 'Licitante', selector: row => row.licitante, sortable: true, width: '35%' },
-    { name: 'Adicionado Por', selector: row => row.adicionadoPor, sortable: true, width: '15%' },
-    { name: 'Após Republicação', selector: row => row.aposRepublicacao, sortable: true, width: '10%' },
-    { name: 'Renúncia Prazo', selector: row => row.renunciaPrazoRecursal, sortable: true, width: '10%' },
-    { name: 'Registrou Presença', selector: row => row.registrouPresenca, sortable: true, width: '10%' },
-    { name: 'Ativo', selector: row => row.ativo, sortable: true, width: '5%' }
+    { name: 'Licitante', selector: row => row.licitante, sortable: true, width: '45%' },
+    { name: 'Adicionado Por', selector: row => row.adicionadoPor, sortable: true, width: '30%' },
+    { name: 'Ativo', selector: row => row.ativo, sortable: true, width: '10%' }
   ];
 
   const pageTitle = data ? `Detalhes do Procedimento ${data.id}` : 'Detalhes do Procedimento';
