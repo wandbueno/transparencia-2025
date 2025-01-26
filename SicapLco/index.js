@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const procedimentosRoutes = require('./routes/procedimentos')
+const fileProxyRouter = require('./services/fileProxy')
 require('dotenv').config()
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(express.json())
 
 // Rotas
 app.use('/api/procedimentos', procedimentosRoutes)
+app.use('/api/files', fileProxyRouter)
 
 // Rota básica para teste
 app.get('/', (req, res) => {

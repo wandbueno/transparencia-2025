@@ -35,6 +35,12 @@ const SicapDetail = () => {
     fetchData();
   }, [id]);
 
+  // Função para extrair o token do URL do arquivo
+const extractFileToken = (url) => {
+  const params = new URLSearchParams(url.split('?')[1]);
+  return params.get('t');
+};
+
   // Definição das colunas para a tabela de anexos
   const columnsAnexos = [
     { name: 'ID', selector: row => row.id, sortable: true, width: '10%' },
@@ -56,6 +62,24 @@ const SicapDetail = () => {
       ),
       width: '30%'
     }
+    // { 
+    //   name: 'Arquivo', 
+    //   selector: row => row.arquivo.nome,
+    //   cell: row => {
+    //     // Extrai o token do URL original
+    //     const fileToken = row.arquivo.url.split('t=')[1]?.split('&')[0];
+    //     if (!fileToken) return 'Link indisponível';
+        
+    //     const proxyUrl = `http://localhost:2025/api/files/file/${fileToken}`;
+        
+    //     return (
+    //       <a href={proxyUrl} target="_blank" rel="noopener noreferrer">
+    //         {row.arquivo.nome}
+    //       </a>
+    //     );
+    //   },
+    //   width: '35%'
+    // }
   ];
 
   // Definição das colunas para a tabela de situações
