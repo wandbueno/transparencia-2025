@@ -1,114 +1,150 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
 const FormData = require('form-data')
+const { wrapper } = require('axios-cookiejar-support')
+const tough = require('tough-cookie')
 
 const BASE_URL = 'https://app.tce.to.gov.br/lo_publico'
+
+const cookieJar = new tough.CookieJar()
+const client = wrapper(
+  axios.create({
+    jar: cookieJar,
+    withCredentials: true
+  })
+)
+
+// Função auxiliar para classificação de modalidade (deve estar no mesmo arquivo)
+const classificarModalidade = tipoExecucao => {
+  const lowerCaseTipo = tipoExecucao.toLowerCase()
+  if (
+    lowerCaseTipo.includes('dispensa') ||
+    lowerCaseTipo.includes('inexigibilidade') ||
+    lowerCaseTipo.includes('chamamento') ||
+    lowerCaseTipo.includes('credenciamento')
+  ) {
+    return 'Modalidade 1'
+  }
+  return 'Modalidade 2'
+}
+// Otimização de seletores Cheerio
+const optimizeSelectors = {
+  UG: 'b:contains("UG:")',
+  PROC_LICITATORIO: 'b:contains("Proc. Licitatório:")',
+  LABEL_INFO: 'span.label-info',
+  LABEL_WARNING: 'span.label-warning'
+}
 
 const extractProcedimentosData = html => {
   const $ = cheerio.load(html)
   const procedimentos = []
 
   $('table tbody tr').each((i, element) => {
-    const $row = $(element)
-    const $blockquote = $row.find('blockquote')
+    try {
+      const $row = $(element)
+      const $blockquote = $row.find('blockquote')
 
-    // Extrai o ID do procedimento do link "Ver"
-    const idProcedimento = $row.find('a').attr('href')?.split('=')[1]
+      // Função auxiliar para extração de texto com fallback
+      const extractText = (selector, defaultValue = 'Não informado') => {
+        const element = $blockquote.find(selector).first()
+        let text = ''
+        let nextNode = element[0]?.nextSibling
+        while (nextNode && nextNode.nodeType !== 1) {
+          if (nextNode.nodeType === 3) {
+            text += nextNode.nodeValue
+          }
+          nextNode = nextNode.nextSibling
+        }
+        return (
+          text
+            .replace(/\n/g, ' ')
+            .replace(/N° Proc\. Administrativo:/g, '')
+            .trim()
+            .replace(/\s+/g, ' ') || defaultValue
+        )
+      }
 
-    // Função auxiliar para extrair texto com fallback
-    const extractText = (selector, defaultValue = 'Não informado') => {
-      const text = $blockquote
-        .find(selector)
-        .parent()
-        .text()
-        .split(':')[1]
-        ?.trim()
-      return text || defaultValue
-    }
-
-    // Extrai o número do processo administrativo do span com classe label-info
-    const processoAdministrativo =
-      $blockquote.find('span.label-info').first().text().trim() ||
-      'Não informado'
-
-    // Função para extrair e formatar o tipo/modalidade
-    const extractTipoModalidade = $row => {
-      const $cell = $row.find('td:nth-child(2)')
-      let tipoText = ''
-
-      // Primeiro tenta encontrar o span com a classe label-warning (para ATA-SRP)
-      const ataSrpText = $cell.find('span.label-warning').text().trim()
-
-      // Primeiro tenta encontrar o span com a classe label (para Dispensa/Inexigibilidade)
-      const labelText = $cell
-        .find('span.label:not(.label-warning)')
+      const idProcedimento = $row.find('a').attr('href')?.split('=')[1]?.trim()
+      const processoAdministrativo = $blockquote
+        .find(optimizeSelectors.LABEL_INFO)
+        .first()
         .text()
         .trim()
-      if (labelText) {
-        return labelText
-      }
 
-      // Se não encontrou o span.label, procura pelo formato "Licitação ➤ Modalidade"
-      const cellText = $cell.text().trim()
-      if (cellText.includes('➤')) {
-        // Divide o texto pelo símbolo ➤ e pega apenas a segunda parte (modalidade)
-        const parts = cellText.split('➤').map(part => part.trim())
-        // Remove o texto ATA-SRP da parte da modalidade
-        const modalidade = parts[1].replace('ATA-SRP', '').trim()
-        // Reconstrói o texto apenas com a modalidade e o ATA-SRP se existir
-        tipoText = `${modalidade}${ataSrpText ? ` ${ataSrpText}` : ''}`
-      } else if (cellText.includes('Licitação')) {
-        // Caso especial para outros formatos de licitação
-        tipoText = cellText
-          .replace('Licitação', '')
-          .replace('➤', '')
-          .replace('ATA-SRP', '')
+      // Função para determinar o tipo/modalidade
+      const extractTipoModalidade = $row => {
+        const $cell = $row.find('td:nth-child(2)')
+        let tipoText = ''
+        const ataSrpText = $cell.find('span.label-warning').text().trim()
+        const labelText = $cell
+          .find('span.label:not(.label-warning)')
+          .text()
           .trim()
-        if (ataSrpText) {
-          tipoText += ` ${ataSrpText}`
+
+        if (labelText) {
+          return labelText
         }
-      } else {
-        // Se nenhum formato conhecido for encontrado
-        tipoText = cellText || 'Não informado'
+
+        const cellText = $cell.text().trim()
+        if (cellText.includes('➤')) {
+          const parts = cellText.split('➤').map(part => part.trim())
+          const modalidade = parts[1].replace('ATA-SRP', '').trim()
+          tipoText = `${modalidade}${ataSrpText ? ` ${ataSrpText}` : ''}`
+        } else if (cellText.includes('Licitação')) {
+          tipoText = cellText
+            .replace('Licitação', '')
+            .replace('➤', '')
+            .replace('ATA-SRP', '')
+            .trim()
+          if (ataSrpText) tipoText += ` ${ataSrpText}`
+        } else {
+          tipoText = cellText || 'Não informado'
+        }
+        return tipoText
       }
 
-      return tipoText
-    }
-
-    const procedimento = {
-      id: idProcedimento,
-      unidadeGestora: extractText('b:contains("UG:")'),
-      processoAdministrativo: processoAdministrativo, // Usa o valor extraído do span
-      processoLicitatorio: extractText('b:contains("Proc. Licitatório:")'),
-      descricaoObjeto: $blockquote.find('p').text().trim() || 'Não informado',
-      tipoExecucao: extractTipoModalidade($row),
-      dataCadastro:
-        $row
-          .find('td:nth-child(3)')
-          .text()
-          .split('Data de Cadastro:')[1]
-          ?.split('Data de Abertura:')[0]
-          ?.trim() || 'Não informado',
-      dataAbertura:
-        $row
-          .find('td:nth-child(3)')
-          .text()
-          .split('Data de Abertura:')[1]
-          ?.trim() || 'Não informado',
-      valor:
-        $row.find('td:nth-child(4)').text().trim() || 'Valor não informado',
-      fases:
-        $row
+      const procedimento = {
+        id: idProcedimento || `N/I-${i}`,
+        unidadeGestora: extractText('b:contains("UG:")')
+          .split('N° Proc. Administrativo')[0]
+          .trim(),
+        processoAdministrativo,
+        processoLicitatorio: extractText('b:contains("Proc. Licitatório:")'),
+        descricaoObjeto: $blockquote.find('p').text().trim() || 'Não informado',
+        tipoExecucao: extractTipoModalidade($row),
+        dataCadastro:
+          $row
+            .find('td:nth-child(3)')
+            .text()
+            .split('Data de Cadastro:')[1]
+            ?.split('Data de Abertura:')[0]
+            ?.trim() || 'Não informado',
+        dataAbertura:
+          $row
+            .find('td:nth-child(3)')
+            .text()
+            .split('Data de Abertura:')[1]
+            ?.trim() || 'Não informado',
+        valor:
+          $row.find('td:nth-child(4)').text().trim() || 'Valor não informado',
+        fases: $row
           .find('td:nth-child(5) span')
           .map((_, el) => $(el).text().trim())
-          .get()
-          .join(' ') || 'Não informado',
-      detalhesUrl: $row.find('a').attr('href') || '#'
-    }
+          .get(),
+        detalhesUrl: $row.find('a').attr('href') || '#',
+        modalidade: classificarModalidade(extractTipoModalidade($row))
+      }
 
-    procedimentos.push(procedimento)
+      if (!procedimento.id || !procedimento.unidadeGestora) {
+        throw new Error(`Dados incompletos na linha ${i}`)
+      }
+      procedimentos.push(procedimento)
+    } catch (error) {
+      console.error(`Erro ao processar linha ${i}:`, error.message)
+    }
   })
 
+  console.log(`Extraídos ${procedimentos.length} procedimentos desta página`)
   return procedimentos
 }
 
@@ -133,12 +169,9 @@ const extractAnexos = $ => {
 }
 
 const extractPrimeiraFase = $ => {
-  // Função auxiliar para extrair texto após um label específico
   const extractLabelText = (label, parentSelector = '.panel-body') => {
     const element = $(`${parentSelector} b:contains("${label}:")`)
     if (!element.length) return ''
-
-    // Pega o texto após o label até o próximo <b> ou <br>
     const text = element
       .parent()
       .html()
@@ -148,21 +181,16 @@ const extractPrimeiraFase = $ => {
     return text || ''
   }
 
-  // Extrai informações do cabeçalho comum
   const unidadeGestora = $('dl dd h4.text-success').text().trim()
   const cnpj = $('dl span.badge').text().trim()
-
-  // Extrai dados específicos do procedimento
   const numeroSicap = $('span.label-info:first').text().trim()
   const processo = $('span.label-info').eq(1).text().trim()
 
-  // Determina o tipo de procedimento
   const isDispensa = $('span.label-info:contains("Dispensa")').length > 0
   const isInexigibilidade =
     $('span.label-danger:contains("Inexigibilidade")').length > 0
   const isLicitacao = $('span:contains("Licitação")').length > 0
 
-  // Extrai tipo/modalidade baseado no tipo de procedimento
   let tipoModalidade = ''
   if (isDispensa) {
     tipoModalidade = 'Dispensa'
@@ -172,13 +200,11 @@ const extractPrimeiraFase = $ => {
     tipoModalidade = 'Licitação'
   }
 
-  // Extrai valor estimado
   const valorEstimado = $('b:contains("Valor estimado:")')
     .next('span.label-info')
     .text()
     .trim()
 
-  // Cria o objeto base com campos comuns
   const result = {
     unidadeGestora,
     cnpj,
@@ -188,15 +214,12 @@ const extractPrimeiraFase = $ => {
     valorEstimado
   }
 
-  // Adiciona campos específicos baseado no tipo de procedimento
   if (isDispensa || isInexigibilidade) {
-    // Campos comuns para Dispensa e Inexigibilidade
     const itemOuLote = extractLabelText('Item ou Lote')
     const dataCadastro = extractLabelText('Data de cadastro')
     const dataBaseOrcamento = extractLabelText('Data Base de orçamento')
     const dataPrimeiraPublicacao = extractLabelText('Data Primeira publicação')
 
-    // Extrai justificativa, legislação e objeto separadamente
     const justificativaText = $('b:contains("Justificativa:")')
       .parent()
       .html()
@@ -226,7 +249,6 @@ const extractPrimeiraFase = $ => {
       objeto: objetoText?.replace(/<br>/g, '')
     })
   } else if (isLicitacao) {
-    // Campos específicos para Licitação
     const tipo = extractLabelText('Tipo')
     const regime = extractLabelText('Regime')
     const numeroIRP = extractLabelText('Número IRP')
@@ -386,88 +408,212 @@ const extractTerceiraFase = $ => {
 
 const getProcedimentos = async () => {
   try {
-    const formData = new FormData()
-    formData.append('isestadual', '')
-    formData.append('municipios', '1703701')
-    formData.append('unidadegestora', '')
-    formData.append('numprsadm', '')
-    formData.append('anoprocessode', 'T')
-    formData.append('descricaoObjeto', '')
-    formData.append('tipodata', '')
-    formData.append('databrinicio', '')
-    formData.append('databrfim', '')
-    formData.append('id', '')
-    formData.append('cnpjcpf', '')
-    formData.append('numprslictatorio', '')
-    formData.append('anolicitatorio', 'T')
+    let allProcedimentos = []
+    const limit = 25 // Quantidade de itens por página
+    let totalPages = 1
 
-    const response = await axios.post(
-      `${BASE_URL}/pesquisar/ListaProcedimento`,
-      formData,
-      {
-        headers: {
-          ...formData.getHeaders(),
-          Accept:
-            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-          'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-          Pragma: 'no-cache',
-          'Sec-Fetch-Dest': 'document',
-          'Sec-Fetch-Mode': 'navigate',
-          'Sec-Fetch-Site': 'none',
-          'Sec-Fetch-User': '?1',
-          'Upgrade-Insecure-Requests': '1',
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-        }
+    // Primeiro request para obter o total de registros
+    const initialData = await fetchPage(1, limit)
+    totalPages = Math.ceil(initialData.totalRegistros / limit)
+    allProcedimentos = initialData.procedimentos
+
+    console.log(
+      `📌 Primeira página processada - ${initialData.procedimentos.length} itens`
+    )
+    console.log(`📊 Total de páginas estimado: ${totalPages}`)
+
+    // Loop para percorrer todas as páginas a partir da segunda
+    for (let page = 2; page <= totalPages; page++) {
+      await new Promise(resolve => setTimeout(resolve, 3000)) // Pequeno delay para evitar bloqueios
+
+      try {
+        console.log(`🔄 Coletando página ${page}/${totalPages}...`)
+        const pageData = await fetchPage(
+          page,
+          limit,
+          initialData.totalRegistros
+        )
+        allProcedimentos = [...allProcedimentos, ...pageData.procedimentos]
+
+        console.log(
+          `✅ Página ${page} processada - ${pageData.procedimentos.length} itens`
+        )
+      } catch (error) {
+        console.error(`❌ Erro ao processar a página ${page}:`, error.message)
+        throw error
       }
+    }
+
+    console.log(
+      `🎉 Scraping completo! Total de registros coletados: ${allProcedimentos.length}`
+    )
+    return allProcedimentos
+  } catch (error) {
+    console.error('❌ Erro crítico:', {
+      message: error.message,
+      stack: error.stack
+    })
+    throw new Error('Falha ao coletar todas as páginas')
+  }
+}
+
+const fetchPage = async (page, limit, totalRegistrosFromFirstPage = null) => {
+  try {
+    const formData = new FormData()
+
+    // Parâmetros fixos da requisição
+    const formFields = {
+      isestadual: '',
+      municipios: '1703701',
+      unidadegestora: '',
+      numprsadm: '',
+      anoprocessode: 'T',
+      descricaoObjeto: '',
+      tipodata: '',
+      databrinicio: '',
+      databrfim: '',
+      id: '',
+      cnpjcpf: '',
+      numprslictatorio: '',
+      anolicitatorio: 'T'
+    }
+
+    Object.entries(formFields).forEach(([key, value]) => {
+      formData.append(key, value)
+    })
+
+    // Parâmetros de paginação
+    const paginationParams = {
+      tipoordenacao: 'procedimento',
+      ordem: 'DESC',
+      municipios: '1703701',
+      page: page,
+      limit: limit,
+      start: (page - 1) * limit,
+      municipio_nome: page === 1 ? {} : []
+    }
+
+    formData.append('data-filter', JSON.stringify(paginationParams))
+
+    // Se for a partir da segunda página, adicionamos `type-new-page`
+    if (page > 1 && totalRegistrosFromFirstPage) {
+      formData.append('total-registros', String(totalRegistrosFromFirstPage))
+      formData.append('type-new-page', 'next')
+    }
+
+    // Define o endpoint correto
+    const endpoint =
+      page === 1 ? '/pesquisar/ListaProcedimento' : '/pesquisar/NewPage'
+
+    console.log(`🔎 Buscando página ${page} em: ${BASE_URL}${endpoint}`)
+    console.log(
+      `📊 Parâmetros enviados:`,
+      JSON.stringify(paginationParams, null, 2)
     )
 
-    return extractProcedimentosData(response.data)
+    const response = await axios.post(`${BASE_URL}${endpoint}`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7'
+      },
+      timeout: 30000
+    })
+
+    const $ = cheerio.load(response.data)
+    const totalRegistros = extractTotalRegistros($)
+
+    console.log(`✅ Página ${page} carregada com sucesso!`)
+
+    return {
+      procedimentos: extractProcedimentosData(response.data),
+      totalRegistros: totalRegistros
+    }
   } catch (error) {
-    console.error('Erro ao buscar procedimentos:', error)
+    console.error(`❌ Erro na página ${page}:`, {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data?.substring(0, 500)
+    })
     throw error
+  }
+}
+
+// Função para extrair o total de registros de forma robusta
+const extractTotalRegistros = $ => {
+  try {
+    // 1. Tenta extrair via input oculto
+    const hiddenInput = $('input#total-registros').val()
+    if (hiddenInput) {
+      console.log('Total via input oculto:', hiddenInput)
+      return parseInt(hiddenInput)
+    }
+
+    // 2. Tenta extrair via texto do elemento .pagination-info
+    const panelText = $('.pagination-info').text()
+    console.log('Panel text:', panelText)
+    // Exemplo esperado: "Exibindo 26 de 526 registros"
+    const match = panelText.match(/de\s+([\d.]+)/i)
+    if (match) {
+      const total = parseInt(match[1].replace(/\./g, ''))
+      console.log('Total extraído da pagination-info:', total)
+      return total
+    }
+
+    // 3. Tenta extrair via os itens da paginação (ex: UL com class "pagination")
+    const lastPageItem = $('.pagination li:nth-last-child(2)').text()
+    if (lastPageItem) {
+      const lastPage = parseInt(lastPageItem) || 1
+      // Tenta pegar o valor do "limit" a partir de um <select> (caso exista)
+      const perPage = parseInt($('select[name="limit"]').val()) || 25
+      const total = lastPage * perPage
+      console.log('Total extraído via paginação:', total)
+      return total
+    }
+
+    // 4. Fallback: se não houver paginação, usa a quantidade de linhas da tabela
+    const rows = $('table tbody tr').length
+    if (rows) {
+      console.log('Fallback: total de linhas da tabela:', rows)
+      return rows
+    }
+
+    console.error('Total de registros não encontrado!')
+    return 0
+  } catch (error) {
+    console.error('Erro na extração do total:', error)
+    return 0
   }
 }
 
 const getProcedimentoById = async id => {
   try {
-    const response = await axios.get(`${BASE_URL}/pesquisar/detalhes`, {
-      params: { idProcedimento: id },
-      headers: {
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-        Pragma: 'no-cache',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-      }
+    await client.get(`${BASE_URL}/pesquisar/detalhes`, {
+      params: { idProcedimento: id }
     })
-
+    const response = await client.get(`${BASE_URL}/pesquisar/detalhes`, {
+      params: { idProcedimento: id }
+    })
     const $ = cheerio.load(response.data)
-
     const dadosPrimeiraFase = extractPrimeiraFase($)
     const anexos = extractAnexos($)
     const dadosSegundaFase = extractSegundaFase($)
     const contratos = extractTerceiraFase($)
-
     return {
       id,
       dadosPrimeiraFase,
       anexos,
       dadosSegundaFase,
-      contratos
+      contratos,
+      sessionData: {
+        cookies: cookieJar.getCookiesSync(BASE_URL).toString(),
+        referer: `${BASE_URL}/pesquisar/detalhes?idProcedimento=${id}`
+      }
     }
   } catch (error) {
-    console.error('Erro ao buscar detalhes do procedimento:', error)
+    console.error('Erro na requisição de detalhes:', error)
     throw error
   }
 }

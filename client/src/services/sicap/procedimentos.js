@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:2025/api/procedimentos'
+const API_BASE_URL = 'http://localhost:2025/api/tipo/modalidade1'
 
 // Função para buscar todos os procedimentos
 export const getProcedimentos = async () => {

@@ -20,6 +20,7 @@ app.use(express.json())
 
 // Rotas
 app.use('/api/procedimentos', procedimentosRoutes)
+app.use('/api/tipo', procedimentosRoutes)
 app.use('/api/files', fileProxyRouter)
 
 // Rota básica para teste

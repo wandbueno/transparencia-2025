@@ -6,27 +6,27 @@ const tenants = {
     token: process.env.TOKEN_CONCEICAO,
     cliente_integrado: process.env.CLIENTE_INTEGRADO,
     allowed_domains: ['conceicaodotocantins.to.gov.br', 'localhost']
+  },
+  camaraconceicaodotocantins: {
+    name: 'Câmara de Conceição do Tocantins',
+    api_url: process.env.SERVER_CM_CONCEICAO,
+    token: process.env.TOKEN_CM_CONCEICAO,
+    cliente_integrado: process.env.CLIENTE_INTEGRADO,
+    allowed_domains: ['conceicaodotocantins.to.leg.br', 'localhost']
   }
   // arraias: {
   //   name: 'Arraias',
   //   api_url: process.env.SERVER_ARRAIAS,
   //   token: process.env.TOKEN_ARRAIAS,
-  //   cliente_integrado: process.env.CLIENTE_INTEGRADO_ARRAIAS,
+  //   cliente_integrado: process.env.CLIENTE_INTEGRADO,
   //   allowed_domains: ['arraias.to.gov.br', 'localhost']
   // },
-  // santarosa: {
-  //   name: 'Santa Rosa',
-  //   api_url: process.env.SERVER_SANTAROSA,
-  //   token: process.env.TOKEN_SANTAROSA,
-  //   cliente_integrado: process.env.CLIENTE_INTEGRADO_SANTAROSA,
-  //   allowed_domains: ['santarosa.to.gov.br', 'localhost']
-  // },
-  // brejinho: {
-  //   name: 'Brejinho',
-  //   api_url: process.env.SERVER_BREJINHO,
-  //   token: process.env.TOKEN_BREJINHO,
-  //   cliente_integrado: process.env.CLIENTE_INTEGRADO_BREJINHO,
-  //   allowed_domains: ['brejinho.to.gov.br', 'localhost']
+  // nazare: {
+  //   name: 'nazare',
+  //   api_url: process.env.SERVER_NAZARE,
+  //   token: process.env.TOKEN_NAZARE,
+  //   cliente_integrado: process.env.CLIENTE_INTEGRADO,
+  //   allowed_domains: ['nazare.to.gov.br', 'localhost']
   // }
 }
 
