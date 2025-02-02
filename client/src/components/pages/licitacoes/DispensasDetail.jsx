@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getDispensasById } from "../../../services/contratosLicitacoes/dispensas";
-import { getDocumentos, downloadDocumento, visualizarDocumento } from '../../../services/documentos/documentos';
+import { getDocumentos, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
@@ -20,7 +20,7 @@ const DispensasDetail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      try { 
         const result = await getDispensasById(id);  
         setData(result); 
       // Busca os documentos
@@ -118,13 +118,14 @@ const DispensasDetail = () => {
   ];
 
   // Add function to handle document visualization
-  const handleVisualizarDocumento = async (codigo) => {
+  const handleVisualizarDocumento = async (codigo, extensao) => {
     try {
-      const blobUrl = await visualizarDocumento(codigo);
-      window.open(blobUrl, '_blank');
+      const blobUrl = await visualizarDocumento(codigo, extensao, 'LICITACAO');
+      if (blobUrl) {
+        window.open(blobUrl, '_blank');
+      }
     } catch (error) {
       console.error('Erro ao visualizar documento:', error);
-      // You may want to show an error message to the user here
     }
   };
       // Definição das colunas para o DataTable dos Documentos
@@ -135,14 +136,16 @@ const DispensasDetail = () => {
     { 
       name: 'Ação',
       selector: row => row.codigo,
-      cell: row => (
-        <ButtonDownloadAnexos 
-          onClick={() => handleVisualizarDocumento(row.codigo)}
-          className="btn btn-primary"
-        >
-          Visualizar
-        </ButtonDownloadAnexos>
-      ),
+      cell: row => {
+        const extensao = row.extensao?.toLowerCase()
+        const isPdf = extensao === 'pdf'
+        return (
+          <ButtonDownloadAnexos 
+            onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+            label={isPdf ? 'Visualizar' : 'Baixar'}
+          />
+        )
+      },
       width: '15%',
       excludeFromExport: true
     }
@@ -288,7 +291,7 @@ const DispensasDetail = () => {
                   data={data.empenhos.registros}
                 />
               </>
-            )}
+            )} 
           </div>
           <div className="tabela-detalhes">
             {data.itensEmAberto.total > 0 && (
@@ -312,7 +315,7 @@ const DispensasDetail = () => {
               />
             </>
           )}
-          
+
           </div>
         </div> 
       </div> 

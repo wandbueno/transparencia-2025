@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getLicitacaoById, getItensVencedores, getItensFracassadosOuDesertos, getItensEmAberto, getItensCanceladosESubstituidos, getEmpresasCredenciadas, getEmpenhos, getContratos } from "../../../services/contratosLicitacoes/licitacoes";
-import { getDocumentos, downloadDocumento, visualizarDocumento } from '../../../services/documentos/documentos';
+import { getDocumentos, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
@@ -33,12 +33,12 @@ const LicitacaoDetail = () => {
         const result = await getLicitacaoById(id);  
         setData(result);
 
-         // Busca os documentos
+         // Busca os documentos usando a tabela correta
          try {
-          const docsResponse = await getDocumentos('LICITACAO', id)
-          setDocumentos(docsResponse.registros)
+          const docsResponse = await getDocumentos('LICITACAO', id);
+          setDocumentos(docsResponse.registros || []);
         } catch (docError) {
-          console.error('Erro ao buscar documentos:', docError)
+          console.error('Erro ao buscar documentos:', docError);
         }
 
         // Buscando os itens relacionados
@@ -158,13 +158,13 @@ const LicitacaoDetail = () => {
 
   // Definição das colunas para o DataTable dos Itens Cancelados e Substituídos
   const columnsItensCanceladosESubstituidos = [
-    { name: 'Data', selector: row => row.data, sortable: true },
-    { name: 'Fornecedor', selector: row => row.fornecedor, sortable: true },
-    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true },
-    { name: 'Produto', selector: row => row.produto, sortable: true },
-    { name: 'Quantidade', selector: row => row.quantidade, sortable: true },
-    { name: 'Unidade', selector: row => row.unidade, sortable: true },
-    { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '10%' },    
+    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true, width: '10%' },
+    { name: 'Fornecedor', selector: row => row.fornecedor, sortable: true, width: '25%' },
+    { name: 'Produto', selector: row => row.produto, sortable: true, width: '25%' },
+    { name: 'Quantidade', selector: row => row.quantidade, sortable: true, width: '10%' },
+    { name: 'Unidade', selector: row => row.unidade, sortable: true, width: '10%' },
+    { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '10%' },
   ];
 
   // Definição das colunas para o DataTable dos Responsáveis pela Comissão
@@ -176,15 +176,17 @@ const LicitacaoDetail = () => {
     ];
 
       // Add function to handle document visualization
-  const handleVisualizarDocumento = async (codigo) => {
-    try {
-      const blobUrl = await visualizarDocumento(codigo);
-      window.open(blobUrl, '_blank');
-    } catch (error) {
-      console.error('Erro ao visualizar documento:', error);
-      // You may want to show an error message to the user here
-    }
-  };
+    const handleVisualizarDocumento = async (codigo, extensao) => {
+      try {
+        const blobUrl = await visualizarDocumento(codigo, extensao, 'LICITACAO');
+        if (blobUrl) {
+          window.open(blobUrl, '_blank');
+        }
+      } catch (error) {
+        console.error('Erro ao visualizar documento:', error);
+      }
+    };
+      
      // Definição das colunas para o DataTable dos Documentos
   const columnsDocumentos = [
     { name: 'Nome', selector: row => row.nome, sortable: true, width: '35%' },
@@ -195,11 +197,9 @@ const LicitacaoDetail = () => {
       selector: row => row.codigo,
       cell: row => (
         <ButtonDownloadAnexos 
-          onClick={() => handleVisualizarDocumento(row.codigo)}
-          className="btn btn-primary"
-        >
-          Visualizar
-        </ButtonDownloadAnexos>
+          onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+          label={row.extensao?.toLowerCase() === 'pdf' ? 'Visualizar' : 'Baixar'}
+        />
       ),
       width: '15%',
       excludeFromExport: true
@@ -355,16 +355,16 @@ const LicitacaoDetail = () => {
               </>
             )}
 
-             {/* Documentos */}
-           {documentos && documentos.length > 0 && (
-            <>
-              <h2 className="titulo-tabela">Documentos Anexos</h2>
-              <DataTableDetail
-                columns={columnsDocumentos}
-                data={documentos}
-              />
-            </>
-          )}
+            {/* Documentos */}
+             {documentos && documentos.length > 0 && (
+              <>
+                <h2 className="titulo-tabela">Documentos Anexos</h2>
+                <DataTableDetail
+                  columns={columnsDocumentos}
+                  data={documentos}
+                />
+              </>
+            )}
            
         </div>
         

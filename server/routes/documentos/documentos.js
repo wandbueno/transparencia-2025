@@ -91,10 +91,14 @@ const downloadDocumento = async (req, res) => {
 
     // Define os headers da resposta
     res.setHeader('Content-Type', response.headers['content-type'])
-    res.setHeader(
-      'Content-Disposition',
-      response.headers['content-disposition']
-    )
+
+    // Preserva o Content-Disposition original da API
+    if (response.headers['content-disposition']) {
+      res.setHeader(
+        'Content-Disposition',
+        response.headers['content-disposition']
+      )
+    }
 
     // Envia o arquivo
     res.send(response.data)

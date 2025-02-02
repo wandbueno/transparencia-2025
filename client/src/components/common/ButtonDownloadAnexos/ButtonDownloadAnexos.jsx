@@ -1,10 +1,9 @@
-// client/src/components/common/ButtonDownload/ButtonDownload.jsx
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faSpinner } from '@fortawesome/free-solid-svg-icons'; // Changed from faDownload to faEye
+import { faEye, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import './ButtonDownloadAnexos.css';
 
-const ButtonDownloadAnexos = ({ onClick, label = "Visualizar" }) => { // Changed default label
+const ButtonDownloadAnexos = ({ onClick, label = "Visualizar" }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
@@ -12,8 +11,7 @@ const ButtonDownloadAnexos = ({ onClick, label = "Visualizar" }) => { // Changed
       setIsLoading(true);
       await onClick();
     } catch (error) {
-      console.error('Erro ao visualizar documento:', error); // Updated error message
-      // Você pode adicionar um toast ou outra notificação de erro aqui
+      console.error('Erro ao visualizar documento:', error);
     } finally {
       setIsLoading(false);
     }
@@ -26,7 +24,7 @@ const ButtonDownloadAnexos = ({ onClick, label = "Visualizar" }) => { // Changed
       disabled={isLoading}
     >
       <FontAwesomeIcon 
-        icon={isLoading ? faSpinner : faEye} // Changed icon
+        icon={isLoading ? faSpinner : faEye}
         className={isLoading ? 'fa-spin' : ''} 
         style={{ marginRight: '5px' }}
       />
