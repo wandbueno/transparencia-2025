@@ -7,7 +7,6 @@ import DataTableDetail from '../../common/DataTableDetail';
 import { config } from "../../../assets/config";
 import './SicapDetail.css';
 
-
 const SicapDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -35,51 +34,44 @@ const SicapDetail = () => {
     fetchData();
   }, [id]);
 
-  // Função para extrair o token do URL do arquivo
-const extractFileToken = (url) => {
-  const params = new URLSearchParams(url.split('?')[1]);
-  return params.get('t');
-};
+  const pageTitle = data ? `Detalhes do Procedimento ${data.id}` : 'Detalhes do Procedimento';
 
-  // Definição das colunas para a tabela de anexos
+  // Função para gerar URL do proxy
+  const getProxyUrl = (token) => {
+    const baseUrl = import.meta.env.VITE_SICAP_API_URL || 'http://localhost:2025'
+    return `${baseUrl}/api/files/file/${id}/${token}`
+  }
+
+  // Atualização das colunas dos anexos para usar o proxy
   const columnsAnexos = [
     { name: 'ID', selector: row => row.id, sortable: true, width: '10%' },
     { name: 'Fase', selector: row => row.fase, sortable: true, width: '15%' },
-    { 
-      name: 'Tipo', 
-      selector: row => row.tipo.length > 50 ? `${row.tipo.slice(0, 50)}...` : row.tipo, 
-      sortable: true, 
-      width: '35%' 
-    },
-    { name: '	Anexado em', selector: row => row.dataAnexo, sortable: true, width: '10%' },
+    { name: 'Tipo', selector: row => row.tipo, sortable: true, width: '35%' },
+    { name: 'Data Anexo', selector: row => row.dataAnexo, sortable: true, width: '10%' },
     { 
       name: 'Arquivo', 
       selector: row => row.arquivo.nome,
-      cell: row => (
-        <a href={row.arquivo.url} target="_blank" rel="noopener noreferrer">
-          {row.arquivo.nome}
-        </a>
-      ),
+      cell: row => {
+        // Extrai o token do URL original
+        const token = row.arquivo.url.split('t=')[1]?.split('&')[0]
+        if (!token) return 'Link indisponível'
+        
+        // Gera URL do proxy
+        const proxyUrl = getProxyUrl(token)
+        
+        return (
+          <a 
+            href={proxyUrl} 
+            className="btn-download"
+            download // Força download
+          >
+            <i className="fas fa-download"></i>
+            {row.arquivo.nome}
+          </a>
+        )
+      },
       width: '30%'
     }
-    // { 
-    //   name: 'Arquivo', 
-    //   selector: row => row.arquivo.nome,
-    //   cell: row => {
-    //     // Extrai o token do URL original
-    //     const fileToken = row.arquivo.url.split('t=')[1]?.split('&')[0];
-    //     if (!fileToken) return 'Link indisponível';
-        
-    //     const proxyUrl = `http://localhost:2025/api/files/file/${fileToken}`;
-        
-    //     return (
-    //       <a href={proxyUrl} target="_blank" rel="noopener noreferrer">
-    //         {row.arquivo.nome}
-    //       </a>
-    //     );
-    //   },
-    //   width: '35%'
-    // }
   ];
 
   // Definição das colunas para a tabela de situações
@@ -99,8 +91,6 @@ const extractFileToken = (url) => {
     { name: 'Adicionado Por', selector: row => row.adicionadoPor, sortable: true, width: '30%' },
     { name: 'Ativo', selector: row => row.ativo, sortable: true, width: '10%' }
   ];
-
-  const pageTitle = data ? `Detalhes do Procedimento ${data.id}` : 'Detalhes do Procedimento';
 
   return (
     <div className="container">
@@ -129,21 +119,7 @@ const extractFileToken = (url) => {
             <span><p>Processo:</p> {data.dadosPrimeiraFase.processo}</span>
             <span><p>Tipo/Modalidade:</p> {data.dadosPrimeiraFase.tipoModalidade}</span>
             <span><p>Valor Estimado:</p> {data.dadosPrimeiraFase.valorEstimado}</span>
-
             
-            
-            {/* Campos específicos para Dispensa/Inexigibilidade */}
-            {(data.dadosPrimeiraFase.tipoModalidade === 'Dispensa' || 
-              data.dadosPrimeiraFase.tipoModalidade === 'Inexigibilidade') && (
-              <>
-                <span><p>Item ou Lote:</p> {data.dadosPrimeiraFase.itemOuLote}</span>
-                <span><p>Data de Cadastro:</p> {data.dadosPrimeiraFase.dataCadastro}</span>
-                <span><p>Data Base Orçamento:</p> {data.dadosPrimeiraFase.dataBaseOrcamento}</span>
-                <span><p>Data Primeira Publicação:</p> {data.dadosPrimeiraFase.dataPrimeiraPublicacao}</span>
-              </>
-            )}
-
-            {/* Campos específicos para Licitação */}
             {data.dadosPrimeiraFase.tipoModalidade === 'Licitação' && (
               <>
                 <span><p>Tipo:</p> {data.dadosPrimeiraFase.tipo}</span>
@@ -156,27 +132,21 @@ const extractFileToken = (url) => {
               </>
             )}
 
-            {/* Mostrar campos específicos para Licitação */}
-            {data.dadosPrimeiraFase.tipoModalidade === 'Licitação' && (
+            {(data.dadosPrimeiraFase.tipoModalidade === 'Dispensa' || 
+              data.dadosPrimeiraFase.tipoModalidade === 'Inexigibilidade') && (
               <>
-                <span><p>Quantidade de Licitantes:</p> {data.dadosPrimeiraFase.quantidadeLicitantes || 'Não informado'}</span>
-                <span><p>Quantidade de Habilitados:</p> {data.dadosPrimeiraFase.quantidadeHabilitados || 'Não informado'}</span>
+                <span><p>Item ou Lote:</p> {data.dadosPrimeiraFase.itemOuLote}</span>
+                <span><p>Data de Cadastro:</p> {data.dadosPrimeiraFase.dataCadastro}</span>
+                <span><p>Data Base Orçamento:</p> {data.dadosPrimeiraFase.dataBaseOrcamento}</span>
+                <span><p>Data Primeira Publicação:</p> {data.dadosPrimeiraFase.dataPrimeiraPublicacao}</span>
+                <div className="full-width">
+                  <span><p>Justificativa:</p> {data.dadosPrimeiraFase.justificativa}</span>
+                  <span><p>Legislação:</p> {data.dadosPrimeiraFase.legislacao}</span>
+                </div>
               </>
             )}
             
             <div className="full-width">
-              {/* Mostrar Justificativa e Legislação apenas para Dispensa/Inexigibilidade */}
-              {(data.dadosPrimeiraFase.tipoModalidade === 'Dispensa' || 
-                data.dadosPrimeiraFase.tipoModalidade === 'Inexigibilidade') && (
-                <>
-                  {data.dadosPrimeiraFase.justificativa && (
-                    <span><p>Justificativa:</p> {data.dadosPrimeiraFase.justificativa}</span>
-                  )}
-                  {data.dadosPrimeiraFase.legislacao && (
-                    <span><p>Legislação:</p> {data.dadosPrimeiraFase.legislacao}</span>
-                  )}
-                </>
-              )}
               <span><p>Objeto:</p> {data.dadosPrimeiraFase.objeto}</span>
             </div>
           </div>

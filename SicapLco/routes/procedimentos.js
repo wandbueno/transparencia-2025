@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { getProcedimentos, getProcedimentoById } = require('../services/scraper')
+const municipalities = require('../config/municipalities')
 
 // Configuração de cache
 const NodeCache = require('node-cache')
@@ -10,69 +11,128 @@ const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 })
 const padronizarModalidade = modalidade =>
   modalidade.toLowerCase().replace(/\s/g, '')
 
-// Rota otimizada para modalidade1
+// Rota para modalidade1
 router.get('/modalidade1', async (req, res) => {
   try {
-    const cached = cache.get('modalidade1')
+    const tenant =
+      req.query.tenant || req.headers['x-tenant-id'] || 'conceicaodotocantins'
+    const cacheKey = `${tenant}-modalidade1`
+
+    // Verifica se existe no cache
+    const cached = cache.get(cacheKey)
     if (cached) return res.json(cached)
 
+    // Verifica se o tenant existe na configuração
+    if (!municipalities[tenant]) {
+      return res.status(404).json({
+        error: 'Município não encontrado',
+        message: `Tenant ${tenant} não está configurado`
+      })
+    }
+
+    // Define o tenant no ambiente
+    process.env.TENANT_ID = tenant
+
+    // Busca todos os procedimentos
     const allData = await getProcedimentos()
+
+    // Filtra por modalidade1
     const filtered = allData.filter(
       p => padronizarModalidade(p.modalidade) === 'modalidade1'
     )
 
-    cache.set('modalidade1', filtered)
+    // Salva no cache
+    cache.set(cacheKey, filtered)
+
     res.json(filtered)
   } catch (error) {
     console.error('Erro em /modalidade1:', error)
-    res.status(500).json({ error: 'Erro ao buscar dados' })
+    res.status(500).json({
+      error: 'Erro ao buscar dados',
+      message: error.message
+    })
   }
 })
 
-// Rota otimizada para modalidade2
+// Rota para modalidade2
 router.get('/modalidade2', async (req, res) => {
   try {
-    const cached = cache.get('modalidade2')
+    const tenant =
+      req.query.tenant || req.headers['x-tenant-id'] || 'conceicaodotocantins'
+    const cacheKey = `${tenant}-modalidade2`
+
+    // Verifica se existe no cache
+    const cached = cache.get(cacheKey)
     if (cached) return res.json(cached)
 
+    // Verifica se o tenant existe na configuração
+    if (!municipalities[tenant]) {
+      return res.status(404).json({
+        error: 'Município não encontrado',
+        message: `Tenant ${tenant} não está configurado`
+      })
+    }
+
+    // Define o tenant no ambiente
+    process.env.TENANT_ID = tenant
+
+    // Busca todos os procedimentos
     const allData = await getProcedimentos()
+
+    // Filtra por modalidade2
     const filtered = allData.filter(
       p => padronizarModalidade(p.modalidade) === 'modalidade2'
     )
 
-    cache.set('modalidade2', filtered)
+    // Salva no cache
+    cache.set(cacheKey, filtered)
+
     res.json(filtered)
   } catch (error) {
     console.error('Erro em /modalidade2:', error)
-    res.status(500).json({ error: 'Erro ao buscar dados' })
-  }
-})
-
-// Rota completa (apenas para administração)
-router.get('/full', async (req, res) => {
-  try {
-    const cached = cache.get('full')
-    if (cached) return res.json(cached)
-
-    const data = await getProcedimentos()
-
-    cache.set('full', data)
-    res.json(data)
-  } catch (error) {
-    console.error('Erro em /full:', error)
-    res.status(500).json({ error: 'Erro ao buscar dados completos' })
+    res.status(500).json({
+      error: 'Erro ao buscar dados',
+      message: error.message
+    })
   }
 })
 
 // Rota para buscar detalhes de um procedimento específico
-router.get('/:id', async (req, res) => {
+router.get('/detalhes/:id', async (req, res) => {
   try {
     const { id } = req.params
+    const tenant =
+      req.query.tenant || req.headers['x-tenant-id'] || 'conceicaodotocantins'
+    const cacheKey = `${tenant}-details-${id}`
+
+    // Verifica cache
+    const cached = cache.get(cacheKey)
+    if (cached) return res.json(cached)
+
+    // Verifica tenant
+    if (!municipalities[tenant]) {
+      return res.status(404).json({
+        error: 'Município não encontrado',
+        message: `Tenant ${tenant} não está configurado`
+      })
+    }
+
+    // Define o tenant
+    process.env.TENANT_ID = tenant
+
+    // Busca detalhes
     const detalhes = await getProcedimentoById(id)
+
+    // Salva no cache
+    cache.set(cacheKey, detalhes)
+
     res.json(detalhes)
   } catch (error) {
     console.error('Erro ao buscar detalhes do procedimento:', error)
-    res.status(500).json({ error: 'Erro ao buscar detalhes do procedimento' })
+    res.status(500).json({
+      error: 'Erro ao buscar detalhes',
+      message: error.message
+    })
   }
 })
 

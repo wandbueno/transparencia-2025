@@ -3,6 +3,7 @@ const cheerio = require('cheerio')
 const FormData = require('form-data')
 const { wrapper } = require('axios-cookiejar-support')
 const tough = require('tough-cookie')
+const municipalities = require('../config/municipalities')
 
 const BASE_URL = 'https://app.tce.to.gov.br/lo_publico'
 
@@ -14,7 +15,7 @@ const client = wrapper(
   })
 )
 
-// Função auxiliar para classificação de modalidade (deve estar no mesmo arquivo)
+// Função auxiliar para classificação de modalidade
 const classificarModalidade = tipoExecucao => {
   const lowerCaseTipo = tipoExecucao.toLowerCase()
   if (
@@ -27,22 +28,69 @@ const classificarModalidade = tipoExecucao => {
   }
   return 'Modalidade 2'
 }
-// Otimização de seletores Cheerio
-const optimizeSelectors = {
-  UG: 'b:contains("UG:")',
-  PROC_LICITATORIO: 'b:contains("Proc. Licitatório:")',
-  LABEL_INFO: 'span.label-info',
-  LABEL_WARNING: 'span.label-warning'
+
+// Função para verificar se a unidade gestora pertence ao tenant atual
+const isValidManagementUnit = (ugText, tenant) => {
+  if (!tenant || !municipalities[tenant]) {
+    console.log(`⚠️ Tenant inválido: ${tenant}`)
+    return false
+  }
+
+  const managementUnits = municipalities[tenant].managementUnits
+  const normalizedUgText = ugText
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  console.log(`🔍 Verificando UG: ${normalizedUgText}`)
+
+  for (const unit of managementUnits) {
+    const normalizedUnitName = unit.name
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+    console.log(`📋 Comparando com: ${normalizedUnitName}`)
+
+    if (normalizedUgText.includes(normalizedUnitName)) {
+      console.log(`✅ Match encontrado!`)
+      return true
+    }
+  }
+
+  console.log(`❌ Nenhum match encontrado`)
+  return false
 }
 
-const extractProcedimentosData = html => {
+const extractProcedimentosData = (html, tenant) => {
   const $ = cheerio.load(html)
   const procedimentos = []
+  let totalProcessados = 0
+  let totalValidos = 0
 
   $('table tbody tr').each((i, element) => {
     try {
+      totalProcessados++
       const $row = $(element)
       const $blockquote = $row.find('blockquote')
+
+      // Extrai o texto da unidade gestora
+      const ugText = $blockquote
+        .find('b:contains("UG:")')
+        .parent()
+        .text()
+        .trim()
+
+      // Verifica se a unidade gestora pertence ao tenant atual
+      if (!isValidManagementUnit(ugText, tenant)) {
+        return // Pula este item se não pertencer ao tenant
+      }
+
+      totalValidos++
 
       // Função auxiliar para extração de texto com fallback
       const extractText = (selector, defaultValue = 'Não informado') => {
@@ -55,18 +103,12 @@ const extractProcedimentosData = html => {
           }
           nextNode = nextNode.nextSibling
         }
-        return (
-          text
-            .replace(/\n/g, ' ')
-            .replace(/N° Proc\. Administrativo:/g, '')
-            .trim()
-            .replace(/\s+/g, ' ') || defaultValue
-        )
+        return text.replace(/\n/g, ' ').trim() || defaultValue
       }
 
       const idProcedimento = $row.find('a').attr('href')?.split('=')[1]?.trim()
       const processoAdministrativo = $blockquote
-        .find(optimizeSelectors.LABEL_INFO)
+        .find('span.label-info')
         .first()
         .text()
         .trim()
@@ -105,9 +147,7 @@ const extractProcedimentosData = html => {
 
       const procedimento = {
         id: idProcedimento || `N/I-${i}`,
-        unidadeGestora: extractText('b:contains("UG:")')
-          .split('N° Proc. Administrativo')[0]
-          .trim(),
+        unidadeGestora: ugText.split('N° Proc. Administrativo')[0].trim(),
         processoAdministrativo,
         processoLicitatorio: extractText('b:contains("Proc. Licitatório:")'),
         descricaoObjeto: $blockquote.find('p').text().trim() || 'Não informado',
@@ -136,15 +176,19 @@ const extractProcedimentosData = html => {
       }
 
       if (!procedimento.id || !procedimento.unidadeGestora) {
-        throw new Error(`Dados incompletos na linha ${i}`)
+        console.log(`⚠️ Dados incompletos na linha ${i}`)
+        return
       }
+
       procedimentos.push(procedimento)
     } catch (error) {
-      console.error(`Erro ao processar linha ${i}:`, error.message)
+      console.error(`❌ Erro ao processar linha ${i}:`, error.message)
     }
   })
 
-  console.log(`Extraídos ${procedimentos.length} procedimentos desta página`)
+  console.log(
+    `✅ Página processada - ${totalValidos} itens válidos de ${totalProcessados} totais`
+  )
   return procedimentos
 }
 
@@ -410,44 +454,93 @@ const getProcedimentos = async () => {
   try {
     let allProcedimentos = []
     const limit = 25 // Quantidade de itens por página
-    let totalPages = 1
+    const tenant = process.env.TENANT_ID
+    let failedPages = []
+    let totalRegistros = 0
+
+    if (!tenant || !municipalities[tenant]) {
+      throw new Error('Tenant não configurado ou inválido')
+    }
+
+    const municipalityCode = municipalities[tenant].code
 
     // Primeiro request para obter o total de registros
-    const initialData = await fetchPage(1, limit)
-    totalPages = Math.ceil(initialData.totalRegistros / limit)
-    allProcedimentos = initialData.procedimentos
+    console.log('🔄 Buscando primeira página para obter total de registros...')
+    const initialData = await fetchPage(1, limit, municipalityCode)
+    totalRegistros = initialData.totalRegistros
+    const totalPages = Math.ceil(totalRegistros / limit)
 
-    console.log(
-      `📌 Primeira página processada - ${initialData.procedimentos.length} itens`
-    )
-    console.log(`📊 Total de páginas estimado: ${totalPages}`)
+    console.log(`📊 Total de registros: ${totalRegistros}`)
+    console.log(`📊 Total de páginas: ${totalPages}`)
+
+    allProcedimentos = initialData.procedimentos
 
     // Loop para percorrer todas as páginas a partir da segunda
     for (let page = 2; page <= totalPages; page++) {
-      await new Promise(resolve => setTimeout(resolve, 3000)) // Pequeno delay para evitar bloqueios
-
       try {
+        await new Promise(resolve => setTimeout(resolve, 3000)) // Delay entre requisições
+
         console.log(`🔄 Coletando página ${page}/${totalPages}...`)
         const pageData = await fetchPage(
           page,
           limit,
-          initialData.totalRegistros
+          municipalityCode,
+          totalRegistros
         )
-        allProcedimentos = [...allProcedimentos, ...pageData.procedimentos]
 
-        console.log(
-          `✅ Página ${page} processada - ${pageData.procedimentos.length} itens`
-        )
+        if (pageData.procedimentos.length > 0) {
+          allProcedimentos = [...allProcedimentos, ...pageData.procedimentos]
+          console.log(
+            `✅ Página ${page} processada - ${pageData.procedimentos.length} itens`
+          )
+        } else {
+          console.log(
+            `⚠️ Página ${page} sem dados - Adicionando à lista de retry`
+          )
+          failedPages.push(page)
+        }
       } catch (error) {
         console.error(`❌ Erro ao processar a página ${page}:`, error.message)
-        throw error
+        failedPages.push(page)
+        await new Promise(resolve => setTimeout(resolve, 5000)) // Delay maior após erro
       }
     }
 
+    // Tenta recuperar páginas que falharam
+    if (failedPages.length > 0) {
+      console.log(
+        `🔄 Tentando recuperar ${failedPages.length} páginas que falharam...`
+      )
+      for (const page of failedPages) {
+        try {
+          await new Promise(resolve => setTimeout(resolve, 5000))
+          console.log(`🔄 Tentando recuperar página ${page}...`)
+          const pageData = await fetchPage(
+            page,
+            limit,
+            municipalityCode,
+            totalRegistros
+          )
+          if (pageData.procedimentos.length > 0) {
+            allProcedimentos = [...allProcedimentos, ...pageData.procedimentos]
+            console.log(`✅ Página ${page} recuperada com sucesso`)
+          }
+        } catch (error) {
+          console.error(`❌ Falha definitiva na página ${page}:`, error.message)
+        }
+      }
+    }
+
+    // Remove duplicatas
+    const uniqueProcedimentos = [
+      ...new Map(allProcedimentos.map(item => [item.id, item])).values()
+    ]
+
     console.log(
-      `🎉 Scraping completo! Total de registros coletados: ${allProcedimentos.length}`
+      `⚠️ Atenção: Coletados ${uniqueProcedimentos.length} registros de ${totalRegistros} esperados`
     )
-    return allProcedimentos
+
+    return uniqueProcedimentos
   } catch (error) {
     console.error('❌ Erro crítico:', {
       message: error.message,
@@ -457,14 +550,20 @@ const getProcedimentos = async () => {
   }
 }
 
-const fetchPage = async (page, limit, totalRegistrosFromFirstPage = null) => {
+const fetchPage = async (
+  page,
+  limit,
+  municipalityCode,
+  totalRegistrosFromFirstPage = null
+) => {
   try {
     const formData = new FormData()
+    const tenant = process.env.TENANT_ID
 
     // Parâmetros fixos da requisição
     const formFields = {
       isestadual: '',
-      municipios: '1703701',
+      municipios: municipalityCode,
       unidadegestora: '',
       numprsadm: '',
       anoprocessode: 'T',
@@ -486,7 +585,7 @@ const fetchPage = async (page, limit, totalRegistrosFromFirstPage = null) => {
     const paginationParams = {
       tipoordenacao: 'procedimento',
       ordem: 'DESC',
-      municipios: '1703701',
+      municipios: municipalityCode,
       page: page,
       limit: limit,
       start: (page - 1) * limit,
@@ -495,8 +594,11 @@ const fetchPage = async (page, limit, totalRegistrosFromFirstPage = null) => {
 
     formData.append('data-filter', JSON.stringify(paginationParams))
 
-    // Se for a partir da segunda página, adicionamos `type-new-page`
-    if (page > 1 && totalRegistrosFromFirstPage) {
+    // Se for a partir da segunda página, adicionamos os parâmetros necessários
+    if (page > 1) {
+      if (!totalRegistrosFromFirstPage) {
+        throw new Error('Total de registros não fornecido para paginação')
+      }
       formData.append('total-registros', String(totalRegistrosFromFirstPage))
       formData.append('type-new-page', 'next')
     }
@@ -505,85 +607,107 @@ const fetchPage = async (page, limit, totalRegistrosFromFirstPage = null) => {
     const endpoint =
       page === 1 ? '/pesquisar/ListaProcedimento' : '/pesquisar/NewPage'
 
+    // Adiciona headers específicos para simular um navegador real
+    const headers = {
+      ...formData.getHeaders(),
+      'X-Requested-With': 'XMLHttpRequest',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      Accept: 'text/html, */*; q=0.01',
+      'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      Referer: `${BASE_URL}/pesquisar/ListaProcedimento`
+    }
+
+    // Log detalhado da requisição
     console.log(`🔎 Buscando página ${page} em: ${BASE_URL}${endpoint}`)
     console.log(
       `📊 Parâmetros enviados:`,
       JSON.stringify(paginationParams, null, 2)
     )
 
-    const response = await axios.post(`${BASE_URL}${endpoint}`, formData, {
-      headers: {
-        ...formData.getHeaders(),
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7'
-      },
-      timeout: 30000
-    })
+    // Faz a requisição com retry em caso de erro
+    let retries = 3
+    let response
+    while (retries > 0) {
+      try {
+        response = await axios.post(`${BASE_URL}${endpoint}`, formData, {
+          headers,
+          timeout: 30000
+        })
+        break
+      } catch (error) {
+        retries--
+        if (retries === 0) throw error
+        console.log(
+          `⚠️ Tentativa falhou, tentando novamente... (${retries} tentativas restantes)`
+        )
+        await new Promise(resolve => setTimeout(resolve, 5000))
+      }
+    }
 
     const $ = cheerio.load(response.data)
     const totalRegistros = extractTotalRegistros($)
 
-    console.log(`✅ Página ${page} carregada com sucesso!`)
+    // Verifica se a página retornou dados
+    const rows = $('table tbody tr').length
+    if (rows === 0 && page === 1) {
+      console.log('⚠️ Atenção: Primeira página sem dados')
+      return { procedimentos: [], totalRegistros: 0 }
+    }
+
+    console.log(`✅ Página ${page} carregada com sucesso! (${rows} linhas)`)
+
+    // Aguarda um intervalo antes de retornar para evitar sobrecarga
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
     return {
-      procedimentos: extractProcedimentosData(response.data),
+      procedimentos: extractProcedimentosData(response.data, tenant),
       totalRegistros: totalRegistros
     }
   } catch (error) {
     console.error(`❌ Erro na página ${page}:`, {
       message: error.message,
-      status: error.response?.status,
-      data: error.response?.data?.substring(0, 500)
+      status: error.response?.status
     })
-    throw error
+    throw new Error(`Falha na recuperação da página ${page}: ${error.message}`)
   }
 }
 
-// Função para extrair o total de registros de forma robusta
 const extractTotalRegistros = $ => {
   try {
-    // 1. Tenta extrair via input oculto
-    const hiddenInput = $('input#total-registros').val()
-    if (hiddenInput) {
-      console.log('Total via input oculto:', hiddenInput)
-      return parseInt(hiddenInput)
-    }
-
-    // 2. Tenta extrair via texto do elemento .pagination-info
-    const panelText = $('.pagination-info').text()
-    console.log('Panel text:', panelText)
-    // Exemplo esperado: "Exibindo 26 de 526 registros"
-    const match = panelText.match(/de\s+([\d.]+)/i)
-    if (match) {
-      const total = parseInt(match[1].replace(/\./g, ''))
-      console.log('Total extraído da pagination-info:', total)
+    // Tenta extrair do texto de paginação
+    const paginationText = $('.pagination-info').text().trim()
+    const totalMatch = paginationText.match(/de\s+(\d+(?:\.\d+)?)\s+registros/)
+    if (totalMatch) {
+      const total = parseInt(totalMatch[1].replace(/\./g, ''))
+      console.log(`📊 Total de registros (via texto): ${total}`)
       return total
     }
 
-    // 3. Tenta extrair via os itens da paginação (ex: UL com class "pagination")
-    const lastPageItem = $('.pagination li:nth-last-child(2)').text()
-    if (lastPageItem) {
-      const lastPage = parseInt(lastPageItem) || 1
-      // Tenta pegar o valor do "limit" a partir de um <select> (caso exista)
-      const perPage = parseInt($('select[name="limit"]').val()) || 25
-      const total = lastPage * perPage
-      console.log('Total extraído via paginação:', total)
+    // Tenta extrair do input hidden
+    const hiddenTotal = $('input#total-registros').val()
+    if (hiddenTotal) {
+      const total = parseInt(hiddenTotal)
+      console.log(`📊 Total de registros (via input): ${total}`)
       return total
     }
 
-    // 4. Fallback: se não houver paginação, usa a quantidade de linhas da tabela
-    const rows = $('table tbody tr').length
-    if (rows) {
-      console.log('Fallback: total de linhas da tabela:', rows)
-      return rows
+    // Tenta extrair da última página
+    const lastPage = $('.pagination li:not(.next):last').text().trim()
+    if (lastPage && !isNaN(lastPage)) {
+      const total = parseInt(lastPage) * 25 // 25 registros por página
+      console.log(`📊 Total de registros (via paginação): ${total}`)
+      return total
     }
 
-    console.error('Total de registros não encontrado!')
-    return 0
+    // Se nenhum método funcionar, conta as linhas da tabela
+    const rowCount = $('table tbody tr').length
+    console.log(`📊 Total de registros (via contagem): ${rowCount}`)
+    return rowCount
   } catch (error) {
-    console.error('Erro na extração do total:', error)
+    console.error('❌ Erro ao extrair total de registros:', error)
     return 0
   }
 }
