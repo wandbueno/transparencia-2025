@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getLicitacaoById, getItensVencedores, getItensFracassadosOuDesertos, getItensEmAberto, getItensCanceladosESubstituidos, getEmpresasCredenciadas, getEmpenhos, getContratos } from "../../../services/contratosLicitacoes/licitacoes";
+import { getDocumentos, downloadDocumento, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
@@ -8,6 +9,7 @@ import '../PagesDetail.css';
 import '../../../assets/global.css';
 import { config } from "../../../assets/config";
 import ButtonTable from '../../common/ButtonTable'
+import ButtonDownloadAnexos from '../../common/ButtonDownloadAnexos/ButtonDownloadAnexos';
 
 const LicitacaoDetail = () => {
   const { id } = useParams();  
@@ -23,12 +25,21 @@ const LicitacaoDetail = () => {
   const [empresasCredenciadas, setEmpresasCredenciadas] = useState([]);
   const [empenhos, setEmpenhos] = useState([]);
   const [contratos, setContratos] = useState([]);
+  const [documentos, setDocumentos] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getLicitacaoById(id);  
         setData(result);
+
+         // Busca os documentos
+         try {
+          const docsResponse = await getDocumentos('LICITACAO', id)
+          setDocumentos(docsResponse.registros)
+        } catch (docError) {
+          console.error('Erro ao buscar documentos:', docError)
+        }
 
         // Buscando os itens relacionados
         const itensVencedoresResult = await getItensVencedores(id);
@@ -164,10 +175,40 @@ const LicitacaoDetail = () => {
       { name: 'Data do Decreto', selector: row => row.dataDoDecreto, sortable: true },
     ];
 
+      // Add function to handle document visualization
+  const handleVisualizarDocumento = async (codigo) => {
+    try {
+      const blobUrl = await visualizarDocumento(codigo);
+      window.open(blobUrl, '_blank');
+    } catch (error) {
+      console.error('Erro ao visualizar documento:', error);
+      // You may want to show an error message to the user here
+    }
+  };
+     // Definição das colunas para o DataTable dos Documentos
+  const columnsDocumentos = [
+    { name: 'Nome', selector: row => row.nome, sortable: true, width: '35%' },
+    { name: 'Descrição', selector: row => row.descricao, sortable: true, width: '35%' },
+    { name: 'Extensão', selector: row => row.extensao, sortable: true, width: '15%' },
+    { 
+      name: 'Ação',
+      selector: row => row.codigo,
+      cell: row => (
+        <ButtonDownloadAnexos 
+          onClick={() => handleVisualizarDocumento(row.codigo)}
+          className="btn btn-primary"
+        >
+          Visualizar
+        </ButtonDownloadAnexos>
+      ),
+      width: '15%',
+      excludeFromExport: true
+    }
+  ]
+
     // Definindo o título dinamicamente com base nos dados
    const pageTitle = data ? `Detalhes: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes';
 
-   
 
   return (
     <div className="container">
@@ -225,7 +266,7 @@ const LicitacaoDetail = () => {
         </div> 
 
         <div ref={tableRef}>
-          
+         
           {/* Empresas Credenciadas */}
           {empresasCredenciadas && empresasCredenciadas.length > 0 && (
               <>
@@ -313,6 +354,17 @@ const LicitacaoDetail = () => {
                 />
               </>
             )}
+
+             {/* Documentos */}
+           {documentos && documentos.length > 0 && (
+            <>
+              <h2 className="titulo-tabela">Documentos Anexos</h2>
+              <DataTableDetail
+                columns={columnsDocumentos}
+                data={documentos}
+              />
+            </>
+          )}
           
         </div>
         

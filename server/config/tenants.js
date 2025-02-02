@@ -21,12 +21,12 @@ const tenants = {
   //   cliente_integrado: process.env.CLIENTE_INTEGRADO,
   //   allowed_domains: ['arraias.to.gov.br', 'localhost']
   // },
-  // nazare: {
+  // brejinhodenazare: {
   //   name: 'nazare',
   //   api_url: process.env.SERVER_NAZARE,
   //   token: process.env.TOKEN_NAZARE,
   //   cliente_integrado: process.env.CLIENTE_INTEGRADO,
-  //   allowed_domains: ['nazare.to.gov.br', 'localhost']
+  //   allowed_domains: ['brejinhodenazare.to.gov.br', 'localhost']
   // }
 }
 
