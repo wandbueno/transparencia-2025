@@ -5,7 +5,7 @@ const fileProxyRouter = require('./services/fileProxy')
 require('dotenv').config()
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 2025
 
 // Middleware para verificar tenant
 const tenantMiddleware = (req, res, next) => {
@@ -31,7 +31,7 @@ app.use(tenantMiddleware)
 
 // Rotas
 app.use('/api/tipo', procedimentosRoutes)
-app.use('/api/files', fileProxyRouter) // Mudamos a rota do proxy
+app.use('/api/files', fileProxyRouter) // Rota correta para o proxy de arquivos
 
 // Rota básica para teste
 app.get('/', (req, res) => {

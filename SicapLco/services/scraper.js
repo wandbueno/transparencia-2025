@@ -7,14 +7,6 @@ const municipalities = require('../config/municipalities')
 
 const BASE_URL = 'https://app.tce.to.gov.br/lo_publico'
 
-const cookieJar = new tough.CookieJar()
-const client = wrapper(
-  axios.create({
-    jar: cookieJar,
-    withCredentials: true
-  })
-)
-
 // Função auxiliar para classificação de modalidade
 const classificarModalidade = tipoExecucao => {
   const lowerCaseTipo = tipoExecucao.toLowerCase()
@@ -714,25 +706,35 @@ const extractTotalRegistros = $ => {
 
 const getProcedimentoById = async id => {
   try {
+    // Cria um novo jar e client para cada requisição
+    const cookieJar = new tough.CookieJar()
+    const client = wrapper(
+      axios.create({
+        jar: cookieJar,
+        withCredentials: true
+      })
+    )
+
+    // Primeiro request para inicializar a sessão
     await client.get(`${BASE_URL}/pesquisar/detalhes`, {
       params: { idProcedimento: id }
     })
+
+    // Segundo request para obter os dados
     const response = await client.get(`${BASE_URL}/pesquisar/detalhes`, {
       params: { idProcedimento: id }
     })
+
     const $ = cheerio.load(response.data)
-    const dadosPrimeiraFase = extractPrimeiraFase($)
-    const anexos = extractAnexos($)
-    const dadosSegundaFase = extractSegundaFase($)
-    const contratos = extractTerceiraFase($)
+
     return {
       id,
-      dadosPrimeiraFase,
-      anexos,
-      dadosSegundaFase,
-      contratos,
+      dadosPrimeiraFase: extractPrimeiraFase($),
+      anexos: extractAnexos($),
+      dadosSegundaFase: extractSegundaFase($),
+      contratos: extractTerceiraFase($),
       sessionData: {
-        cookies: cookieJar.getCookiesSync(BASE_URL).toString(),
+        cookies: cookieJar.getCookieStringSync(BASE_URL), // Cookies serializados
         referer: `${BASE_URL}/pesquisar/detalhes?idProcedimento=${id}`
       }
     }

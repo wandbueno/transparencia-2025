@@ -118,15 +118,18 @@ router.get('/detalhes/:id', async (req, res) => {
     }
 
     // Define o tenant
-    process.env.TENANT_ID = tenant
+    process.env.TENANT_ID = tenant // ⚠️ Atenção para concorrência em produção!
 
     // Busca detalhes
     const detalhes = await getProcedimentoById(id)
 
-    // Salva no cache
-    cache.set(cacheKey, detalhes)
+    // Armazena a sessão no cache por 15 minutos
+    const sessionCacheKey = `${tenant}-session-${id}`
+    cache.set(sessionCacheKey, detalhes.sessionData, 900)
 
-    res.json(detalhes)
+    // Salva no cache e envia resposta
+    cache.set(cacheKey, detalhes)
+    res.json(detalhes) // ← Única resposta
   } catch (error) {
     console.error('Erro ao buscar detalhes do procedimento:', error)
     res.status(500).json({
