@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getContratosById } from "../../../services/contratosLicitacoes/contratos";
+import { getDocumentos, downloadDocumento, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import '../../../assets/global.css';
 import '../PagesDetail.css';
 import DataTableDetail from "../../common/DataTableDetail";
 import { config } from "../../../assets/config";
+import ButtonDownloadAnexos from '../../common/ButtonDownloadAnexos/ButtonDownloadAnexos';
 
 const ContratosDetail = () => {
   const { id } = useParams();  
@@ -15,12 +17,21 @@ const ContratosDetail = () => {
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo principal
   const tableRef = useRef(); // Referência para capturar as tabelas separadamente
+  const [documentos, setDocumentos] = useState([])
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getContratosById(id);  
         setData(result); 
+
+        try {
+          const docsResponse = await getDocumentos('CONTRATO', id)
+          setDocumentos(docsResponse.registros)
+        } catch (docError) {
+          console.error('Erro ao buscar documentos:', docError)
+        }
 
          // Atualizando o título da página com base nos dados recebidos
          if (result) {
@@ -126,6 +137,49 @@ const ContratosDetail = () => {
       { name: 'Valor Atualizado do Contrato', selector: row => row.valorAtualizadoDoContrato.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true }
     ];
 
+      // Add function to handle document visualization
+  const handleVisualizarDocumento = async (codigo, extensao) => {
+    try {
+      const blobUrl = await visualizarDocumento(codigo, extensao);
+      
+      if (extensao?.toLowerCase() === 'pdf') {
+        // Para PDFs, abre em nova aba
+        window.open(blobUrl, '_blank');
+      } else {
+        // Para outros arquivos, força o download
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `documento_${codigo}.${extensao}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
+      // Limpa a URL do blob após o uso
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+    } catch (error) {
+      console.error('Erro ao visualizar documento:', error);
+    }
+  };
+      // Definição das colunas para o DataTable dos Documentos
+  const columnsDocumentos = [
+    { name: 'Nome', selector: row => row.nome, sortable: true, width: '35%' },
+    { name: 'Descrição', selector: row => row.descricao, sortable: true, width: '35%' },
+    { name: 'Extensão', selector: row => row.extensao, sortable: true, width: '15%' },
+    { 
+      name: 'Ação',
+      selector: row => row.codigo,
+      cell: row => (
+        <ButtonDownloadAnexos 
+          onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+          className="btn btn-primary"
+          label={row.extensao?.toLowerCase() === 'pdf' ? 'Visualizar' : 'Baixar'}
+        />
+      ),
+      width: '15%',
+      excludeFromExport: true
+    }
+  ]
 
   return (
     <div className="container">
@@ -219,6 +273,17 @@ const ContratosDetail = () => {
                 />
               </>
             )}
+
+               {/* Documentos */}
+           {documentos && documentos.length > 0 && (
+            <>
+              <h2 className="titulo-tabela">Documentos Anexos</h2>
+              <DataTableDetail
+                columns={columnsDocumentos}
+                data={documentos}
+              />
+            </>
+          )}
           </div>
         </div>
         

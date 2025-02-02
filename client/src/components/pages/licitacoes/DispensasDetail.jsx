@@ -20,7 +20,7 @@ const DispensasDetail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      try { 
         const result = await getDispensasById(id);  
         setData(result); 
       // Busca os documentos
@@ -301,7 +301,7 @@ const DispensasDetail = () => {
                   data={data.empenhos.registros}
                 />
               </>
-            )}
+            )} 
           </div>
           <div className="tabela-detalhes">
             {data.itensEmAberto.total > 0 && (
