@@ -36,11 +36,23 @@ const SicapDetail = () => {
 
   const pageTitle = data ? `Detalhes do Procedimento ${data.id}` : 'Detalhes do Procedimento';
 
+  // Função para extrair token e hash da URL
+  const extractFileParams = (url) => {
+    const params = new URLSearchParams(url.split('?')[1]);
+    return {
+      token: params.get('t'),
+      hash: params.get('h')
+    };
+  };
+
   // Função para gerar URL do proxy
-  const getProxyUrl = (token) => {
-    const baseUrl = import.meta.env.VITE_SICAP_API_URL || 'http://localhost:2025'
-    return `${baseUrl}/api/files/file/${id}/${token}`
-  }
+  const getProxyUrl = (url) => {
+    const { token, hash } = extractFileParams(url);
+    if (!token || !hash) return null;
+    
+    const baseUrl = import.meta.env.VITE_SICAP_API_URL || 'http://localhost:2025';
+    return `${baseUrl}/api/files/file/${id}/${token}/${hash}`;
+  };
 
   // Atualização das colunas dos anexos para usar o proxy
   const columnsAnexos = [
@@ -52,23 +64,19 @@ const SicapDetail = () => {
       name: 'Arquivo', 
       selector: row => row.arquivo.nome,
       cell: row => {
-        // Extrai o token do URL original
-        const token = row.arquivo.url.split('t=')[1]?.split('&')[0]
-        if (!token) return 'Link indisponível'
-        
-        // Gera URL do proxy
-        const proxyUrl = getProxyUrl(token)
+        const proxyUrl = getProxyUrl(row.arquivo.url);
+        if (!proxyUrl) return 'Link indisponível';
         
         return (
           <a 
-            href={proxyUrl} 
+            href={proxyUrl}
             className="btn-download"
-            download // Força download
+            download
           >
             <i className="fas fa-download"></i>
             {row.arquivo.nome}
           </a>
-        )
+        );
       },
       width: '30%'
     }
@@ -152,6 +160,16 @@ const SicapDetail = () => {
           </div>
 
           <div ref={tableRef}>
+            {data.anexos?.length > 0 && (
+              <>
+                <h3 className="titulo-tabela">Anexos</h3>
+                <DataTableDetail
+                  columns={columnsAnexos}
+                  data={data.anexos}
+                />
+              </>
+            )}
+
             {data.dadosSegundaFase?.situacoes?.length > 0 && (
               <>
                 <h3 className="titulo-tabela">Situação</h3>
@@ -168,16 +186,6 @@ const SicapDetail = () => {
                 <DataTableDetail
                   columns={columnsHabilitados}
                   data={data.dadosSegundaFase.habilitados}
-                />
-              </>
-            )}
-
-            {data.anexos?.length > 0 && (
-              <>
-                <h3 className="titulo-tabela">Anexos</h3>
-                <DataTableDetail
-                  columns={columnsAnexos}
-                  data={data.anexos}
                 />
               </>
             )}
