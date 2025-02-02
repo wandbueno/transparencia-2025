@@ -35,7 +35,7 @@ export const getDocumentName = async codigo => {
   }
 }
 
-// Função para baixar documento
+// Function to download document
 export const downloadDocumento = async codigo => {
   try {
     const response = await axios.get(
@@ -45,9 +45,13 @@ export const downloadDocumento = async codigo => {
       }
     )
 
-    // Obtém o nome do arquivo do header Content-Disposition
+    // Get content type from response
+    const contentType = response.headers['content-type']
+
+    // Get filename from content disposition or use default with extension
     const contentDisposition = response.headers['content-disposition']
     let filename = 'documento'
+
     if (contentDisposition) {
       const filenameMatch = contentDisposition.match(
         /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
@@ -57,21 +61,18 @@ export const downloadDocumento = async codigo => {
       }
     }
 
-    // Cria URL do blob
-    const url = window.URL.createObjectURL(
-      new Blob([response.data], {
-        type: response.headers['content-type']
-      })
-    )
+    // Create blob URL
+    const blob = new Blob([response.data], { type: contentType })
+    const url = window.URL.createObjectURL(blob)
 
-    // Cria elemento <a> temporário para download
+    // Create temporary link and trigger download
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', filename)
     document.body.appendChild(link)
     link.click()
 
-    // Limpa
+    // Cleanup
     link.parentNode.removeChild(link)
     window.URL.revokeObjectURL(url)
 
@@ -82,7 +83,7 @@ export const downloadDocumento = async codigo => {
   }
 }
 
-// Função para visualizar documento (retorna URL do blob)
+// Função para visualizar documento
 export const visualizarDocumento = async codigo => {
   try {
     const response = await axios.get(
@@ -92,12 +93,14 @@ export const visualizarDocumento = async codigo => {
       }
     )
 
-    // Cria e retorna URL do blob
-    return window.URL.createObjectURL(
+    // Criar URL do blob
+    const blobUrl = window.URL.createObjectURL(
       new Blob([response.data], {
         type: response.headers['content-type']
       })
     )
+
+    return blobUrl
   } catch (error) {
     console.error('Erro ao visualizar documento:', error)
     throw error

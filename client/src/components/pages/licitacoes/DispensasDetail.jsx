@@ -118,13 +118,27 @@ const DispensasDetail = () => {
   ];
 
   // Add function to handle document visualization
-  const handleVisualizarDocumento = async (codigo) => {
+  const handleVisualizarDocumento = async (codigo, extensao) => {
     try {
-      const blobUrl = await visualizarDocumento(codigo);
-      window.open(blobUrl, '_blank');
+      const blobUrl = await visualizarDocumento(codigo, extensao);
+      
+      if (extensao?.toLowerCase() === 'pdf') {
+        // Para PDFs, abre em nova aba
+        window.open(blobUrl, '_blank');
+      } else {
+        // Para outros arquivos, força o download
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `documento_${codigo}.${extensao}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
+      // Limpa a URL do blob após o uso
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
     } catch (error) {
       console.error('Erro ao visualizar documento:', error);
-      // You may want to show an error message to the user here
     }
   };
       // Definição das colunas para o DataTable dos Documentos
@@ -137,11 +151,10 @@ const DispensasDetail = () => {
       selector: row => row.codigo,
       cell: row => (
         <ButtonDownloadAnexos 
-          onClick={() => handleVisualizarDocumento(row.codigo)}
+          onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
           className="btn btn-primary"
-        >
-          Visualizar
-        </ButtonDownloadAnexos>
+          label={row.extensao?.toLowerCase() === 'pdf' ? 'Visualizar' : 'Baixar'}
+        />
       ),
       width: '15%',
       excludeFromExport: true
@@ -312,7 +325,7 @@ const DispensasDetail = () => {
               />
             </>
           )}
-          
+
           </div>
         </div> 
       </div> 

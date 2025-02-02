@@ -158,13 +158,13 @@ const LicitacaoDetail = () => {
 
   // Definição das colunas para o DataTable dos Itens Cancelados e Substituídos
   const columnsItensCanceladosESubstituidos = [
-    { name: 'Data', selector: row => row.data, sortable: true },
-    { name: 'Fornecedor', selector: row => row.fornecedor, sortable: true },
-    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true },
-    { name: 'Produto', selector: row => row.produto, sortable: true },
-    { name: 'Quantidade', selector: row => row.quantidade, sortable: true },
-    { name: 'Unidade', selector: row => row.unidade, sortable: true },
-    { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true },
+    { name: 'Data', selector: row => row.data, sortable: true, width: '10%' },    
+    { name: 'Lote e Item', selector: row => row.loteEItem, sortable: true, width: '10%' },
+    { name: 'Fornecedor', selector: row => row.fornecedor, sortable: true, width: '25%' },
+    { name: 'Produto', selector: row => row.produto, sortable: true, width: '25%' },
+    { name: 'Quantidade', selector: row => row.quantidade, sortable: true, width: '10%' },
+    { name: 'Unidade', selector: row => row.unidade, sortable: true, width: '10%' },
+    { name: 'Valor Total', selector: row => row.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), sortable: true, width: '10%' },
   ];
 
   // Definição das colunas para o DataTable dos Responsáveis pela Comissão
