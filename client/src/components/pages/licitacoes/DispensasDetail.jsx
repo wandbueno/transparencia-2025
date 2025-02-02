@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getDispensasById } from "../../../services/contratosLicitacoes/dispensas";
-import { getDocumentos, downloadDocumento, visualizarDocumento } from '../../../services/documentos/documentos';
+import { getDocumentos, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
@@ -120,23 +120,10 @@ const DispensasDetail = () => {
   // Add function to handle document visualization
   const handleVisualizarDocumento = async (codigo, extensao) => {
     try {
-      const blobUrl = await visualizarDocumento(codigo, extensao);
-      
-      if (extensao?.toLowerCase() === 'pdf') {
-        // Para PDFs, abre em nova aba
+      const blobUrl = await visualizarDocumento(codigo, extensao, 'LICITACAO');
+      if (blobUrl) {
         window.open(blobUrl, '_blank');
-      } else {
-        // Para outros arquivos, força o download
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `documento_${codigo}.${extensao}`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
       }
-      
-      // Limpa a URL do blob após o uso
-      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
     } catch (error) {
       console.error('Erro ao visualizar documento:', error);
     }
@@ -149,13 +136,16 @@ const DispensasDetail = () => {
     { 
       name: 'Ação',
       selector: row => row.codigo,
-      cell: row => (
-        <ButtonDownloadAnexos 
-          onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
-          className="btn btn-primary"
-          label={row.extensao?.toLowerCase() === 'pdf' ? 'Visualizar' : 'Baixar'}
-        />
-      ),
+      cell: row => {
+        const extensao = row.extensao?.toLowerCase()
+        const isPdf = extensao === 'pdf'
+        return (
+          <ButtonDownloadAnexos 
+            onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+            label={isPdf ? 'Visualizar' : 'Baixar'}
+          />
+        )
+      },
       width: '15%',
       excludeFromExport: true
     }

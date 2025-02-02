@@ -53,24 +53,11 @@ const LegislacaoDetail = () => {
   // Função para visualizar documento
   const handleVisualizarDocumento = async (codigo, extensao) => {
     try {
-      const blobUrl = await visualizarDocumento(codigo, extensao, 'DOCUMENTO_PORTAL_DA_TRANSPARENCIA')
-      
-      if (extensao?.toLowerCase() === 'pdf') {
-        window.open(blobUrl, '_blank')
-      } else {
-        const link = document.createElement('a')
-        link.href = blobUrl
-        link.download = `documento_${codigo}.${extensao}`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      }
-      
-      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100)
+      await visualizarDocumento(codigo, extensao, 'DOCUMENTO_PORTAL_DA_TRANSPARENCIA')
     } catch (error) {
       console.error('Erro ao visualizar documento:', error)
     }
-  }  
+  }
 
   // Definição das colunas para o DataTable dos Documentos
   const columnsDocumentos = [
@@ -80,12 +67,16 @@ const LegislacaoDetail = () => {
     { 
       name: 'Ação',
       selector: row => row.codigo,
-      cell: row => (
-        <ButtonDownloadAnexos 
-          onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
-          label={row.extensao?.toLowerCase() === 'pdf' ? 'Visualizar' : 'Baixar'}
-        />
-      ),
+      cell: row => {
+        const extensao = row.extensao?.toLowerCase()
+        const isPdf = extensao === 'pdf'
+        return (
+          <ButtonDownloadAnexos 
+            onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+            label={isPdf ? 'Visualizar' : 'Baixar'}
+          />
+        )
+      },
       width: '15%',
       excludeFromExport: true
     }
