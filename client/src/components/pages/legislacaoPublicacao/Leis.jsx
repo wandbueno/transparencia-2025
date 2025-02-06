@@ -9,8 +9,7 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import ButtonTable from "../../common/ButtonTable";
 import { config } from '../../../assets/config';
 
-const columnsLeis = [
-  
+const columnsLeis = [  
   { name: "Tipo", selector: (row) => row.tipoDoDocumento, sortable: true, width: '5%' },
   { name: "Número", selector: (row) => row.numeroDoDocumento, sortable: true, width: '8%' },
   { name: "Data", selector: (row) => row.dataDaPublicacao, sortable: true, width: '10%' },
@@ -46,7 +45,7 @@ const Leis = () => {
   useEffect(() => {
     
     // Atualiza o título da aba do navegador
-    document.title = `Pagamentos - Portal Transparência - ${config.geral.nomeOrgao}`
+    document.title = `Leis Municípais - Portal Transparência - ${config.geral.nomeOrgao}`
 
     const fetchData = async () => {
       try {

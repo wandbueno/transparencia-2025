@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getDispensasById } from "../../../services/contratosLicitacoes/dispensas";
+import { getDocumentos, visualizarDocumento } from '../../../services/documentos/documentos';
 import PageHeader from '../../common/PageHeader';
 import LoadingSpinner from '../../common/LoadingSpinner'
 import DataTableDetail from '../../common/DataTableDetail';
 import '../PagesDetail.css';
 import '../../../assets/global.css';
+import ButtonDownloadAnexos from '../../common/ButtonDownloadAnexos/ButtonDownloadAnexos';
 
 const DispensasDetail = () => {
   const { id } = useParams();  
@@ -14,13 +16,20 @@ const DispensasDetail = () => {
   const [error, setError] = useState(null);
   const contentRef = useRef();  // Referência para capturar o conteúdo principal
   const tableRef = useRef(); // Referência para capturar as tabelas separadamente
+  const [documentos, setDocumentos] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      try { 
         const result = await getDispensasById(id);  
         setData(result); 
-
+      // Busca os documentos
+      try {
+        const docsResponse = await getDocumentos('LICITACAO', id)
+        setDocumentos(docsResponse.registros)
+      } catch (docError) {
+        console.error('Erro ao buscar documentos:', docError)
+      }
         
       } catch (err) {
         setError(err.message);
@@ -107,6 +116,40 @@ const DispensasDetail = () => {
     { name: 'Decreto', selector: row => row.decreto, sortable: true },
     { name: 'Data do Decreto', selector: row => row.dataDoDecreto, sortable: true },
   ];
+
+  // Add function to handle document visualization
+  const handleVisualizarDocumento = async (codigo, extensao) => {
+    try {
+      const blobUrl = await visualizarDocumento(codigo, extensao, 'LICITACAO');
+      if (blobUrl) {
+        window.open(blobUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Erro ao visualizar documento:', error);
+    }
+  };
+      // Definição das colunas para o DataTable dos Documentos
+  const columnsDocumentos = [
+    { name: 'Nome', selector: row => row.nome, sortable: true, width: '35%' },
+    { name: 'Descrição', selector: row => row.descricao, sortable: true, width: '35%' },
+    { name: 'Extensão', selector: row => row.extensao, sortable: true, width: '15%' },
+    { 
+      name: 'Ação',
+      selector: row => row.codigo,
+      cell: row => {
+        const extensao = row.extensao?.toLowerCase()
+        const isPdf = extensao === 'pdf'
+        return (
+          <ButtonDownloadAnexos 
+            onClick={() => handleVisualizarDocumento(row.codigo, row.extensao)}
+            label={isPdf ? 'Visualizar' : 'Baixar'}
+          />
+        )
+      },
+      width: '15%',
+      excludeFromExport: true
+    }
+  ]
 
    // Definindo o título dinamicamente com base nos dados
    const pageTitle = data ? `Detalhes: ${data.modalidade} Nº ${data.numeroAno}` : 'Detalhes';
@@ -248,7 +291,7 @@ const DispensasDetail = () => {
                   data={data.empenhos.registros}
                 />
               </>
-            )}
+            )} 
           </div>
           <div className="tabela-detalhes">
             {data.itensEmAberto.total > 0 && (
@@ -260,6 +303,19 @@ const DispensasDetail = () => {
                 />
               </>
             )}
+
+            
+             {/* Documentos */}
+           {documentos && documentos.length > 0 && (
+            <>
+              <h2 className="titulo-tabela">Documentos Anexos</h2>
+              <DataTableDetail
+                columns={columnsDocumentos}
+                data={documentos}
+              />
+            </>
+          )}
+
           </div>
         </div> 
       </div> 

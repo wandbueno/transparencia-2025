@@ -69,6 +69,8 @@ const OrdemCronologicaPagamentosRoutes = require('./routes/receitasDespesas/Orde
 const lrfRoutes = require('./routes/LRF/lrf')
 const comboRoutes = require('./routes/combo/combo')
 
+const documentosRoutes = require('./routes/documentos/documentos') // Nova rota
+
 // Usar as rotas
 app.use('/api/licitacoes', licitacoesRoutes)
 app.use('/api/contratos', contratosRoutes)
@@ -104,6 +106,8 @@ app.use('/api/legislacao', legislacaoRoutes)
 
 app.use('/api/lrf', lrfRoutes)
 app.use('/api/combo', comboRoutes)
+
+app.use('/api/gestao-eletronica-de-documentos', documentosRoutes)
 
 // Rota de teste para verificar configurações do tenant
 app.get('/api/test-tenant', tenantMiddleware, (req, res) => {
