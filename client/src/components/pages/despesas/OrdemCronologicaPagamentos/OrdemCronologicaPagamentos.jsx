@@ -138,18 +138,19 @@ const OrdemCronologicaPagamentos = () => {
   const handleFilterChange = (filters) => {
     console.log('Filtros recebidos:', filters);
     
-    // Ensure filters are properly formatted before sending
-    const formattedFilters = {
-      ...filters,
-      cpfCnpjDoFornecedor: filters.cpfCnpjDoFornecedor,
-      categoriaDeEmpenho: filters.categoriaDeEmpenho 
-        ? parseInt(filters.categoriaDeEmpenho) 
-        : undefined
-    };
+    // Format CPF/CNPJ if present
+    if (filters.cpfCnpjDoFornecedor) {
+      filters.cpfCnpjDoFornecedor = filters.cpfCnpjDoFornecedor.replace(/[^\d]/g, '')
+    }
+  
+    // Ensure categoriaDeEmpenho is properly converted to number
+    if (filters.categoriaDeEmpenho) {
+      filters.categoriaDeEmpenho = parseInt(filters.categoriaDeEmpenho)
+    }
   
     // Update URL with new filters
     const params = new URLSearchParams();
-    Object.entries(formattedFilters).forEach(([key, value]) => {
+    Object.entries(filters).forEach(([key, value]) => {
       if (value) {
         params.set(key, value);
       }
@@ -157,9 +158,9 @@ const OrdemCronologicaPagamentos = () => {
     setSearchParams(params);
   
     // Fetch data with new filters
-    fetchData(formattedFilters);
+    fetchData(filters);
   };
-
+  
   return (
     <div className="container">
       <PageHeader

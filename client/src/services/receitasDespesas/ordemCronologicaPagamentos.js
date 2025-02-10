@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-// client/src/services/receitasDespesas/ordemCronologicaPagamentos.js
-
 const API_BASE_URL = `${
   import.meta.env.VITE_BACKEND_URL
 }/api/ordem-cronologica-de-pagamentos`
@@ -9,13 +7,21 @@ const API_BASE_URL = `${
 // Função para buscar a lista paginada de ordens cronológicas de pagamento
 export const getOrdensCronologicasPagas = async (filters = {}) => {
   try {
+    // Format the cpfCnpjDoFornecedor to remove any formatting
+    if (filters.cpfCnpjDoFornecedor) {
+      filters.cpfCnpjDoFornecedor = filters.cpfCnpjDoFornecedor.replace(
+        /[^\d]/g,
+        ''
+      )
+    }
+
     const params = {
       pagina: 1,
       tamanhoDaPagina: -1,
       ano: filters.ano || new Date().getFullYear(),
       mes: filters.mes || new Date().getMonth() + 1,
       nomeDoFornecedor: filters.nomeDoFornecedor,
-      cpfCnpjDoFornecedor: filters.cpfCnpjDoFornecedor, // Make sure this matches
+      cpfCnpjDoFornecedor: filters.cpfCnpjDoFornecedor,
       codigoDoOrgao: filters.orgao ? parseInt(filters.orgao) : undefined,
       categoriaDeEmpenho: filters.categoriaDeEmpenho
         ? parseInt(filters.categoriaDeEmpenho)

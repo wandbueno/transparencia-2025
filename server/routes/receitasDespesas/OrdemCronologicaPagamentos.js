@@ -27,29 +27,20 @@ const fetchFromAPI = async (path, req, res) => {
 
     // Prepara os parâmetros da requisição
     const params = {
-      pagina: otherParams.pagina || 1,
-      tamanhoDaPagina: otherParams.tamanhoDaPagina || -1,
-
-      // Parâmetros de data
-      ano: otherParams.ano,
-      mes: otherParams.mes,
-
-      // Parâmetros de identificação
-      codigoDoOrgao: otherParams.codigoDoOrgao
-        ? parseInt(otherParams.codigoDoOrgao)
+      pagina: req.query.pagina || 1,
+      tamanhoDaPagina: req.query.tamanhoDaPagina || -1,
+      ano: req.query.ano,
+      mes: req.query.mes,
+      codigoDoOrgao: req.query.codigoDoOrgao
+        ? parseInt(req.query.codigoDoOrgao)
         : undefined,
-      categoriaDeEmpenho: otherParams.categoriaDeEmpenho
-        ? parseInt(otherParams.categoriaDeEmpenho)
+      categoriaDeEmpenho: req.query.categoriaDeEmpenho
+        ? parseInt(req.query.categoriaDeEmpenho)
         : undefined,
-
-      // Parâmetros de fornecedor
-      nomeDoFornecedor: otherParams.nomeDoFornecedor,
-      cpfCnpjDoFornecedor: req.query.cpfCnpjDoFornecedor,
-      liquidacao: req.query.liquidacao,
-
-      // Parâmetros de ordenação
-      ordenarPor: otherParams.ordenarPor || 'dataDaExigibilidade',
-      ordem: otherParams.ordem || 'asc',
+      nomeDoFornecedor: req.query.nomeDoFornecedor,
+      cpfCnpjDoFornecedor: req.query.cpfCnpjDoFornecedor?.replace(/[^\d]/g, ''), // Remove non-digits
+      ordenarPor: req.query.ordenarPor || 'dataDaExigibilidade',
+      ordem: req.query.ordem || 'asc',
 
       // Adiciona as datas formatadas se existirem
       ...(dataInicial && { dataInicial: formatDate(dataInicial) }),
