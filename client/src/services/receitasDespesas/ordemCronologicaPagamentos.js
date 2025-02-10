@@ -9,23 +9,17 @@ const API_BASE_URL = `${
 // Função para buscar a lista paginada de ordens cronológicas de pagamento
 export const getOrdensCronologicasPagas = async (filters = {}) => {
   try {
-    // Obter a data atual
-    const currentDate = new Date()
-    const currentYear = currentDate.getFullYear()
-    const currentMonth = currentDate.getMonth() + 1
-
-    // Prepara os parâmetros da requisição
     const params = {
       pagina: 1,
-      tamanhoDaPagina: -1, // Remove limit to get all records
-      ano: filters.ano || currentYear,
-      mes: filters.mes || currentMonth,
+      tamanhoDaPagina: -1,
+      ano: filters.ano || new Date().getFullYear(),
+      mes: filters.mes || new Date().getMonth() + 1,
       nomeDoFornecedor: filters.nomeDoFornecedor,
-      cpfCnpj: filters.cpfCnpj,
-      codigoDoOrgao: filters.orgao ? parseInt(filters.orgao) : undefined, // Convert to number
+      cpfCnpjDoFornecedor: filters.cpfCnpjDoFornecedor, // Make sure this matches
+      codigoDoOrgao: filters.orgao ? parseInt(filters.orgao) : undefined,
       categoriaDeEmpenho: filters.categoriaDeEmpenho
         ? parseInt(filters.categoriaDeEmpenho)
-        : undefined // Convert to number
+        : undefined
     }
 
     // Remove undefined params
@@ -34,8 +28,6 @@ export const getOrdensCronologicasPagas = async (filters = {}) => {
         delete params[key]
       }
     })
-
-    console.log('Parâmetros enviados para API:', params)
 
     const response = await axios.get(`${API_BASE_URL}/paginado`, { params })
     return response.data

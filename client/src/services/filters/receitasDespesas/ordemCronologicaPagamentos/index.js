@@ -73,8 +73,4 @@ export const ORDEM_CRONOLOGICA_FIELD_ORDER = [
 ]
 
 // Filtros obrigatórios
-export const ORDEM_CRONOLOGICA_REQUIRED_FILTERS = [
-  'ano',
-  'mes',
-  'cpfCnpjDoFornecedor'
-]
+export const ORDEM_CRONOLOGICA_REQUIRED_FILTERS = ['ano', 'mes']

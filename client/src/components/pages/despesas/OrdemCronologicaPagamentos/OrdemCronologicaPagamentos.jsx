@@ -138,17 +138,26 @@ const OrdemCronologicaPagamentos = () => {
   const handleFilterChange = (filters) => {
     console.log('Filtros recebidos:', filters);
     
-    // Atualiza a URL com os novos filtros
+    // Ensure filters are properly formatted before sending
+    const formattedFilters = {
+      ...filters,
+      cpfCnpjDoFornecedor: filters.cpfCnpjDoFornecedor,
+      categoriaDeEmpenho: filters.categoriaDeEmpenho 
+        ? parseInt(filters.categoriaDeEmpenho) 
+        : undefined
+    };
+  
+    // Update URL with new filters
     const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
+    Object.entries(formattedFilters).forEach(([key, value]) => {
       if (value) {
         params.set(key, value);
       }
     });
     setSearchParams(params);
-
-    // Busca os dados com os novos filtros
-    fetchData(filters);
+  
+    // Fetch data with new filters
+    fetchData(formattedFilters);
   };
 
   return (

@@ -44,7 +44,7 @@ const fetchFromAPI = async (path, req, res) => {
 
       // Parâmetros de fornecedor
       nomeDoFornecedor: otherParams.nomeDoFornecedor,
-      cpfCnpjDoFornecedor: req.query.cpfCnpj,
+      cpfCnpjDoFornecedor: req.query.cpfCnpjDoFornecedor,
       liquidacao: req.query.liquidacao,
 
       // Parâmetros de ordenação
