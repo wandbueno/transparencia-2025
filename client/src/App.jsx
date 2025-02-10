@@ -84,6 +84,7 @@ import OrdemDeFornecimentoDetalhe from './components/pages/Contratos/OrdemDeForn
 import OrdemCronologicaPagamentos from './components/pages/despesas/OrdemCronologicaPagamentos/OrdemCronologicaPagamentos';
 import Sicap from './components/pages/sicap/Sicap';
 import SicapDetail from './components/pages/sicap/SicapDetail';
+import OrdemCronologicaPagamentosDetail from './components/pages/despesas/OrdemCronologicaPagamentos/OrdemCronologicaPagamentosDetail';
 
 function App() {
 
@@ -179,6 +180,7 @@ function App() {
           <Route path="/ordem-de-fornecimento" element={<OrdensDeFornecimento />} />
           <Route path="/ordem-de-fornecimento/:id" element={<OrdemDeFornecimentoDetalhe />} />
           <Route path="/ordem-cronologica-de-pagamentos" element={<OrdemCronologicaPagamentos />} />
+          <Route path="/ordem-cronologica-pagamentos/:id" element={<OrdemCronologicaPagamentosDetail />} />
           <Route path="/sicap" element={ <Sicap />} />
           <Route path="/sicap/:id" element={<SicapDetail />} />
         </Routes>

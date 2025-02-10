@@ -28,11 +28,29 @@ const fetchFromAPI = async (path, req, res) => {
     // Prepara os parâmetros da requisição
     const params = {
       pagina: otherParams.pagina || 1,
-      tamanhoDaPagina: otherParams.tamanhoDaPagina || 2500,
-      mes: otherParams.mes,
+      tamanhoDaPagina: otherParams.tamanhoDaPagina || -1,
+
+      // Parâmetros de data
       ano: otherParams.ano,
-      codigoDoCliente: otherParams.codigoDoCliente,
-      liquidacao: otherParams.liquidacao,
+      mes: otherParams.mes,
+
+      // Parâmetros de identificação
+      codigoDoOrgao: otherParams.codigoDoOrgao
+        ? parseInt(otherParams.codigoDoOrgao)
+        : undefined,
+      categoriaDeEmpenho: otherParams.categoriaDeEmpenho
+        ? parseInt(otherParams.categoriaDeEmpenho)
+        : undefined,
+
+      // Parâmetros de fornecedor
+      nomeDoFornecedor: otherParams.nomeDoFornecedor,
+      cpfCnpjDoFornecedor: req.query.cpfCnpj,
+      liquidacao: req.query.liquidacao,
+
+      // Parâmetros de ordenação
+      ordenarPor: otherParams.ordenarPor || 'dataDaExigibilidade',
+      ordem: otherParams.ordem || 'asc',
+
       // Adiciona as datas formatadas se existirem
       ...(dataInicial && { dataInicial: formatDate(dataInicial) }),
       ...(dataFinal && { dataFinal: formatDate(dataFinal) })
@@ -90,11 +108,20 @@ router.get('/paginado', (req, res) =>
   )
 )
 
-// Rota para buscar detalhes de uma liquidação específica
+// Rota para buscar detalhes de uma ordem cronológica específica
 router.get('/detalhe', (req, res) => {
   const { ano, mes, liquidacao } = req.query
+
+  // Validação dos parâmetros obrigatórios
+  if (!ano || !mes || !liquidacao) {
+    return res.status(400).json({
+      error: 'Parâmetros inválidos',
+      details: 'ano, mes e liquidacao são obrigatórios'
+    })
+  }
+
   fetchFromAPI(
-    `/api/receitas-e-despesas/relatorio-de-ordem-cronologica-de-pagamentos/detalhe?ano=${ano}&mes=${mes}&liquidacao=${liquidacao}`,
+    '/api/receitas-e-despesas/relatorio-de-ordem-cronologica-de-pagamentos/detalhe',
     req,
     res
   )
