@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getReceitas } from "../../../services/receitasDespesas/receitas";
+import { getReceitas, getReceitasDataAtualizacao } from "../../../services/receitasDespesas/receitas";
 import DataTableComponent from "../../common/DataTable";
 import PageHeader from '../../common/PageHeader';
 import MultiComboSelect from '../../common/MultiComboSelect/MultiComboSelect';
@@ -90,6 +90,7 @@ const Receitas = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
+  const [updateDate, setUpdateDate] = useState(null);
 
   // Get initial filters - if no year/month in URL, use current year/month
   const getInitialFilters = () => {
@@ -123,9 +124,21 @@ const Receitas = () => {
       setSearchParams(params);
     }
     
-    // Always fetch data with initial filters
-    fetchData(initialFilters);
+    // Fetch data and update date
+    Promise.all([
+      fetchData(initialFilters),
+      fetchUpdateDate()
+    ]);
   }, []);
+
+  const fetchUpdateDate = async () => {
+    try {
+      const date = await getReceitasDataAtualizacao();
+      setUpdateDate(date);
+    } catch (error) {
+      console.error('Erro ao buscar data de atualização:', error);
+    }
+  };
 
   const fetchData = async (filters = {}) => {
     try {
@@ -209,11 +222,23 @@ const Receitas = () => {
       ) : error ? (
         <div>Erro ao carregar Receitas: {error}</div>
       ) : (
-        <DataTableComponent
-          title="Receitas"
-          columns={columns}
-          data={data}
-        />
+        <>
+          <DataTableComponent
+            title="Receitas"
+            columns={columns}
+            data={data}
+          />
+          {updateDate && (
+            <p style={{ 
+              textAlign: 'left',
+              marginTop: '10px',
+              fontSize: 'var(--font-size-small)',
+              color: 'var(--text-color)'
+            }}>
+              Conjunto de informações atualizadas em {updateDate}
+            </p>
+          )}
+        </>
       )}
     </div>
   );

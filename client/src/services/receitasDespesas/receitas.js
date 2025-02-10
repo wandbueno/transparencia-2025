@@ -113,3 +113,14 @@ export const getMovimentosReceita = async (id, ano, mes, codigoDoOrgao) => {
     throw error
   }
 }
+
+// Add new function to get update date
+export const getReceitasDataAtualizacao = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/data-de-atualizacao`)
+    return response.data
+  } catch (error) {
+    console.error('Erro ao buscar data de atualização:', error)
+    throw error
+  }
+}
