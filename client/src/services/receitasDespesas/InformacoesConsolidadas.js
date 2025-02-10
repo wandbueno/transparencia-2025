@@ -53,8 +53,34 @@ export const getOrdensPagamentoPaginadas = async (filters = {}) => {
 
 export const getConsolidadosPaginados = async (filters = {}) => {
   try {
+    // Mapeia os filtros para os parâmetros esperados pela API
+    const params = {
+      pagina: 1,
+      tamanhoDaPagina: -1,
+
+      // Parâmetros de estrutura
+      codigoDoOrgao: filters.orgao ? parseInt(filters.orgao) : undefined,
+      ano: filters.ano,
+      cpfOuCnpj: filters.cpfOuCnpj ? addCnpjMask(filters.cpfOuCnpj) : undefined,
+      fonteDoEmpenho: filters.fonteDoEmpenho,
+      fornecedor: filters.fornecedor,
+      rubricaDaDespesa: filters.rubricaDaDespesa
+    }
+
+    // Remove parâmetros undefined ou vazios
+    Object.keys(params).forEach(key => {
+      if (params[key] === undefined || params[key] === '') {
+        delete params[key]
+      }
+    })
+
+    console.log('Parâmetros enviados para API:', params)
+
     const response = await axios.get(`${API_BASE_URL}/paginado`, {
-      params: filters
+      params,
+      headers: {
+        Accept: 'application/json'
+      }
     })
     return response.data
   } catch (error) {
@@ -81,4 +107,9 @@ export const getDetalhamentoCompleto = async (id, filters = {}) => {
     console.error('Erro ao buscar detalhamento completo:', error)
     throw error
   }
+}
+
+// Função para adicionar a máscara ao CNPJ
+function addCnpjMask(cnpj) {
+  return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
 }

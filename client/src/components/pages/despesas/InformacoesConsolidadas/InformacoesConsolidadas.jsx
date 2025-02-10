@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getConsolidadosPaginados } from "../../../../services/receitasDespesas/InformacoesConsolidadas";
 import DataTableComponent from "../../../common/DataTable";
 import PageHeader from '../../../common/PageHeader';
-import FilterSection from '../../../common/FilterSection/FilterSection';
+import MultiComboSelect from '../../../common/MultiComboSelect/MultiComboSelect';
 import InfoText from '../../../common/InfoText';
 import LoadingSpinner from '../../../common/LoadingSpinner';
 import ButtonTable from "../../../common/ButtonTable";
-import { config } from '../../../../assets/config';
+import { config } from '../../../../assets/config'; 
+import {
+  INFO_CONSOLIDADAS_COMBO_FILTERS,
+  INFO_CONSOLIDADAS_TEXT_FIELDS,
+  INFO_CONSOLIDADAS_CUSTOM_WIDTHS,
+  INFO_CONSOLIDADAS_CUSTOM_LABELS,
+  INFO_CONSOLIDADAS_FIELD_ORDER
+} from '../../../../services/filters/receitasDespesas/informacoesConsolidadas';
 
 // Função auxiliar para truncar texto
 const truncateText = (text, maxLength) => {
@@ -84,27 +92,65 @@ const columnsConsolidados = [
 ];
 
 const InformacoesConsolidadas = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  // Get initial filters from URL
+  const getInitialFilters = () => {
+    const filters = {};
+    for (const [key, value] of searchParams.entries()) {
+      filters[key] = value;
+    }
+    return filters;
+  };
+
+  const fetchData = async (filters = {}) => {
+    try {
+      setLoading(true);
+      console.log('Buscando dados com filtros:', filters);
+      
+      const result = await getConsolidadosPaginados(filters);
+      setData(result.registros);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Atualiza o título da aba do navegador
     document.title = `Informações Consolidadas - Portal Transparência - ${config.geral.nomeOrgao}`;
 
-    const fetchData = async () => {
-      try {
-        const result = await getConsolidadosPaginados();
-        setData(result.registros);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    const initialFilters = getInitialFilters();
+    
+    // Only fetch with filters if they exist in URL
+    if (Object.keys(initialFilters).length > 0) {
+      fetchData(initialFilters);
+    } else {
+      // Otherwise fetch without filters
+      fetchData();
+    }
   }, []);
+
+  const handleFilterChange = (filters) => {
+    console.log('Filtros recebidos:', filters);
+    
+    // Update URL with new filters
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+
+    // Fetch data with new filters
+    fetchData(filters);
+  };
 
   return (
     <div className="container">
@@ -115,7 +161,16 @@ const InformacoesConsolidadas = () => {
         ]}
       />
       
-      <FilterSection />
+      <MultiComboSelect
+        title="Filtros de Pesquisa"
+        availableFilters={INFO_CONSOLIDADAS_COMBO_FILTERS}
+        textFields={INFO_CONSOLIDADAS_TEXT_FIELDS}
+        customWidths={INFO_CONSOLIDADAS_CUSTOM_WIDTHS}
+        customLabels={INFO_CONSOLIDADAS_CUSTOM_LABELS}
+        onFilterChange={handleFilterChange}
+        initialValues={getInitialFilters()}
+        fieldOrder={INFO_CONSOLIDADAS_FIELD_ORDER}
+      />
       
       <InfoText href="https://conceicaodotocantins.to.gov.br/transparencia/declaracoes/">
         Veja Declarações Negativas e Demais Documentos Clicando Aqui
